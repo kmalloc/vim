@@ -1,0 +1,12 @@
+#!/bin/sh
+
+rm -f filenametags
+echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase" > filenametags
+find `pwd`  -regex '.*\.\(h\|c\|cpp\|cc\|cxx\|py\|mk\|xrc\|txt\|Makefile\)' -type f -printf "%f\t%p\t1\n" | \
+sort -f >> filenametags
+
+
+#find `pwd`  -regex '.*\.\(h\|c\|cpp\|cc\|cxx\|hpp\|txt\)' -type f >> cscope.files 
+
+#cscope -Rbq -i cscope.files
+
