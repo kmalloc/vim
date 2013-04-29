@@ -88,6 +88,10 @@ endif
 
 "-------------key mapping-------------------------------
 
+"a better way to replace esc
+inoremap ;;  <ESC>
+
+
 "edit my vimrc
 map <leader>ev :tabedit $MYVIMRC<CR>
 map <F9> :so ~/.vimrc<CR>
@@ -313,7 +317,7 @@ function! List_lookup_file()
 	endif
 
 	if txt == "y"
-		execute "! ~/.vim/list.all.files.cur"
+		execute "! ~/.vim/list.all.files cur"
 	endif
 
 	execute "let g:LookupFile_TagExpr='\"filenametags\"'"
