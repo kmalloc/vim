@@ -317,7 +317,7 @@ function! List_lookup_file()
 	endif
 
 	if txt == "y"
-		execute "! ~/.vim/list.all.files cur"
+		execute "! ~/.vim/list.all.files \"cur\""
 	endif
 
 	execute "let g:LookupFile_TagExpr='\"filenametags\"'"

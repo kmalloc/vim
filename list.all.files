@@ -26,8 +26,7 @@ if [ "${mode}" == "gui" ]; then
 		echo "gui code is not available from non-office computer."
 	fi
 
-else if [ "${mode}" == "cur" ]; then
-
+elif [ "${mode}" == "cur" ]; then
 	makelist "`pwd`" "`pwd`"
 else
 	echo "invalid input."
@@ -36,4 +35,6 @@ fi
 #find `pwd`  -regex '.*\.\(h\|c\|cpp\|cc\|cxx\|hpp\|txt\)' -type f >> cscope.files 
 
 #cscope -Rbq -i cscope.files
+
+
 
