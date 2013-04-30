@@ -161,21 +161,21 @@ map md :call DelBookmark()<CR>
 "------cscope key mapping.
 
 "find reference 
-map <leader>fr :let g:word = expand("<cword>")<CR>:tabedit<CR>:cs find s <C-R>=g:word<CR><CR>:copen<CR>
+map <leader>fr :let g:word = expand("<cword>")<CR>:cs find s <C-R>=g:word<CR><CR>:copen<CR>
 "find definition
-map <leader>fd :let g:word = expand("<cword>")<CR>:tabedit<CR>:cs find g <C-R>=g:word<CR><CR>:copen<CR>
+map <leader>fd :let g:word = expand("<cword>")<CR>:cs find g <C-R>=g:word<CR><CR>:copen<CR>
 "find caller
-map <leader>fc :let g:word = expand("<cword>")<CR>:tabedit<CR>:cs find c <C-R>=g:word<CR><CR>:copen<CR>
+map <leader>fc :let g:word = expand("<cword>")<CR>:cs find c <C-R>=g:word<CR><CR>:copen<CR>
 "find what you specify,find text
-map <leader>ft :let g:word = expand("<cword>")<CR>:tabedit<CR>:cs find t <C-R>=g:word<CR><CR>:copen<CR>
+map <leader>ft :let g:word = expand("<cword>")<CR>:cs find t <C-R>=g:word<CR><CR>:copen<CR>
 
 "find this egrep pattern
-map <leader>fe :let g:word = expand("<cword>")<CR>:tabedit<CR>:cs find e <C-R>=g:word<CR><CR>:copen<CR>
+map <leader>fe :let g:word = expand("<cword>")<CR>:cs find e <C-R>=g:word<CR><CR>:copen<CR>
 
 "find file
-map <leader>ff :let g:file = expand("<cfile>")<CR>:tabedit<CR>:cs find f <C-R>=g:file<CR><CR>:copen<CR>
+map <leader>ff :let g:file = expand("<cfile>")<CR>:cs find f <C-R>=g:file<CR><CR>:copen<CR>
 "find files that include this file
-map <leader>fi :let g:file = expand("<cfile>")<CR>:tabedit<CR>:cs find i <C-R>=g:file<CR><CR>:copen<CR>
+map <leader>fi :let g:file = expand("<cfile>")<CR>:cs find i <C-R>=g:file<CR><CR>:copen<CR>
 "map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 
 
