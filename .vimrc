@@ -87,6 +87,9 @@ if(has('cscope'))
 endif
 
 "-------------key mapping-------------------------------
+"a better way to replace esc
+inoremap ;;  <ESC>
+
 
 "edit my vimrc
 map <leader>ev :tabedit $MYVIMRC<CR>
