@@ -13,7 +13,7 @@ if [ "`whoami`" == "$name" ];then
 	mkdir -p ~/.vim/wx.tags
 	mv tags ~/.vim/wx.tags
 else
-	echo "not office computer."
+	echo "not office computer.wx code is not going to be ctags"
 fi
 
 
