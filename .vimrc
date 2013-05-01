@@ -22,7 +22,7 @@ set foldenable
 set foldmethod=manual
 
 "share system clipboard
-set clipboard=unnamed
+set clipboard=unname
 
 "key and mouse
 set mouse=a
@@ -59,12 +59,11 @@ syntax on
 set t_Co=256
 set guifont=Monospace\ 14
 set background=light
-colorscheme deveiate 
+colorscheme pacific "deveiate 
 "deveiate
 "molokai
 "torte
 "darkburn
-
 
 set guioptions-=m "hide menu bar.
 set guioptions-=T "hide tool bar.
