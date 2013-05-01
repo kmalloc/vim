@@ -213,11 +213,11 @@ let g:AutoComplPop_CompleteoptPreview = 1
 
 
 "OmniCppCompletion
-let g:OmniCpp_NamespaceSearch = 1
+let g:OmniCpp_NamespaceSearch = 2 
 
 let g:OmniCpp_ShowPrototypeInAbbr = 1 
 
-let g:OmniCpp_MayCompleteScope = 1 
+let g:OmniCpp_MayCompleteScope = 0 
 
 "MRU setting
 "no help doc is provided.
