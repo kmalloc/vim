@@ -68,6 +68,7 @@ colorscheme deveiate
 
 set guioptions-=m "hide menu bar.
 set guioptions-=T "hide tool bar.
+set completeopt-=preview "remove preview window for autocompletio
 
 "context menu
 highlight Pmenu guibg=darkblue ctermbg=darkblue
