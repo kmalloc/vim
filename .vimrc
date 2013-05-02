@@ -59,11 +59,11 @@ syntax on
 set t_Co=256
 set guifont=Monospace\ 14
 set background=light
-colorscheme deveiate 
+colorscheme  deveiate 
+"pacific
 "molokai
 "torte
 "darkburn
-
 
 set guioptions-=m "hide menu bar.
 set guioptions-=T "hide tool bar.
