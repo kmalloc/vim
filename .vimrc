@@ -60,7 +60,6 @@ set t_Co=256
 set guifont=Monospace\ 14
 set background=light
 colorscheme deveiate 
-"deveiate
 "molokai
 "torte
 "darkburn
