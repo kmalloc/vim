@@ -27,6 +27,7 @@ set clipboard=unnamed
 "key and mouse
 set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
+set backspace=indent,eol,start
 
 set tags=~/.vim/cpp.tags/tags
 set tags+=~/.vim/gui.tags/tags
@@ -142,7 +143,8 @@ map <leader>lf :LookupFile<CR>
 map <F7> :call FindReference()<CR>
 
 "checkout file using p4.
-map <leader>co  :!~/tools/p4 edit %<CR>
+map <leader>co   :!~/tools/p4 edit %<CR>
+map <leader>add  :!~/tools/p4 add %<CR>
 
 
 map <leader>sstf :mksession! ~/session/tflex<CR>
