@@ -1,7 +1,7 @@
 #!/bin/sh
 
 user="miliao"
-code="~/code/gui_tflex"
+code="${HOME}/code/gui_tflex"
 mode=${1:-"cur"}
 
 
@@ -11,6 +11,7 @@ function makelist
   codeloc=${2:-"."}
   
   rm -f ${outloc}/filenametags
+  touch ${outloc}/filenametags
   echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase" > ${outloc}/filenametags
   find ${codeloc}  -regex '.*\.\(h\|c\|cpp\|cc\|cxx\|py\|mk\|xrc\|txt\|Makefile\)' -type f -printf "%f\t%p\t1\n" | \
   sort -f >> ${outloc}/filenametags
@@ -20,7 +21,7 @@ if [ "${mode}" == "gui" ]; then
 
 	if [ "`whoami`" == "$user" ]; then
 
-		makelist "~/.vim/caches" "~/code/gui_tflex"
+		makelist "${HOME}/.vim/caches" "${HOME}/code/gui_tflex"
 
 	else
 		echo "gui code is not available from non-office computer."
@@ -32,9 +33,6 @@ else
 	echo "invalid input."
 fi
 
-#find `pwd`  -regex '.*\.\(h\|c\|cpp\|cc\|cxx\|hpp\|txt\)' -type f >> cscope.files 
-
-#cscope -Rbq -i cscope.files
 
 
 
