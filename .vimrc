@@ -234,6 +234,13 @@ let g:MRU_Add_Menu = 0 "disable gui menu setting.
 let g:simple_bookmarks_signs = 1
 let g:simple_bookmarks_new_tab = 0 
 let g:simple_bookmarks_auto_close = 0 
+
+"a.vim setting: search path.
+let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
+
+
+
+
 "---------------------function ------------------------------------
 
 function! P4CheckOut()
