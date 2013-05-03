@@ -49,6 +49,7 @@ set ruler
 
 "tab
 set switchbuf=usetab,newtab
+set hidden
 
 filetype plugin on
 filetype indent on
@@ -57,7 +58,7 @@ filetype indent on
 "appearance
 syntax on
 set t_Co=256
-set guifont=Monospace\ 14
+set guifont=Courier\ 10\ Pitch\ 16
 set background=light
 colorscheme  deveiate 
 "pacific
@@ -88,12 +89,9 @@ endif
 
 "-------------key mapping-------------------------------
 "a better way to replace esc
+inoremap ,,  <ESC>
 inoremap ;;  <ESC>
-
-
-"a better way to replace esc
-inoremap ;;  <ESC>
-
+ 
 
 "edit my vimrc
 map <leader>ev :tabedit $MYVIMRC<CR>
@@ -122,7 +120,7 @@ map <C-j> :tabp<CR>
 map <C-k> :tabn<CR>
 
 map <M-o> :tabnew %<CR> :A<CR>
-map <C-h> :tabnew %<CR> :A<CR>
+map <C-h> :A<CR>
 
 map <F2>  :MRU<CR>
 "map <F3>  :AS<CR>
@@ -267,6 +265,7 @@ function! RefreshGuiCodeFiles()
 
 	let csFiles = $HOME."/.vim/caches/cscope.files"
 	let csOut = $HOME."/.vim/caches/cscope.out"
+	let lookupfiles = $HOME."/.vim/caches/filenametags"
 
 	if filereadable(csFiles)
 		let csfilesdeleted=delete(csFiles)
@@ -276,6 +275,11 @@ function! RefreshGuiCodeFiles()
 		let csoutdeleted=delete(csOut)
 	endif
 
+	if filereadable(lookupfiles)
+		let filetagsdeleted=delete(lookupfiles)
+	endif
+
+	silent! execute "!~/.vim/list.all.files gui"
 
 	if(has('cscope'))
 		if filereadable(csFiles)	

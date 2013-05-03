@@ -91,7 +91,7 @@ function! simple_bookmarks#Copen()
   endfor
 
   call setqflist(choices)
-  copen
+  bo copen
   let w:simple_bookmarks_quickfix = 1
 
   call s:SetupQuickfixMappings()
