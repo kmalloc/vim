@@ -1,8 +1,13 @@
 #!/bin/sh
 
-user="miliao"
-code="${HOME}/code/gui_tflex"
-mode=${1:-"cur"}
+officeUser="miliao"
+user="`whoami`"
+
+#cur:search current directory.
+#code:search code path(different in office and home)
+#probe:to be decide. dynamically decide the search mode using user name.
+mode=${1:-"code"} 
+
 
 
 function makelist
@@ -17,16 +22,18 @@ function makelist
   sort -f >> ${outloc}/filenametags
 }
 
-if [ "${mode}" == "gui" ]; then
 
-	if [ "`whoami`" == "$user" ]; then
+mkdir -p ~/.vim/caches
 
-		makelist "${HOME}/.vim/caches" "${HOME}/code/gui_tflex"
+if [ "${user}" == "${officeUser}" ];then
+	code="${HOME}/code/gui_tflex"
+else
+	code="${HOME}/code"
+fi
 
-	else
-		echo "gui code is not available from non-office computer."
-	fi
 
+if [ "${mode}" == "code" ]; then
+	makelist "${HOME}/.vim/caches" "${code}"
 elif [ "${mode}" == "cur" ]; then
 	makelist "`pwd`" "`pwd`"
 else

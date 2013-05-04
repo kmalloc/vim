@@ -251,6 +251,7 @@ endfunction
 
 
 function! ToggleToolsBar()
+
 	if(has("gui_running"))
 		if &guioptions =~# 'T'
 			execute"set guioptions-=T"
@@ -260,6 +261,7 @@ function! ToggleToolsBar()
 			execute"set guioptions+=m"
 		endif
 	endif
+	
 endfunction
 
 
@@ -288,7 +290,7 @@ function! RefreshGuiCodeFiles()
 		let filetagsdeleted=delete(lookupfiles)
 	endif
 
-	silent! execute "!~/.vim/list.all.files gui"
+	silent! execute "!~/.vim/list.all.files"
 
 	if(has('cscope'))
 		if filereadable(csFiles)	
@@ -311,13 +313,14 @@ function! RefreshGuiCodeFiles()
 
 endfunction
 
+
 function! RefreshCodeTags()
 
-	let txt=input("refresh gui code?otherwise refresh current path.(y/n):")
+	let txt=input("refresh code base? otherwise refresh current path.(y/n):")
 	if txt == "y"
-		execute "! ~/.vim/list.code.tags.sh gui"
+		execute "! ~/.vim/list.code.tags.sh"
 	else
-		execute "!~/.vim/list.code.tags.sh"
+		execute "!~/.vim/list.code.tags.sh cur"
 	endif
 	
 endfunction
@@ -329,7 +332,7 @@ function! List_lookup_file()
 
 	let txt="y"
 	if filereadable("filenametags")
-      let txt = input("tags existed,rebuild or not ?(y/n)") 
+      let txt = input("filenametags existed,rebuild or not ?(y/n)") 
 	endif
 
 	if txt == "y"
@@ -339,8 +342,12 @@ function! List_lookup_file()
 	execute "let g:LookupFile_TagExpr='\"filenametags\"'"
 
 	if filereadable("cscope.files")
-	else
-		silent! execute "!find `pwd` -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.cc' -o -name '*.hpp' > cscope.files"
+		let txt="cscope.files existed, rebuild or not?(y/n)")
+	endif
+
+
+	if txt == "y"
+		execute "! ~/.vim/list.cscope.files.sh cur"
 	endif
 
 	silent! execute "!cscope -C -Rbq -i cscope.files"
@@ -379,6 +386,7 @@ function! BookmarkHere()
 	silent! execute "Bookmark ".txt
 
 endfunction
+
 
 function! DelBookmark()
 

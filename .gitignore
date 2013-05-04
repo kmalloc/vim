@@ -6,4 +6,5 @@ wx.tags/
 cpp.tags/
 doc/tags
 doc/tags-ja
-
+*.swp
+.netrwhist
