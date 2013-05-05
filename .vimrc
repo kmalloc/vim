@@ -60,8 +60,8 @@ filetype indent on
 syntax on
 set t_Co=256
 set guifont=Courier\ 10\ Pitch\ 16
-set background=light
-colorscheme  deveiate 
+"set background=light
+colorscheme  solarized "deveiate 
 "pacific
 "molokai
 "torte
