@@ -61,7 +61,13 @@ syntax on
 set t_Co=256
 set guifont=Courier\ 10\ Pitch\ 16
 "set background=light
-colorscheme  solarized "deveiate 
+
+if (has("gui_running"))
+	colorscheme  solarized "deveiate 
+else
+	colorscheme  torte
+endif
+
 "pacific
 "molokai
 "torte
