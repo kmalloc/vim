@@ -63,6 +63,7 @@ set guifont=Courier\ 10\ Pitch\ 16
 "set background=light
 
 if (has("gui_running"))
+	set background=dark
 	colorscheme  solarized "deveiate 
 else
 	colorscheme  torte
