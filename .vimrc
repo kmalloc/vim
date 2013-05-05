@@ -77,6 +77,7 @@ endif
 set guioptions-=m "hide menu bar.
 set guioptions-=T "hide tool bar.
 set completeopt-=preview "remove preview window for autocompletio
+"set statusline+=%{EchoFuncGetStatusLine()}
 
 "context menu
 highlight Pmenu guibg=darkblue ctermbg=darkblue
@@ -224,9 +225,7 @@ let g:AutoComplPop_CompleteoptPreview = 1
 
 "OmniCppCompletion
 let g:OmniCpp_NamespaceSearch = 2 
-
 let g:OmniCpp_ShowPrototypeInAbbr = 1 
-
 let g:OmniCpp_MayCompleteScope = 0 
 
 "MRU setting
@@ -245,6 +244,15 @@ let g:simple_bookmarks_auto_close = 0
 "a.vim setting: search path.
 let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 
+
+"echofunc.vim setting.
+"if the following is set to 1.
+"information will not shown on status line.
+let g:EchoFuncShowOnStatus=0
+"need to find an appropriate mapping,
+"otherwhise default mapping will not work in terminal.
+"let g:EchoFuncKeyNext='<C-->'
+"let g:EchoFuncKeyNext='<C-=>'
 
 
 
