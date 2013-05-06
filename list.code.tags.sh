@@ -15,6 +15,16 @@ else
 	path="`pwd`"
 fi
 
+if [ -e "tags" ];then
+	rm tags
+fi
+
+
+guiTarget=${HOME}/.vim/gui.tags/tags
+if [ -e "${guiTarget}" ];then
+	rm ${guiTarget}
+fi
+
 
 ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${path}
 

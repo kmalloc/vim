@@ -29,6 +29,7 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start
 
+let cpptags=$HOME."/.vim/cpp.tags/tags"
 set tags=~/.vim/cpp.tags/tags
 set tags+=~/.vim/gui.tags/tags
 set tags+=~/.vim/wx.tags/tags
