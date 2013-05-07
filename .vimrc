@@ -266,7 +266,7 @@ autocmd! BufWritePost ~/.vimrc so ~/.vimrc
 "---------------------function ------------------------------------
 
 function! OnBufWrite(file)
-	if (g:PerforceExisted < 0)
+	if (g:PerforceExisted == 0)
 		return
 	else
 		silent! execute("! p4 edit ".a:file)
