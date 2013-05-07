@@ -1,7 +1,8 @@
 "author               : miliao.
 "vim version required : vim 7.0 and above.
 "other requirment     : compile vim with option: --enable-cscope.
-"plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,bufExplorer,vimExplorer,MRU.
+"plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
+"                       echofunc,bufExplorer,vimExplorer,MRU.
 
 let mapleader=","
 set number
@@ -250,26 +251,47 @@ let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 "if the following is set to 1.
 "information will not shown on status line.
 let g:EchoFuncShowOnStatus=0
-let g:EchoFuncAutoStartBalloonDeclaration=0  
+let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration 
 "need to find an appropriate mapping,
 "otherwhise default mapping will not work in terminal.
 "let g:EchoFuncKeyNext='<C-->'
 "let g:EchoFuncKeyNext='<C-=>'
 
 "----------------------autocmd------------------------------------
-autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEdit()
-
+autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEnter()
+autocmd! BufWritePost *.cpp,*.cc,*.h,*.hpp call OnBufWrite(expand("<afile>"))
+autocmd! BufWritePost ~/.vimrc so ~/.vimrc
 
 
 "---------------------function ------------------------------------
 
-function! OnBufEdit()
+function! OnBufWrite(file)
+	if (g:PerforceExisted < 0)
+		return
+	else
+		silent! execute("! p4 edit ".a:file)
+	endif
+
+	"silent! execute("! cp ".a:file." change.cc")
+	"echo "buf write event " a:file
+endfunction
+
+
+
+function! OnBufEnter()
 	silent! execute "normal:"
 	silent! execute "TlistOpen"
 	silent! execute "wincmd w"
 endfunction
 
-
+function! IsP4Exist()
+	silent! execute "! which p4 > /dev/null 2>&1"
+	if !v:shell_error
+		let g:PerforceExisted = 1
+	else
+		let g:PerforceExisted = 0
+	endif
+endfunction
 
 function! P4CheckOut()
 	let f = expand("<cfile>")
@@ -424,3 +446,9 @@ function! DelBookmark()
 
 endfunction
 
+
+
+
+"------------------------------call function to setup environment----
+
+call IsP4Exist()
