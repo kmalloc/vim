@@ -152,8 +152,8 @@ map <leader>lf :LookupFile<CR>
 map <F7> :call FindReference()<CR>
 
 "checkout file using p4.
-map <leader>co   :!~/tools/p4 edit %<CR>
-map <leader>add  :!~/tools/p4 add %<CR>
+map <leader>co   :!p4 edit %<CR>
+map <leader>add  :!p4 add %<CR>
 
 
 map <leader>sstf :mksession! ~/session/tflex<CR>
@@ -250,18 +250,31 @@ let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 "if the following is set to 1.
 "information will not shown on status line.
 let g:EchoFuncShowOnStatus=0
+let g:EchoFuncAutoStartBallonDeclaration = 0
+
 "need to find an appropriate mapping,
 "otherwhise default mapping will not work in terminal.
 "let g:EchoFuncKeyNext='<C-->'
 "let g:EchoFuncKeyNext='<C-=>'
 
+"----------------------autocmd------------------------------------
+autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEdit()
+
 
 
 "---------------------function ------------------------------------
 
+function! OnBufEdit()
+	silent! execute "normal:"
+	silent! execute "TlistOpen"
+	silent! execute "wincmd w"
+endfunction
+
+
+
 function! P4CheckOut()
 	let f = expand("<cfile>")
-	call system("~/tools/p4 edit ".f)
+	silent! execute("! p4 edit ".f)
 endfunction
 
 
