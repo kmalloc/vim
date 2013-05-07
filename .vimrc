@@ -107,7 +107,8 @@ inoremap ;;  <ESC>
 "edit my vimrc
 map <leader>ev :tabedit $MYVIMRC<CR>
 map <F9> :so ~/.vimrc<CR>
-map <F6> :bo copen<CR> 
+map <F6> :call ToggleQuickfix()<CR> 
+map <F3> :call ToggleBufExplorer(expand("<cfile>"))<CR>
 
 "toggle gvim tool bar.
 map <M-m> :call ToggleToolsBar()<CR> 
@@ -261,7 +262,7 @@ let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEnter()
 autocmd! BufWritePost *.cpp,*.cc,*.h,*.hpp call OnBufWrite(expand("<afile>"))
 autocmd! BufWritePost ~/.vimrc so ~/.vimrc
-
+autocmd! TabEnter * call OnTabEnter()
 
 "---------------------function ------------------------------------
 
@@ -279,9 +280,23 @@ endfunction
 
 
 function! OnBufEnter()
+
+	let l:win = winnr()
 	silent! execute "normal:"
-	silent! execute "TlistOpen"
-	silent! execute "wincmd w"
+	silent! execute "Tlist"
+	"silent! execute l:win."wincmd w"
+
+endfunction
+
+
+function! OnTabEnter()
+
+	if g:IsQuickfixOpen == 1
+		silent! execute "bo copen"
+	else
+		silent! execute "cclose"
+	endif
+
 endfunction
 
 function! IsP4Exist()
@@ -446,6 +461,27 @@ function! DelBookmark()
 
 endfunction
 
+
+functio! ToggleBufExplorer(file)
+
+	silent! execute "BufExplorer"
+
+endfunction
+
+
+functio! ToggleQuickfix()
+
+   if g:IsQuickfixOpen == 0 
+	   let l:win = winnr()
+	   silent! execute "bo copen"
+	   silent! execute l:win."wincmd w"
+	   let g:IsQuickfixOpen = 1
+   else
+	   silent! execute "cclose"
+	   let g:IsQuickfixOpen = 0 
+   endif
+
+endfunction
 
 
 
