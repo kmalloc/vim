@@ -250,8 +250,7 @@ let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 "if the following is set to 1.
 "information will not shown on status line.
 let g:EchoFuncShowOnStatus=0
-let g:EchoFuncAutoStartBallonDeclaration = 0
-
+let g:EchoFuncAutoStartBalloonDeclaration=0  
 "need to find an appropriate mapping,
 "otherwhise default mapping will not work in terminal.
 "let g:EchoFuncKeyNext='<C-->'
@@ -319,18 +318,15 @@ function! RefreshGuiCodeFiles()
 		let filetagsdeleted=delete(lookupfiles)
 	endif
 
-	silent! execute "!~/.vim/list.all.files"
+	silent! execute "!~/.vim/list.all.files&"
 
 	if(has('cscope'))
 		if filereadable(csFiles)	
 		else
-			silent! execute "!~/.vim/list.cscope.files.sh"
+			silent! execute "!~/.vim/list.cscope.files.sh "
 		endif
 
-		silent! execute "!cscope -C -Rbq -i ~/.vim/caches/cscope.files"
-		silent! execute "!mv cscope.*  ~/.vim/caches/"
-
-		if filereadable(csOut)
+	   if filereadable(csOut)
 			silent! execute "normal :"
 			silent! execute "cs add ".csOut
 		endif
@@ -347,9 +343,9 @@ function! RefreshCodeTags()
 
 	let txt=input("refresh code base? otherwise refresh current path.(y/n):")
 	if txt == "y"
-		execute "! ~/.vim/list.code.tags.sh"
+		execute "! ~/.vim/list.code.tags.sh &"
 	else
-		execute "!~/.vim/list.code.tags.sh cur"
+		execute "!~/.vim/list.code.tags.sh cur &"
 	endif
 	
 endfunction

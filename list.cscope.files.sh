@@ -17,3 +17,6 @@ fi
 
 
 find ${searchLoc} -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.cc' -o -name '*.hpp' > ${outLoc}
+
+cscope -C -Rbq -i ${outLoc}
+mv cscope.*  ${HOME}/.vim/caches/
