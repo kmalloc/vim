@@ -722,9 +722,9 @@ function! s:MRU_Open_Window(...)
 
     " Create mappings to select and edit a file from the MRU list
     nnoremap <buffer> <silent> <CR>
-                \ :call <SID>MRU_Select_File_Cmd('edit,useopen')<CR>
+                \ :call <SID>MRU_Select_File_Cmd('edit,newtab')<CR>
     vnoremap <buffer> <silent> <CR>
-                \ :call <SID>MRU_Select_File_Cmd('edit,useopen')<CR>
+                \ :call <SID>MRU_Select_File_Cmd('edit,newtab')<CR>
     nnoremap <buffer> <silent> o
                 \ :call <SID>MRU_Select_File_Cmd('edit,newwin_horiz')<CR>
     vnoremap <buffer> <silent> o
@@ -741,7 +741,7 @@ function! s:MRU_Open_Window(...)
                 \ :call <SID>MRU_Select_File_Cmd('view,useopen')<CR>
     nnoremap <buffer> <silent> u :MRU<CR>
     nnoremap <buffer> <silent> <2-LeftMouse>
-                \ :call <SID>MRU_Select_File_Cmd('edit,useopen')<CR>
+                \ :call <SID>MRU_Select_File_Cmd('edit,newtab')<CR>
     nnoremap <buffer> <silent> q :close<CR>
 
     " Restore the previous cpoptions settings

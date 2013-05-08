@@ -30,6 +30,16 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start
 
+"enable alt key in terminal
+"set <M-key>=<Esc>key
+"see :h map-alt-keys
+
+exe "set <M-x>=\<ESC>x"
+exe "set <M-w>=\<ESC>w"
+exe "set <M-o>=\<ESC>o"
+exe "set <M-1>=\<ESC>1"
+exe "set <M-2>=\<ESC>2"
+
 let cpptags=$HOME."/.vim/cpp.tags/tags"
 set tags=~/.vim/cpp.tags/tags
 set tags+=~/.vim/gui.tags/tags
@@ -123,7 +133,7 @@ map <F12> :call RefreshGuiCodeFiles()<CR>
 "tab key mapping
 map <C-t> :tabnew<CR>
 map <M-x> :tabclose<CR>
-map <M-w> :call CloseWin()<CR>
+map <M-w> :x<CR>
 
 map <M-1> :tabp<CR>
 map <M-2> :tabn<CR>
@@ -236,6 +246,7 @@ let g:MRU_Max_Entries=1024
 let g:MRU_Use_Current_Window = 0 "
 let g:MRU_Auto_Close = 0 "do not close on selecting file.
 let g:MRU_Add_Menu = 0 "disable gui menu setting.
+let g:MRU_Open_File_Use_Tabs = 1
 
 "let g:vbookmark_bookmarkSaveFile=$HOME.'/.vimbookmark'
 
@@ -261,12 +272,14 @@ let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 "----------------------global variable---------------------------
 let g:IsQuickfixOpen = 0
 let g:PerforceExisted = 0
+let g:IsMRUOpened    = 0
 
 "----------------------autocmd------------------------------------
 autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEnter()
 autocmd! BufWritePost *.cpp,*.cc,*.h,*.hpp call OnBufWrite(expand("<afile>"))
 autocmd! BufWritePost ~/.vimrc so ~/.vimrc
 autocmd! TabEnter * call OnTabEnter()
+autocmd! BufWinLeave * call CloseWin()
 
 "---------------------function ------------------------------------
 
@@ -299,6 +312,13 @@ endfunction
 
 function! OnTabEnter()
 
+	"still have bugs,should enable auto close mru.
+	if g:IsMRUOpened == 1 
+		let l:win = winnr()
+		call OpenMRU()
+		silent! execute l:win."wincmd w"
+	endif
+
 	if g:IsQuickfixOpen == 1
 		let l:win = winnr()
 		silent! execute "bo copen"
@@ -306,6 +326,7 @@ function! OnTabEnter()
 	else
 		silent! execute "cclose"
 	endif
+
 
 endfunction
 
@@ -501,22 +522,26 @@ function! OpenBookmark()
 	let g:IsQuickfixOpen = 1
 endfunction
 
-
+"mru does not use quickfix to display history.
 function! OpenMRU()
 	let l:win = winnr()
 	silent! execute "MRU"
 	silent! execute l:win."wincmd w"
-	let g:IsQuickfixOpen = 1
+	"let g:IsMRUOpened += 1
+	let g:IsMRUOpened = 1
 endfunction
 
 
 function! CloseWin()
+
 	if (getbufvar(winbufnr(winnr()), "&buftype") == "quickfix" )
-		echo "closing quickfix"
 		let g:IsQuickfixOpen = 0
 	endif
 
-	silent! execute("x")
+	if bufname("%") == "__MRU_Files__"
+		let g:IsMRUOpened = 0
+	endif
+
 endfunction
 
 
