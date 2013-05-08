@@ -274,7 +274,11 @@ function! OnBufWrite(file)
 	if (g:PerforceExisted == 0)
 		return
 	else
-		silent! execute("! p4 edit ".a:file)
+		silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
+
+		if v:shell_error
+			echo "p4 edit error,please check if you are log in"
+		endif
 	endif
 
 	"silent! execute("! cp ".a:file." change.cc")
