@@ -174,22 +174,22 @@ map md :call DelBookmark()<CR>
 "------cscope key mapping.
 
 "find reference 
-map <leader>fr :let g:word = expand("<cword>")<CR>:cs find s <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
+map <leader>fr :let g:word = expand("<cword>")<CR>:cs find s <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
 "find definition
-map <leader>fd :let g:word = expand("<cword>")<CR>:cs find g <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
+map <leader>fd :let g:word = expand("<cword>")<CR>:cs find g <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
 "find caller
-map <leader>fc :let g:word = expand("<cword>")<CR>:cs find c <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
+map <leader>fc :let g:word = expand("<cword>")<CR>:cs find c <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
 "find what you specify,find text
-map <leader>ft :let g:word = expand("<cword>")<CR>:cs find t <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
+map <leader>ft :let g:word = expand("<cword>")<CR>:cs find t <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
 
 "find this egrep pattern
-map <leader>fe :let g:word = expand("<cword>")<CR>:cs find e <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
+map <leader>fe :let g:word = expand("<cword>")<CR>:cs find e <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
 
 "find file
-map <leader>ff :let g:file = expand("<cfile>")<CR>:cs find f <C-R>=g:file<CR><CR>:call ToggleQuickfix()<CR>
+map <leader>ff :let g:file = expand("<cfile>")<CR>:cs find f <C-R>=g:file<CR><CR>:call OpenCscopeSearchList()<CR>
 "find files that include this file
-map <leader>fi :let g:file = expand("<cfile>")<CR>:cs find i <C-R>=g:file<CR><CR>:call ToggleQuickfix()<CR>
-"map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call ToggleQuickfix()<CR>
+map <leader>fi :let g:file = expand("<cfile>")<CR>:cs find i <C-R>=g:file<CR><CR>:call OpenCscopeSearchList()<CR>
+"map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
 
 
 
@@ -240,7 +240,7 @@ let g:MRU_Add_Menu = 0 "disable gui menu setting.
 "let g:vbookmark_bookmarkSaveFile=$HOME.'/.vimbookmark'
 
 let g:simple_bookmarks_signs = 1
-let g:simple_bookmarks_new_tab = 0 
+let g:simple_bookmarks_new_tab = 1 
 let g:simple_bookmarks_auto_close = 0 
 
 "a.vim setting: search path.
@@ -296,7 +296,9 @@ endfunction
 function! OnTabEnter()
 
 	if g:IsQuickfixOpen == 1
+		let l:win = winnr()
 		silent! execute "bo copen"
+		silent! execute l:win."wincmd w"
 	else
 		silent! execute "cclose"
 	endif
@@ -512,6 +514,16 @@ function! CloseWin()
 
 	silent! execute("x")
 endfunction
+
+
+function! OpenCscopeSearchList()
+	if g:IsQuickfixOpen == 0
+		call ToggleQuickfix()
+	endif
+endfunction
+
+
+
 "------------------------------call function to setup environment----
 
 call IsP4Exist()
