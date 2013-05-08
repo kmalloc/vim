@@ -122,9 +122,8 @@ map <F12> :call RefreshGuiCodeFiles()<CR>
 
 "tab key mapping
 map <C-t> :tabnew<CR>
-map <leader>xx :tabclose<CR>
 map <M-x> :tabclose<CR>
-map <M-w> :x<CR>
+map <M-w> :call CloseWin()<CR>
 
 map <M-1> :tabp<CR>
 map <M-2> :tabn<CR>
@@ -134,7 +133,7 @@ map <C-k> :tabn<CR>
 map <M-o> :tabnew %<CR> :A<CR>
 map <C-h> :A<CR>
 
-map <F2>  :MRU<CR>
+map <F2>  :call OpenMRU()<CR>
 "map <F3>  :AS<CR>
 
 map <C-A> ggVG
@@ -167,7 +166,7 @@ map <leader>sos :so ~/session/<CR>
 "bookmark setting
 
 map mm :call BookmarkHere()<CR>
-map mc :CopenBookmarks<CR>
+map mc :call OpenBookmark()<CR>
 map md :call DelBookmark()<CR>
 
 
@@ -175,22 +174,22 @@ map md :call DelBookmark()<CR>
 "------cscope key mapping.
 
 "find reference 
-map <leader>fr :let g:word = expand("<cword>")<CR>:cs find s <C-R>=g:word<CR><CR>:bo copen<CR>
+map <leader>fr :let g:word = expand("<cword>")<CR>:cs find s <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
 "find definition
-map <leader>fd :let g:word = expand("<cword>")<CR>:cs find g <C-R>=g:word<CR><CR>:bo copen<CR>
+map <leader>fd :let g:word = expand("<cword>")<CR>:cs find g <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
 "find caller
-map <leader>fc :let g:word = expand("<cword>")<CR>:cs find c <C-R>=g:word<CR><CR>:bo copen<CR>
+map <leader>fc :let g:word = expand("<cword>")<CR>:cs find c <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
 "find what you specify,find text
-map <leader>ft :let g:word = expand("<cword>")<CR>:cs find t <C-R>=g:word<CR><CR>:bo copen<CR>
+map <leader>ft :let g:word = expand("<cword>")<CR>:cs find t <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
 
 "find this egrep pattern
-map <leader>fe :let g:word = expand("<cword>")<CR>:cs find e <C-R>=g:word<CR><CR>:bo copen<CR>
+map <leader>fe :let g:word = expand("<cword>")<CR>:cs find e <C-R>=g:word<CR><CR>:call ToggleQuickfix()<CR>
 
 "find file
-map <leader>ff :let g:file = expand("<cfile>")<CR>:cs find f <C-R>=g:file<CR><CR>:bo copen<CR>
+map <leader>ff :let g:file = expand("<cfile>")<CR>:cs find f <C-R>=g:file<CR><CR>:call ToggleQuickfix()<CR>
 "find files that include this file
-map <leader>fi :let g:file = expand("<cfile>")<CR>:cs find i <C-R>=g:file<CR><CR>:bo copen<CR>
-"map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:bo copen<CR>
+map <leader>fi :let g:file = expand("<cfile>")<CR>:cs find i <C-R>=g:file<CR><CR>:call ToggleQuickfix()<CR>
+"map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call ToggleQuickfix()<CR>
 
 
 
@@ -258,6 +257,11 @@ let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 "let g:EchoFuncKeyNext='<C-->'
 "let g:EchoFuncKeyNext='<C-=>'
 
+
+"----------------------global variable---------------------------
+let g:IsQuickfixOpen = 0
+let g:PerforceExisted = 0
+
 "----------------------autocmd------------------------------------
 autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEnter()
 autocmd! BufWritePost *.cpp,*.cc,*.h,*.hpp call OnBufWrite(expand("<afile>"))
@@ -283,8 +287,8 @@ function! OnBufEnter()
 
 	let l:win = winnr()
 	silent! execute "normal:"
-	silent! execute "Tlist"
-	"silent! execute l:win."wincmd w"
+	silent! execute "TlistOpen"
+	silent! execute l:win."wincmd w"
 
 endfunction
 
@@ -434,7 +438,7 @@ function! FindReference()
 
 	silent! execute "tabedit"
 	silent! execute "cs find e ".txt
-	silent! execute "bo copen"
+	call ToggleQuickfix()
 endfunction
 
 
@@ -484,7 +488,30 @@ functio! ToggleQuickfix()
 endfunction
 
 
+function! OpenBookmark()
+	let l:win = winnr()
+	silent execute "CopenBookmarks"
+	silent! execute l:win."wincmd w"
+	let g:IsQuickfixOpen = 1
+endfunction
 
+
+function! OpenMRU()
+	let l:win = winnr()
+	silent! execute "MRU"
+	silent! execute l:win."wincmd w"
+	let g:IsQuickfixOpen = 1
+endfunction
+
+
+function! CloseWin()
+	if (getbufvar(winbufnr(winnr()), "&buftype") == "quickfix" )
+		echo "closing quickfix"
+		let g:IsQuickfixOpen = 0
+	endif
+
+	silent! execute("x")
+endfunction
 "------------------------------call function to setup environment----
 
 call IsP4Exist()
