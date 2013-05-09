@@ -33,12 +33,13 @@ set backspace=indent,eol,start
 "enable alt key in terminal
 "set <M-key>=<Esc>key
 "see :h map-alt-keys
-
-exe "set <M-x>=\<ESC>x"
-exe "set <M-w>=\<ESC>w"
-exe "set <M-o>=\<ESC>o"
-exe "set <M-1>=\<ESC>1"
-exe "set <M-2>=\<ESC>2"
+if(!has("gui_running"))
+	exe "set <M-x>=\<ESC>x"
+	exe "set <M-w>=\<ESC>w"
+	exe "set <M-o>=\<ESC>o"
+	exe "set <M-1>=\<ESC>1"
+	exe "set <M-2>=\<ESC>2"
+endif
 
 let cpptags=$HOME."/.vim/cpp.tags/tags"
 set tags=~/.vim/cpp.tags/tags
