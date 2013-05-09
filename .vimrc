@@ -545,7 +545,7 @@ function! ToggleHistoryWin()
 	if l:mruwinnr != -1
 		execute "bd! ".l:mruwinnr
 	else
-		OpenHistory()
+		call OpenHistory()
 	endif
 	
 endfunction
