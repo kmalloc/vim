@@ -119,7 +119,7 @@ inoremap ;;  <ESC>
 map <leader>ev :tabedit $MYVIMRC<CR>
 map <F9> :so ~/.vimrc<CR>
 map <F6> :call ToggleQuickfix()<CR> 
-map <F3> :call ToggleBufExplorer(expand("<cfile>"))<CR>
+map <F3> :call ToggleBufferExp(expand"<cfile>")<CR>
 
 "toggle gvim tool bar.
 map <M-m> :call ToggleToolsBar()<CR> 
@@ -144,7 +144,7 @@ map <C-k> :tabn<CR>
 map <M-o> :tabnew %<CR> :A<CR>
 map <C-h> :A<CR>
 
-map <F2>  :call OpenMRU()<CR>
+map <F2>  :call OpenHistory()<CR>
 "map <F3>  :AS<CR>
 
 map <C-A> ggVG
@@ -176,30 +176,35 @@ map <leader>sos :so ~/session/<CR>
 
 "bookmark setting
 
-map mm :call BookmarkHere()<CR>
-map mc :call OpenBookmark()<CR>
-map md :call DelBookmark()<CR>
+map mm :call BookMarkHere()<CR>
+map mc :call OpenBookMark()<CR>
+map md :call DelBookMark()<CR>
 
 
 
 "------cscope key mapping.
 
 "find reference 
-map <leader>fr :let g:word = expand("<cword>")<CR>:cs find s <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
+map <leader>fr :call CscopeFind(expand("<cword>"),"s")<CR>
+
 "find definition
-map <leader>fd :let g:word = expand("<cword>")<CR>:cs find g <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
+map <leader>fd :call CscopeFind(expand("<cword>"),"g")<CR> 
+
 "find caller
-map <leader>fc :let g:word = expand("<cword>")<CR>:cs find c <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
+map <leader>fc :call CscopeFind(expand("<cword>"),"c")<CR>
+
 "find what you specify,find text
-map <leader>ft :let g:word = expand("<cword>")<CR>:cs find t <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
+map <leader>ft :call CscopeFind(expand("<cword>"),"t")<CR>
 
 "find this egrep pattern
-map <leader>fe :let g:word = expand("<cword>")<CR>:cs find e <C-R>=g:word<CR><CR>:call OpenCscopeSearchList()<CR>
+map <leader>fe :call CscopeFind(expand("<cword>"),"e")<CR>
 
 "find file
-map <leader>ff :let g:file = expand("<cfile>")<CR>:cs find f <C-R>=g:file<CR><CR>:call OpenCscopeSearchList()<CR>
+map <leader>ff :call CscopeFind(expand("<cfile>"),"f")<CR>
+
 "find files that include this file
-map <leader>fi :let g:file = expand("<cfile>")<CR>:cs find i <C-R>=g:file<CR><CR>:call OpenCscopeSearchList()<CR>
+map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
+
 "map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
 
 
@@ -273,7 +278,7 @@ let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 "----------------------global variable---------------------------
 let g:IsQuickfixOpen = 0
 let g:PerforceExisted = 0
-let g:IsMRUOpened    = 0
+let g:IsHistoryOpened    = 0
 
 "----------------------autocmd------------------------------------
 autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEnter()
@@ -314,9 +319,9 @@ endfunction
 function! OnTabEnter()
 
 	"still have bugs,should enable auto close mru.
-	if g:IsMRUOpened == 1 
+	if g:IsHistoryOpened == 1 
 		let l:win = winnr()
-		call OpenMRU()
+		call OpenHistory()
 		silent! execute l:win."wincmd w"
 	endif
 
@@ -471,7 +476,7 @@ endfunction
 
 
 
-function! BookmarkHere()
+function! BookMarkHere()
 	let txt = input("bookmark name:")
 	if txt == ""
 		return
@@ -482,7 +487,7 @@ function! BookmarkHere()
 endfunction
 
 
-function! DelBookmark()
+function! DelBookMark()
 
 	let txt = input("bookmark to be deleted:")
 	if(txt == "")
@@ -494,14 +499,14 @@ function! DelBookmark()
 endfunction
 
 
-functio! ToggleBufExplorer(file)
+function! ToggleBufferExp(file)
 
 	silent! execute "BufExplorer"
 
 endfunction
 
 
-functio! ToggleQuickfix()
+function! ToggleQuickfix()
 
    if g:IsQuickfixOpen == 0 
 	   let l:win = winnr()
@@ -516,7 +521,7 @@ functio! ToggleQuickfix()
 endfunction
 
 
-function! OpenBookmark()
+function! OpenBookMark()
 	let l:win = winnr()
 	silent execute "CopenBookmarks"
 	silent! execute l:win."wincmd w"
@@ -524,12 +529,12 @@ function! OpenBookmark()
 endfunction
 
 "mru does not use quickfix to display history.
-function! OpenMRU()
+function! OpenHistory()
 	let l:win = winnr()
 	silent! execute "MRU"
 	silent! execute l:win."wincmd w"
-	"let g:IsMRUOpened += 1
-	let g:IsMRUOpened = 1
+	"let g:IsHistoryOpened += 1
+	let g:IsHistoryOpened = 1
 endfunction
 
 
@@ -540,7 +545,7 @@ function! CloseWin()
 	endif
 
 	if bufname("%") == "__MRU_Files__"
-		let g:IsMRUOpened = 0
+		let g:IsHistoryOpened = 0
 	endif
 
 endfunction
@@ -552,6 +557,11 @@ function! OpenCscopeSearchList()
 	endif
 endfunction
 
+
+function! CscopeFind(file,type)
+	silent! execute "cs find ".a:type." ".a:file 
+	silent! call OpenCscopeSearchList()
+endfunction
 
 
 "------------------------------call function to setup environment----
