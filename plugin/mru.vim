@@ -702,7 +702,6 @@ function! s:MRU_Open_Window(...)
             else
                 let wcmd = '+buffer' . bufnum
             endif
-
             exe 'silent! botright ' . g:MRU_Window_Height . 'split ' . wcmd
         endif
     endif
@@ -766,6 +765,7 @@ function! s:MRU_Open_Window(...)
     let  output = map(m, 'fnamemodify(v:val, ":t") . " (" . v:val . ")"')
     silent! 0put =output
 
+	setlocal modifiable
     " Delete the empty line at the end of the buffer
     $delete
 

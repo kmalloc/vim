@@ -119,7 +119,7 @@ inoremap ;;  <ESC>
 map <leader>ev :tabedit $MYVIMRC<CR>
 map <F9> :so ~/.vimrc<CR>
 map <F6> :call ToggleQuickfix()<CR> 
-map <F3> :call ToggleBufferExp(expand"<cfile>")<CR>
+map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
 
 "toggle gvim tool bar.
 map <M-m> :call ToggleToolsBar()<CR> 
@@ -144,7 +144,7 @@ map <C-k> :tabn<CR>
 map <M-o> :tabnew %<CR> :A<CR>
 map <C-h> :A<CR>
 
-map <F2>  :call OpenHistory()<CR>
+map <F2>  :call ToggleHistoryWin()<CR>
 "map <F3>  :AS<CR>
 
 map <C-A> ggVG
@@ -278,10 +278,10 @@ let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 "----------------------global variable---------------------------
 let g:IsQuickfixOpen = 0
 let g:PerforceExisted = 0
-let g:IsHistoryOpened    = 0
-
+let g:MruBufferName = "__MRU_Files__"
 "----------------------autocmd------------------------------------
 autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEnter()
+autocmd! BufWinEnter * call OpenHistoryIfNecessary()
 autocmd! BufWritePost *.cpp,*.cc,*.h,*.hpp call OnBufWrite(expand("<afile>"))
 autocmd! BufWritePost ~/.vimrc so ~/.vimrc
 autocmd! TabEnter * call OnTabEnter()
@@ -301,7 +301,6 @@ function! OnBufWrite(file)
 	endif
 
 	"silent! execute("! cp ".a:file." change.cc")
-	"echo "buf write event " a:file
 endfunction
 
 
@@ -318,13 +317,7 @@ endfunction
 
 function! OnTabEnter()
 
-	"still have bugs,should enable auto close mru.
-	if g:IsHistoryOpened == 1 
-		let l:win = winnr()
-		call OpenHistory()
-		silent! execute l:win."wincmd w"
-	endif
-
+	
 	if g:IsQuickfixOpen == 1
 		let l:win = winnr()
 		silent! execute "bo copen"
@@ -333,6 +326,7 @@ function! OnTabEnter()
 		silent! execute "cclose"
 	endif
 
+    call OpenHistoryIfNecessary()
 
 endfunction
 
@@ -531,12 +525,30 @@ endfunction
 "mru does not use quickfix to display history.
 function! OpenHistory()
 	let l:win = winnr()
-	silent! execute "MRU"
+	execute "MRU"
 	silent! execute l:win."wincmd w"
-	"let g:IsHistoryOpened += 1
-	let g:IsHistoryOpened = 1
 endfunction
 
+"still have bugs,should enable auto close mru.
+function! OpenHistoryIfNecessary()
+	let l:mruwinnr = bufnr(g:MruBufferName)
+	if l:mruwinnr != -1
+		let l:win = winnr()
+		call OpenHistory()
+		silent! execute l:win."wincmd w"
+	endif
+endfunction
+
+function! ToggleHistoryWin()
+
+	let l:mruwinnr = bufnr(g:MruBufferName)
+	if l:mruwinnr != -1
+		execute "bd! ".l:mruwinnr
+	else
+		OpenHistory()
+	endif
+	
+endfunction
 
 function! CloseWin()
 
@@ -544,8 +556,8 @@ function! CloseWin()
 		let g:IsQuickfixOpen = 0
 	endif
 
+
 	if bufname("%") == "__MRU_Files__"
-		let g:IsHistoryOpened = 0
 	endif
 
 endfunction
