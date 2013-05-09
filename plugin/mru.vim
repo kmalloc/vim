@@ -708,7 +708,7 @@ function! s:MRU_Open_Window(...)
 
     " Mark the buffer as scratch
     setlocal buftype=nofile
-    setlocal bufhidden=delete
+    setlocal bufhidden=wipe "delete
     setlocal noswapfile
     setlocal nowrap
     setlocal nobuflisted
