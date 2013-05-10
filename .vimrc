@@ -154,7 +154,7 @@ map <leader>tl :Tlist<CR>
 map <F4> :Tlist<CR>  
 
 "file explorer
-map <leader>ve :VE<CR><CR>
+map <leader>ve :Ve<CR><CR>
 map <leader>fe :tabnew<CR>:Ve <CR><C-W><C-W>:x<CR> 
 
 "look up file
