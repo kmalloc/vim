@@ -558,6 +558,10 @@ function! CloseWin()
 
 
 	if bufname("%") == "__MRU_Files__"
+		let l:mruwinnr = bufnr(g:MruBufferName)
+		if l:mruwinnr != -1
+			execute "bd! ".l:mruwinnr
+		endif
 	endif
 
 endfunction
