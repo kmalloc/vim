@@ -286,7 +286,7 @@ let g:IsHistoryWinOpened = 0
 augroup AutoEventHandler
     autocmd!
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx,*.vimrc call OnBufEnter()
-    autocmd BufWinEnter * call OpenHistoryIfNecessary()
+    autocmd BufWinEnter * call OnBufferWinEnter()
     autocmd BufWritePost *.cpp,*.cc,*.c,*.cxx,*.h,*.hpp call OnBufWrite(expand("<afile>"))
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd TabEnter * call OnTabEnter()
@@ -324,6 +324,18 @@ function! OnBufEnter()
         silent! execute "TlistOpen"
         silent! execute l:win."wincmd w"
     endif
+
+
+endfunction
+
+
+function! OnBufferWinEnter()
+
+    if(winnr("$") == 1 && bufwinnr(g:MruBufferName) != -1)
+        quit
+    endif
+
+    call OpenHistoryIfNecessary()
 
 endfunction
 
