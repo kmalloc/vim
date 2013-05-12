@@ -34,11 +34,11 @@ set backspace=indent,eol,start
 "set <M-key>=<Esc>key
 "see :h map-alt-keys
 if(!has("gui_running"))
-	exe "set <M-x>=\<ESC>x"
-	exe "set <M-w>=\<ESC>w"
-	exe "set <M-o>=\<ESC>o"
-	exe "set <M-1>=\<ESC>1"
-	exe "set <M-2>=\<ESC>2"
+    exe "set <M-x>=\<ESC>x"
+    exe "set <M-w>=\<ESC>w"
+    exe "set <M-o>=\<ESC>o"
+    exe "set <M-1>=\<ESC>1"
+    exe "set <M-2>=\<ESC>2"
 endif
 
 let cpptags=$HOME."/.vim/cpp.tags/tags"
@@ -77,10 +77,10 @@ set guifont=Courier\ 10\ Pitch\ 16
 "set background=light
 
 if (has("gui_running"))
-	set background=dark
-	colorscheme  solarized "deveiate 
+    set background=dark
+    colorscheme  solarized "deveiate 
 else
-	colorscheme  torte
+    colorscheme  torte
 endif
 
 "pacific
@@ -100,14 +100,14 @@ highlight PmenuSel guibg=brown ctermbg=brown
 
 "setup cscope database.
 if(has('cscope'))
-	if filereadable($HOME."/.vim/caches/cscope.out")
-		silent! execute "normal :"
-		silent! execute "cs add ".$HOME."/.vim/caches/cscope.out"
-	else
-		echo "can not find cscope.out,f12 please"
-	endif
+    if filereadable($HOME."/.vim/caches/cscope.out")
+        silent! execute "normal :"
+        silent! execute "cs add ".$HOME."/.vim/caches/cscope.out"
+    else
+        echo "can not find cscope.out,f12 please"
+    endif
 
-	set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
+    set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
 endif
 
 "-------------key mapping-------------------------------
@@ -284,132 +284,132 @@ let g:IsHistoryWinOpened = 0
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
-	autocmd!
-	autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx,*.vimrc call OnBufEnter()
-	autocmd BufWinEnter * call OpenHistoryIfNecessary()
-	autocmd BufWritePost *.cpp,*.cc,*.c,*.cxx,*.h,*.hpp call OnBufWrite(expand("<afile>"))
-	autocmd BufWritePost ~/.vimrc so ~/.vimrc
-	autocmd TabEnter * call OnTabEnter()
-	autocmd BufWinLeave * call CloseWin(expand("<afile>"))
-	autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx  TlistOpen
+    autocmd!
+    autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx,*.vimrc call OnBufEnter()
+    autocmd BufWinEnter * call OpenHistoryIfNecessary()
+    autocmd BufWritePost *.cpp,*.cc,*.c,*.cxx,*.h,*.hpp call OnBufWrite(expand("<afile>"))
+    autocmd BufWritePost ~/.vimrc so ~/.vimrc
+    autocmd TabEnter * call OnTabEnter()
+    autocmd BufWinLeave * call CloseWin(expand("<afile>"))
+    autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx  TlistOpen
 augroup end
 "---------------------function ------------------------------------
 
 function! OnBufWrite(file)
-	if (g:PerforceExisted == 0)
-		return
-	else
-		silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
+    if (g:PerforceExisted == 0)
+        return
+    else
+        silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
 
-		if v:shell_error
-			echo "p4 edit error,please check if you are log in"
-		endif
-	endif
+        if v:shell_error
+            echo "p4 edit error,please check if you are log in"
+        endif
+    endif
 
-	"silent! execute("! cp ".a:file." change.cc")
+    "silent! execute("! cp ".a:file." change.cc")
 endfunction
 
 
 
 function! OnBufEnter()
 
-	let l:win = winnr()
-	if bufwinnr(g:TaglistName) == -1
-		silent! execute "normal:"
-		silent! execute "TlistOpen"
-		silent! execute l:win."wincmd w"
-	endif
+    if bufwinnr(g:TaglistName) == -1
+        let l:win = winnr()
+        silent! execute "normal:"
+        silent! execute "TlistOpen"
+        silent! execute l:win."wincmd w"
+    endif
 
 endfunction
 
 
 function! OnTabEnter()
 
-	
-	if g:IsQuickfixOpen == 1
-		let l:win = winnr()
-		silent! execute "bo copen"
-		silent! execute l:win."wincmd w"
-	else
-		silent! execute "cclose"
-	endif
+
+    if g:IsQuickfixOpen == 1
+        let l:win = winnr()
+        silent! execute "bo copen"
+        silent! execute l:win."wincmd w"
+    else
+        silent! execute "cclose"
+    endif
 
     call OpenHistoryIfNecessary()
 
 endfunction
 
 function! IsP4Exist()
-	silent! execute "! which p4 > /dev/null 2>&1"
-	if !v:shell_error
-		let g:PerforceExisted = 1
-	else
-		let g:PerforceExisted = 0
-	endif
+    silent! execute "! which p4 > /dev/null 2>&1"
+    if !v:shell_error
+        let g:PerforceExisted = 1
+    else
+        let g:PerforceExisted = 0
+    endif
 endfunction
 
 function! P4CheckOut()
-	let f = expand("<cfile>")
-	silent! execute("! p4 edit ".f)
+    let f = expand("<cfile>")
+    silent! execute("! p4 edit ".f)
 endfunction
 
 
 
 function! ToggleToolsBar()
 
-	if(has("gui_running"))
-		if &guioptions =~# 'T'
-			execute"set guioptions-=T"
-			execute"set guioptions-=m"
-		else
-			execute"set guioptions+=T"
-			execute"set guioptions+=m"
-		endif
-	endif
-	
+    if(has("gui_running"))
+        if &guioptions =~# 'T'
+            execute"set guioptions-=T"
+            execute"set guioptions-=m"
+        else
+            execute"set guioptions+=T"
+            execute"set guioptions+=m"
+        endif
+    endif
+
 endfunction
 
 
 "refresh code in folder ~/code/gui_tflex/
 "setup caches for lookupFile, cscope.
 function! RefreshGuiCodeFiles()
-	"let dir = getcwd()
+    "let dir = getcwd()
 
-	if has("cscope")
-		silent! execute "cs kill -1"
-	endif
+    if has("cscope")
+        silent! execute "cs kill -1"
+    endif
 
-	let csFiles = $HOME."/.vim/caches/cscope.files"
-	let csOut = $HOME."/.vim/caches/cscope.out"
-	let lookupfiles = $HOME."/.vim/caches/filenametags"
+    let csFiles = $HOME."/.vim/caches/cscope.files"
+    let csOut = $HOME."/.vim/caches/cscope.out"
+    let lookupfiles = $HOME."/.vim/caches/filenametags"
 
-	if filereadable(csFiles)
-		let csfilesdeleted=delete(csFiles)
-	endif
+    if filereadable(csFiles)
+        let csfilesdeleted=delete(csFiles)
+    endif
 
-	if filereadable(csOut)
-		let csoutdeleted=delete(csOut)
-	endif
+    if filereadable(csOut)
+        let csoutdeleted=delete(csOut)
+    endif
 
-	if filereadable(lookupfiles)
-		let filetagsdeleted=delete(lookupfiles)
-	endif
+    if filereadable(lookupfiles)
+        let filetagsdeleted=delete(lookupfiles)
+    endif
 
-	silent! execute "!~/.vim/list.all.files&"
+    silent! execute "!~/.vim/list.all.files&"
 
-	if(has('cscope'))
-		if filereadable(csFiles)	
-		else
-			silent! execute "!~/.vim/list.cscope.files.sh "
-		endif
+    if(has('cscope'))
+        if filereadable(csFiles)	
+        else
+            silent! execute "!~/.vim/list.cscope.files.sh "
+        endif
 
-	   if filereadable(csOut)
-			silent! execute "normal :"
-			silent! execute "cs add ".csOut
-		endif
+        if filereadable(csOut)
+            silent! execute "normal :"
+            silent! execute "cs add ".csOut
+        endif
 
-	else
-		echo "please install cscope first"
-	endif
+    else
+        echo "please install cscope first"
+    endif
 
 
 endfunction
@@ -417,13 +417,13 @@ endfunction
 
 function! RefreshCodeTags()
 
-	let txt=input("refresh code base? otherwise refresh current path.(y/n):")
-	if txt == "y"
-		execute "! ~/.vim/list.code.tags.sh &"
-	else
-		execute "!~/.vim/list.code.tags.sh cur &"
-	endif
-	
+    let txt=input("refresh code base? otherwise refresh current path.(y/n):")
+    if txt == "y"
+        execute "! ~/.vim/list.code.tags.sh &"
+    else
+        execute "!~/.vim/list.code.tags.sh cur &"
+    endif
+
 endfunction
 
 
@@ -431,32 +431,32 @@ endfunction
 "setup files in current folder for LookupFiel, Cscope.
 function! List_lookup_file()
 
-	let txt="y"
-	if filereadable("filenametags")
-      let txt = input("filenametags existed,rebuild or not ?(y/n)") 
-	endif
+    let txt="y"
+    if filereadable("filenametags")
+        let txt = input("filenametags existed,rebuild or not ?(y/n)") 
+    endif
 
-	if txt == "y"
-		execute "! ~/.vim/list.all.files \"cur\""
-	endif
+    if txt == "y"
+        execute "! ~/.vim/list.all.files \"cur\""
+    endif
 
-	execute "let g:LookupFile_TagExpr='\"filenametags\"'"
+    execute "let g:LookupFile_TagExpr='\"filenametags\"'"
 
-	if filereadable("cscope.files")
-		let txt="cscope.files existed, rebuild or not?(y/n)")
-	endif
+    if filereadable("cscope.files")
+        let txt="cscope.files existed, rebuild or not?(y/n)")
+    endif
 
 
-	if txt == "y"
-		execute "! ~/.vim/list.cscope.files.sh cur"
-	endif
+    if txt == "y"
+        execute "! ~/.vim/list.cscope.files.sh cur"
+    endif
 
-	silent! execute "!cscope -C -Rbq -i cscope.files"
+    silent! execute "!cscope -C -Rbq -i cscope.files"
 
-	if filereadable("cscope.out")
-		silent! execute "normal :"
-		silent! execute "cs add cscope.out"
-	endif
+    if filereadable("cscope.out")
+        silent! execute "normal :"
+        silent! execute "cs add cscope.out"
+    endif
 
 
 endfunction
@@ -464,146 +464,146 @@ endfunction
 
 
 function! FindReference()
-	let txt = input('enter text:')
-	if txt == ""
-		return
-	endif
+    let txt = input('enter text:')
+    if txt == ""
+        return
+    endif
 
-	echo "...searching..."
+    echo "...searching..."
 
-	silent! execute "tabedit"
-	silent! execute "cs find e ".txt
-	call ToggleQuickfix()
+    silent! execute "tabedit"
+    silent! execute "cs find e ".txt
+    call ToggleQuickfix()
 endfunction
 
 
 
 function! BookMarkHere()
-	let txt = input("bookmark name:")
-	if txt == ""
-		return
-	endif
+    let txt = input("bookmark name:")
+    if txt == ""
+        return
+    endif
 
-	silent! execute "Bookmark ".txt
+    silent! execute "Bookmark ".txt
 
 endfunction
 
 
 function! DelBookMark()
 
-	let txt = input("bookmark to be deleted:")
-	if(txt == "")
-		return
-	endif
+    let txt = input("bookmark to be deleted:")
+    if(txt == "")
+        return
+    endif
 
-	silent! execute "DelBookmark ".txt
+    silent! execute "DelBookmark ".txt
 
 endfunction
 
 
 function! ToggleBufferExp(file)
 
-	silent! execute "BufExplorer"
+    silent! execute "BufExplorer"
 
 endfunction
 
 
 function! ToggleQuickfix()
 
-   if g:IsQuickfixOpen == 0 
-	   let l:win = winnr()
-	   silent! execute "bo copen"
-	   silent! execute l:win."wincmd w"
-	   let g:IsQuickfixOpen = 1
-   else
-	   silent! execute "cclose"
-	   let g:IsQuickfixOpen = 0 
-   endif
+    if g:IsQuickfixOpen == 0 
+        let l:win = winnr()
+        silent! execute "bo copen"
+        silent! execute l:win."wincmd w"
+        let g:IsQuickfixOpen = 1
+    else
+        silent! execute "cclose"
+        let g:IsQuickfixOpen = 0 
+    endif
 
 endfunction
 
 
 function! OpenBookMark()
-	let l:win = winnr()
-	silent execute "CopenBookmarks"
-	silent! execute l:win."wincmd w"
-	let g:IsQuickfixOpen = 1
+    let l:win = winnr()
+    silent execute "CopenBookmarks"
+    silent! execute l:win."wincmd w"
+    let g:IsQuickfixOpen = 1
 endfunction
 
 "mru does not use quickfix to display history.
 function! OpenHistory()
 
-	let g:IsHistoryWinOpened = 1
-	let l:win = winnr()
-	execute "MRU"
-	silent! execute l:win."wincmd w"
+    let g:IsHistoryWinOpened = 1
+    let l:win = winnr()
+    execute "MRU"
+    silent! execute l:win."wincmd w"
 
 endfunction
 
 "still have bugs,should enable auto close mru.
 function! OpenHistoryIfNecessary()
-	"let l:mruwinnr = bufnr(g:MruBufferName)
-	if g:IsHistoryWinOpened == 1
+    "let l:mruwinnr = bufnr(g:MruBufferName)
+    if g:IsHistoryWinOpened == 1
 
-		call OpenHistory()
+        call OpenHistory()
 
-	else
+    else
 
         call CloseHistoryBuffer()
 
-	endif
+    endif
 
 endfunction
 
 function! ToggleHistoryWin()
 
-	let l:mruwinnr = bufwinnr(g:MruBufferName)
-	if l:mruwinnr != -1
-		let g:IsHistoryWinOpened = 0
-		execute l:mruwinnr."wincmd w"
+    let l:mruwinnr = bufwinnr(g:MruBufferName)
+    if l:mruwinnr != -1
+        let g:IsHistoryWinOpened = 0
+        execute l:mruwinnr."wincmd w"
         execute "q"
-	else
-		call OpenHistory()
-	endif
-	
+    else
+        call OpenHistory()
+    endif
+
 endfunction
 
 
 function! CloseHistoryBuffer()
 
-	let g:IsHistoryWinOpened = 0
-	let l:mruwinnr = bufnr(g:MruBufferName)
-	if l:mruwinnr != -1
-		silent! execute "bd! ".l:mruwinnr
-	endif
+    let g:IsHistoryWinOpened = 0
+    let l:mruwinnr = bufnr(g:MruBufferName)
+    if l:mruwinnr != -1
+        silent! execute "bd! ".l:mruwinnr
+    endif
 
 endfunction
 
 function! CloseWin(buffer)
 
-	if (getbufvar(winbufnr(winnr()), "&buftype") == "quickfix" )
-		let g:IsQuickfixOpen = 0
-	endif
+    if (getbufvar(winbufnr(winnr()), "&buftype") == "quickfix" )
+        let g:IsQuickfixOpen = 0
+    endif
 
-	"in BufWinLeave event , bufname("%") may not be the buffer being unloaded.
-	"use <afile> instead.
-	if a:buffer == g:MruBufferName
-		call CloseHistoryBuffer()
-	endif
+    "in BufWinLeave event , bufname("%") may not be the buffer being unloaded.
+    "use <afile> instead.
+    if a:buffer == g:MruBufferName
+        call CloseHistoryBuffer()
+    endif
 
 endfunction
 
 
 function! OpenCscopeSearchList()
-	if g:IsQuickfixOpen == 0
-		call ToggleQuickfix()
-	endif
+    if g:IsQuickfixOpen == 0
+        call ToggleQuickfix()
+    endif
 endfunction
 
 
 function! CscopeFind(file,type)
-	silent! execute "cs find ".a:type." ".a:file 
-	silent! call OpenCscopeSearchList()
+    silent! execute "cs find ".a:type." ".a:file 
+    silent! call OpenCscopeSearchList()
 endfunction
 
 
