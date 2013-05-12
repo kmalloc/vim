@@ -413,7 +413,12 @@ function! RefreshGuiCodeFiles()
 
     silent! execute "!~/.vim/list.all.files&"
 
+    if filereadable(lookupfiles)
+        execute "let g:LookupFile_TagExpr='\"".lookupfiles."\"'"
+    endif 
+
     if(has('cscope'))
+
         if filereadable(csFiles)	
         else
             silent! execute "!~/.vim/list.cscope.files.sh "
@@ -460,7 +465,7 @@ function! List_lookup_file()
     execute "let g:LookupFile_TagExpr='\"filenametags\"'"
 
     if filereadable("cscope.files")
-        let txt="cscope.files existed, rebuild or not?(y/n)")
+        let txt="cscope.files existed, rebuild or not?(y/n)"
     endif
 
 
@@ -468,7 +473,7 @@ function! List_lookup_file()
         execute "! ~/.vim/list.cscope.files.sh cur"
     endif
 
-    silent! execute "!cscope -C -Rbq -i cscope.files"
+    silent! execute "! cscope -C -Rbq -i cscope.files"
 
     if filereadable("cscope.out")
         silent! execute "normal :"
