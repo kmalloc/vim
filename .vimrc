@@ -290,12 +290,17 @@ augroup AutoEventHandler
     autocmd BufWritePost *.cpp,*.cc,*.c,*.cxx,*.h,*.hpp call OnBufWrite(expand("<afile>"))
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd TabEnter * call OnTabEnter()
+
+    "note: this event will not trigger for those buffer that is displayed in
+    "multiple windows.
     autocmd BufWinLeave * call CloseWin(expand("<afile>"))
+
     autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx  TlistOpen
 augroup end
 "---------------------function ------------------------------------
 
 function! OnBufWrite(file)
+
     if (g:PerforceExisted == 0)
         return
     else
@@ -460,7 +465,6 @@ function! List_lookup_file()
 
 
 endfunction
-
 
 
 function! FindReference()

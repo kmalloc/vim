@@ -1483,25 +1483,27 @@ function! s:Tlist_Window_Exit_Only_Window()
     " the '0 mark is correctly set to the previous buffer.
     if v:version < 700
 	if winbufnr(2) == -1
-            bdelete
+        "modified by liao
+        "bdelete
 	    quit
 	endif
     else
 	if winbufnr(2) == -1
-	    if tabpagenr('$') == 1
-		" Only one tag page is present
-                "
-                " When deleting the taglist buffer, autocommands cannot be
-                " disabled. If autocommands are disabled, then on exiting Vim,
-                " the window size will not be restored back to the original
-                " size.
-                bdelete
-		quit
-	    else
-		" More than one tab page is present. Close only the current
-		" tab page
-                close
-	    endif
+        if tabpagenr('$') == 1
+            " Only one tag page is present
+            "
+            " When deleting the taglist buffer, autocommands cannot be
+            " disabled. If autocommands are disabled, then on exiting Vim,
+            " the window size will not be restored back to the original
+            " size.
+            " modified by liao
+            "bdelete
+            quit
+        else
+            " More than one tab page is present. Close only the current
+            " tab page
+            close
+        endif
 	endif
     endif
 endfunction
