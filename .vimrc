@@ -57,6 +57,7 @@ set autoindent
 set ruler
 set nocp
 set showmatch
+set expandtab "replace tab with space, always.
 set tabstop=4
 set shiftwidth=4
 set ruler
@@ -217,6 +218,7 @@ let Tlist_GainFocus_On_ToggleOpen=0
 let Tlist_Auto_Open=1
 let Tlist_Auto_Update=1
 let Tlist_Use_Right_Window=1
+"let Tlist_Highlight_Tag_On_BufEnter = 0
 
 
 
@@ -277,14 +279,20 @@ let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 let g:IsQuickfixOpen = 0
 let g:PerforceExisted = 0
 let g:MruBufferName = "__MRU_Files__"
-"----------------------autocmd------------------------------------
-autocmd! BufWinEnter *.cpp,*.cc,*.h,*.hpp,*.vimrc call OnBufEnter()
-autocmd! BufWinEnter * call OpenHistoryIfNecessary()
-autocmd! BufWritePost *.cpp,*.cc,*.h,*.hpp call OnBufWrite(expand("<afile>"))
-autocmd! BufWritePost ~/.vimrc so ~/.vimrc
-autocmd! TabEnter * call OnTabEnter()
-autocmd! BufWinLeave * call CloseWin()
+let g:TaglistName = "__Tag_List__"
+let g:IsHistoryWinOpened = 0
 
+"----------------------autocmd------------------------------------
+augroup AutoEventHandler
+	autocmd!
+	autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx,*.vimrc call OnBufEnter()
+	autocmd BufWinEnter * call OpenHistoryIfNecessary()
+	autocmd BufWritePost *.cpp,*.cc,*.c,*.cxx,*.h,*.hpp call OnBufWrite(expand("<afile>"))
+	autocmd BufWritePost ~/.vimrc so ~/.vimrc
+	autocmd TabEnter * call OnTabEnter()
+	autocmd BufWinLeave * call CloseWin(expand("<afile>"))
+	autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx  TlistOpen
+augroup end
 "---------------------function ------------------------------------
 
 function! OnBufWrite(file)
@@ -306,9 +314,11 @@ endfunction
 function! OnBufEnter()
 
 	let l:win = winnr()
-	silent! execute "normal:"
-	silent! execute "TlistOpen"
-	silent! execute l:win."wincmd w"
+	if bufwinnr(g:TaglistName) == -1
+		silent! execute "normal:"
+		silent! execute "TlistOpen"
+		silent! execute l:win."wincmd w"
+	endif
 
 endfunction
 
@@ -522,44 +532,63 @@ endfunction
 
 "mru does not use quickfix to display history.
 function! OpenHistory()
+
+	let g:IsHistoryWinOpened = 1
 	let l:win = winnr()
 	execute "MRU"
 	silent! execute l:win."wincmd w"
+
 endfunction
 
 "still have bugs,should enable auto close mru.
 function! OpenHistoryIfNecessary()
-	let l:mruwinnr = bufnr(g:MruBufferName)
-	if l:mruwinnr != -1
-		let l:win = winnr()
+	"let l:mruwinnr = bufnr(g:MruBufferName)
+	if g:IsHistoryWinOpened == 1
+
 		call OpenHistory()
-		silent! execute l:win."wincmd w"
+
+	else
+
+        call CloseHistoryBuffer()
+
 	endif
+
 endfunction
 
 function! ToggleHistoryWin()
 
-	let l:mruwinnr = bufnr(g:MruBufferName)
+	let l:mruwinnr = bufwinnr(g:MruBufferName)
 	if l:mruwinnr != -1
-		execute "bd! ".l:mruwinnr
+		let g:IsHistoryWinOpened = 0
+		execute l:mruwinnr."wincmd w"
+        execute "q"
 	else
 		call OpenHistory()
 	endif
 	
 endfunction
 
-function! CloseWin()
+
+function! CloseHistoryBuffer()
+
+	let g:IsHistoryWinOpened = 0
+	let l:mruwinnr = bufnr(g:MruBufferName)
+	if l:mruwinnr != -1
+		silent! execute "bd! ".l:mruwinnr
+	endif
+
+endfunction
+
+function! CloseWin(buffer)
 
 	if (getbufvar(winbufnr(winnr()), "&buftype") == "quickfix" )
 		let g:IsQuickfixOpen = 0
 	endif
 
-
-	if bufname("%") == "__MRU_Files__"
-		let l:mruwinnr = bufnr(g:MruBufferName)
-		if l:mruwinnr != -1
-			execute "bd! ".l:mruwinnr
-		endif
+	"in BufWinLeave event , bufname("%") may not be the buffer being unloaded.
+	"use <afile> instead.
+	if a:buffer == g:MruBufferName
+		call CloseHistoryBuffer()
 	endif
 
 endfunction
