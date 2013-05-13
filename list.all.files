@@ -18,7 +18,7 @@ function makelist
   rm -f ${outloc}/filenametags
   touch ${outloc}/filenametags
   echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase" > ${outloc}/filenametags
-  find ${codeloc}  -regex '.*\.\(h\|c\|cpp\|cc\|cxx\|py\|mk\|xrc\|txt\|Makefile\)' -type f -printf "%f\t%p\t1\n" | \
+  find ${codeloc}  -regex '.*\.\(h\|c\|cpp\|cc\|cxx\|py\|mk\|xrc\|sql\|sh\|txt\|Makefile\)' -type f -printf "%f\t%p\t1\n" | \
   sort -f >> ${outloc}/filenametags
 }
 
