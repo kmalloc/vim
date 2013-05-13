@@ -1,8 +1,7 @@
-
 " It's based on:
-runtime colors/Dim.vim
+runtime colors/solarized.vim
 
-let g:colors_name = "DimGreen"
+let g:colors_name = "GreenSolarized"
 
 hi Normal guibg=#001800
 hi NonText guibg=#000800
