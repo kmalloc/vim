@@ -287,7 +287,7 @@ augroup AutoEventHandler
     autocmd!
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx,*.vimrc call OnBufEnter()
     autocmd BufWinEnter * call OnBufferWinEnter()
-    autocmd BufWritePost *.cpp,*.cc,*.c,*.cxx,*.h,*.hpp call OnBufWrite(expand("<afile>"))
+    autocmd BufWritePost */code/gui_tflex/*.cpp,*/code/gui_tflex/*.cc,*/code/gui_tflex/*.c,*/code/gui_tflex/*.cxx,*/code/gui_tflex/*.h,*/code/gui_tflex/*.hpp,*/code/gui_tflex/*.sh,*/code/gui_tflex/*.mk call OnBufWrite(expand("<afile>"))
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd TabEnter * call OnTabEnter()
 
