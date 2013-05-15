@@ -100,6 +100,13 @@ highlight PmenuSel guibg=brown ctermbg=brown
 
 "setup cscope database.
 if(has('cscope'))
+
+    if filereadable($HOME."/tools/cscope/bin/cscope")
+
+        set csprg=~/tools/cscope/bin/cscope
+
+    endif
+
     if filereadable($HOME."/.vim/caches/cscope.out")
         silent! execute "normal :"
         silent! execute "cs add ".$HOME."/.vim/caches/cscope.out"
@@ -253,6 +260,7 @@ let g:MRU_Use_Current_Window = 0 "
 let g:MRU_Auto_Close = 0 "do not close on selecting file.
 let g:MRU_Add_Menu = 0 "disable gui menu setting.
 let g:MRU_Open_File_Use_Tabs = 1
+let g:bufExplorerSortBy='name'       " Sort by the buffer's name.
 
 "let g:vbookmark_bookmarkSaveFile=$HOME.'/.vimbookmark'
 
@@ -525,6 +533,7 @@ endfunction
 
 function! ToggleBufferExp(file)
 
+    silent! execute "TlistClose"
     silent! execute "BufExplorer"
 
 endfunction
