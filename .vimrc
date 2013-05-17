@@ -277,6 +277,7 @@ let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 "information will not shown on status line.
 let g:EchoFuncShowOnStatus=0
 let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration 
+let g:EchoFunc_AutoTrigger = 0
 "need to find an appropriate mapping,
 "otherwhise default mapping will not work in terminal.
 "let g:EchoFuncKeyNext='<C-->'
@@ -312,11 +313,9 @@ function! OnBufWrite(file)
     if (g:PerforceExisted == 0)
         return
     else
-        silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
 
-        if v:shell_error
-            echo "p4 edit error,please check if you are log in"
-        endif
+        call P4CheckOut(a:file)
+
     endif
 
     "silent! execute("! cp ".a:file." change.cc")
@@ -373,9 +372,20 @@ function! IsP4Exist()
     endif
 endfunction
 
-function! P4CheckOut()
-    let f = expand("<cfile>")
-    silent! execute("! p4 edit ".f)
+function! P4CheckOut(file)
+
+    if( filewritable(a:file) == 0)
+
+        silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
+
+        if v:shell_error
+            echo "p4 edit error,please check if you are log in"
+        endif
+
+    else
+        silent! echom "file writable"
+    endif
+
 endfunction
 
 
