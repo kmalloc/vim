@@ -39,6 +39,8 @@ if(!has("gui_running"))
     exe "set <M-o>=\<ESC>o"
     exe "set <M-1>=\<ESC>1"
     exe "set <M-2>=\<ESC>2"
+    exe "set <M-d>=\<ESC>d"
+    exe "set <M-u>=\<ESC>u"
 endif
 
 let cpptags=$HOME."/.vim/cpp.tags/tags"
@@ -141,6 +143,8 @@ map <F12> :call RefreshGuiCodeFiles()<CR>
 map <C-t> :tabnew<CR>
 map <M-x> :tabclose<CR>
 map <M-w> :x<CR>
+map <M-d> <C-d>
+map <M-u> <C-u>
 
 map <M-1> :tabp<CR>
 map <M-2> :tabn<CR>
