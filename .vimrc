@@ -686,6 +686,9 @@ function! SetupCscope()
         
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
         silent! execute "cd ".$HOME."/code/"
+  
+        "export environment variable
+        silent! execute "! ~/.vim/gtags.setup.sh env"
 
     elseif filereadable($HOME."/tools/cscope/bin/cscope")
 
