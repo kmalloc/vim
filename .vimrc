@@ -272,7 +272,9 @@ let g:EchoFunc_AutoTrigger = 0
 "let g:EchoFuncKeyNext='<C-->'
 "let g:EchoFuncKeyNext='<C-=>'
 
-
+"gtags-cscope
+let g:GtagsCscope_Ignore_Case = 1
+let g:GtagsCscope_Absolute_Path = 1
 "----------------------global variable---------------------------
 let g:IsQuickfixOpen = 0
 let g:PerforceExisted = 0
@@ -532,9 +534,9 @@ function! FindReference()
 
     echo "...searching..."
 
-    silent! execute "tabedit"
+    "silent! execute "tabedit"
     silent! execute "cs find e ".txt
-    call ToggleQuickfix()
+    "call ToggleQuickfix()
 endfunction
 
 
