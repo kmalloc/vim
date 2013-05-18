@@ -279,8 +279,12 @@ let g:PerforceExisted = 0
 let g:MruBufferName = "__MRU_Files__"
 let g:TaglistName = "__Tag_List__"
 let g:IsHistoryWinOpened = 0
+
+"using gtags by default if gtags has installed in folder: ~/tools/gtags 
 let g:UseGlobalOverCscope = 0
+let g:IgnoreGtags = 0 "set to 1 if want to disable using gtags.
 let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+let g:gtagsCscopePath = $HOME."/tools/gtags/bin/gtags-cscope"
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
@@ -355,13 +359,15 @@ function! OnTabEnter()
 
 endfunction
 
+function! IsShellCmdExist(cmd)
+
+    silent! execute "! which ".a:cmd." > /dev/null 2>&1"
+    return !v:shell_error
+
+endfunction
+
 function! IsP4Exist()
-    silent! execute "! which p4 > /dev/null 2>&1"
-    if !v:shell_error
-        let g:PerforceExisted = 1
-    else
-        let g:PerforceExisted = 0
-    endif
+    let g:PerforceExisted = IsShellCmdExist("p4") 
 endfunction
 
 function! P4CheckOut(file)
@@ -670,8 +676,7 @@ function! SetupCscope()
         return
     endif
 
-
-    if filereadable($HOME."/tools/gtags/bin/gtags-cscope")
+    if  g:IgnoreGtags == 0 && filereadable(g:gtagsCscopePath)
 
         let g:UseGlobalOverCscope = 1
 
@@ -682,6 +687,7 @@ function! SetupCscope()
 
     elseif filereadable($HOME."/tools/cscope/bin/cscope")
 
+        let g:UseGlobalOverCscope = 0 
         set cscopetag
         set csprg=~/tools/cscope/bin/cscope
 
