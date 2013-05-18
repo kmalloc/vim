@@ -102,24 +102,7 @@ highlight Pmenu guibg=darkblue ctermbg=darkblue
 highlight PmenuSel guibg=brown ctermbg=brown
 
 
-"setup cscope database.
-if(has('cscope'))
 
-    if filereadable($HOME."/tools/cscope/bin/cscope")
-
-        set csprg=~/tools/cscope/bin/cscope
-
-    endif
-
-    if filereadable($HOME."/.vim/caches/cscope.out")
-        silent! execute "normal :"
-        silent! execute "cs add ".$HOME."/.vim/caches/cscope.out"
-    else
-        echo "can not find cscope.out,f12 please"
-    endif
-
-    set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
-endif
 
 "-------------key mapping-------------------------------
 "a better way to replace esc
@@ -296,6 +279,8 @@ let g:PerforceExisted = 0
 let g:MruBufferName = "__MRU_Files__"
 let g:TaglistName = "__Tag_List__"
 let g:IsHistoryWinOpened = 0
+let g:UseGlobalOverCscope = 0
+let g:mycodetags = $HOME."/.vim/caches/cscope.out"
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
@@ -304,6 +289,7 @@ augroup AutoEventHandler
     autocmd BufWinEnter * call OnBufferWinEnter()
     autocmd BufWritePost */code/gui_tflex/*.cpp,*/code/gui_tflex/*.cc,*/code/gui_tflex/*.c,*/code/gui_tflex/*.cxx,*/code/gui_tflex/*.h,*/code/gui_tflex/*.hpp,*/code/gui_tflex/*.sh,*/code/gui_tflex/*.mk call OnBufWrite(expand("<afile>"))
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
+    autocmd BufWritePost */code/*.cpp,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
 
     "note: this event will not trigger for those buffer that is displayed in
@@ -394,7 +380,11 @@ function! P4CheckOut(file)
 
 endfunction
 
-
+function! UpdateGtags()
+    silent! execute "! cd ~/code && global -u"
+    silent! execute "cs kill -1"
+    silent! execute "cs add ".g:mycodetags 
+endfunction
 
 function! ToggleToolsBar()
 
@@ -420,33 +410,52 @@ function! RefreshGuiCodeFiles()
         silent! execute "cs kill -1"
     endif
 
-    let csFiles = $HOME."/.vim/caches/cscope.files"
-    let csOut = $HOME."/.vim/caches/cscope.out"
-    let lookupfiles = $HOME."/.vim/caches/filenametags"
 
-    if filereadable(csFiles)
-        let csfilesdeleted=delete(csFiles)
+    if g:UseGlobalOverCscope == 0
+
+        let l:csFiles = $HOME."/.vim/caches/cscope.files"
+
+        if filereadable(l:csFiles)
+            let csfilesdeleted=delete(l:csFiles)
+        endif
+
+        let l:csOut = $HOME."/.vim/caches/cscope.out"
+        if filereadable(l:csOut)
+            let csoutdeleted=delete(l:csOut)
+        endif
+
+    else
+       
+        let l:csOut = $HOME."/code/GTAGS"
+        delete(l:csOut)
+
     endif
 
-    if filereadable(csOut)
-        let csoutdeleted=delete(csOut)
-    endif
 
+    let l:lookupfiles = $HOME."/.vim/caches/filenametags"
     if filereadable(lookupfiles)
         let filetagsdeleted=delete(lookupfiles)
     endif
 
     silent! execute "!~/.vim/list.all.files&"
-
     if filereadable(lookupfiles)
         execute "let g:LookupFile_TagExpr='\"".lookupfiles."\"'"
     endif 
 
+
     if(has('cscope'))
 
-        if filereadable(csFiles)	
+
+        if g:UseGlobalOverCscope == 0
+
+            if !filereadable(csFiles)	
+                silent! execute "!~/.vim/list.cscope.files.sh "
+            endif
+          
         else
-            silent! execute "!~/.vim/list.cscope.files.sh "
+
+            silent! execute "! ~/.vim/gtags.setup.sh"
+
         endif
 
         if filereadable(csOut)
@@ -654,6 +663,42 @@ function! CscopeFind(file,type)
 endfunction
 
 
+"setup cscope database.
+function! SetupCscope()
+
+    if(!has('cscope'))
+        return
+    endif
+
+
+    if filereadable($HOME."/tools/gtags/bin/gtags-cscope")
+
+        let g:UseGlobalOverCscope = 1
+
+        set csprg=~/tools/gtags/bin/gtags-cscope
+        
+        let g:mycodetags = $HOME."/.vim/caches/GTAGS"
+        silent! execute "cd ".$HOME."/code/"
+
+    elseif filereadable($HOME."/tools/cscope/bin/cscope")
+
+        set cscopetag
+        set csprg=~/tools/cscope/bin/cscope
+
+    endif
+
+    if filereadable(g:mycodetags)
+        silent! execute "normal :"
+        silent! execute "cs add ".g:mycodetags
+    else
+        echo "can not find cscope.out,f12 please"
+    endif
+
+    set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
+
+endfunction
+
 "------------------------------call function to setup environment----
 
 call IsP4Exist()
+call SetupCscope()
