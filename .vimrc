@@ -284,7 +284,7 @@ let g:IsHistoryWinOpened = 0
 
 "using gtags by default if gtags has installed in folder: ~/tools/gtags 
 let g:UseGlobalOverCscope = 0
-let g:IgnoreGtags = 0 "set to 1 if want to disable using gtags.
+let g:IgnoreGtags = 0 "value '1' to disable using gtags.
 let g:mycodetags = $HOME."/.vim/caches/cscope.out"
 let g:gtagsCscopePath = $HOME."/tools/gtags/bin/gtags-cscope"
 
