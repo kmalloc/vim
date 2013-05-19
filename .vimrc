@@ -4,6 +4,8 @@
 "plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 
+
+
 set textwidth=0
 let mapleader=","
 set number
@@ -104,7 +106,6 @@ highlight PmenuSel guibg=brown ctermbg=brown
 
 
 
-
 "-------------key mapping-------------------------------
 "a better way to replace esc
 noremap ;;  <ESC>
@@ -145,6 +146,14 @@ map <F2>  :call ToggleHistoryWin()<CR>
 "map <F3>  :AS<CR>
 
 map <C-A> ggVG
+
+"window operation 
+map <S-TAB> <C-W>w
+
+nmap <silent> <C-Left>    <C-W><:unlet! t:flwwinlayout<CR>
+nmap <silent> <C-Right>   <C-W>>:unlet! t:flwwinlayout<CR>
+nmap <silent> <C-Up>      <C-W>+:unlet! t:flwwinlayout<CR>
+nmap <silent> <C-Down>    <C-W>-:unlet! t:flwwinlayout<CR>
 
 "taglist
 map <leader>tl :Tlist<CR>  
@@ -724,3 +733,4 @@ endfunction
 
 call IsP4Exist()
 call SetupCscope()
+
