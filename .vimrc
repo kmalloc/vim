@@ -4,6 +4,7 @@
 "plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 
+set textwidth=0
 let mapleader=","
 set number
 
@@ -106,6 +107,7 @@ highlight PmenuSel guibg=brown ctermbg=brown
 
 "-------------key mapping-------------------------------
 "a better way to replace esc
+noremap ;;  <ESC>
 inoremap ;;  <ESC>
 
 "edit my vimrc
@@ -286,7 +288,12 @@ let g:IsHistoryWinOpened = 0
 let g:UseGlobalOverCscope = 0
 let g:IgnoreGtags = 0 "value '1' to disable using gtags.
 let g:mycodetags = $HOME."/.vim/caches/cscope.out"
-let g:gtagsCscopePath = $HOME."/tools/gtags/bin/gtags-cscope"
+
+let g:gtagsCscopePath = system("which gtags-cscope")
+let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
+let g:CscopePath = system("which cscope")
+let g:CscopePath = substitute(g:CscopePath,'\n$','','')
+"$HOME."/tools/gtags/bin/gtags-cscope"
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
@@ -475,6 +482,7 @@ function! RefreshGuiCodeFiles()
         echo "please install cscope first"
     endif
 
+    redraw!
 
 endfunction
 
@@ -487,6 +495,8 @@ function! RefreshCodeTags()
     else
         execute "!~/.vim/list.code.tags.sh cur &"
     endif
+
+    redraw!
 
 endfunction
 
@@ -522,6 +532,7 @@ function! List_lookup_file()
         silent! execute "cs add cscope.out"
     endif
 
+    redraw!
 
 endfunction
 
@@ -678,11 +689,11 @@ function! SetupCscope()
         return
     endif
 
+
     if  g:IgnoreGtags == 0 && filereadable(g:gtagsCscopePath)
 
+        set csprg =gtags-cscope
         let g:UseGlobalOverCscope = 1
-
-        set csprg=~/tools/gtags/bin/gtags-cscope
         
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
         silent! execute "cd ".$HOME."/code/"
@@ -690,12 +701,12 @@ function! SetupCscope()
         "export environment variable
         silent! execute "! ~/.vim/gtags.setup.sh env"
 
-    elseif filereadable($HOME."/tools/cscope/bin/cscope")
+    elseif filereadable(g:CscopePath)
 
         let g:UseGlobalOverCscope = 0 
         set cscopetag
-        set csprg=~/tools/cscope/bin/cscope
 
+        set csprg=cscope
     endif
 
     if filereadable(g:mycodetags)
