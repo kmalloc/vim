@@ -1,6 +1,8 @@
 #! /bin/sh
 
 mode=${1:-"update"}
+export GTAGSROOT="${HOME}/code"
+export GTAGSDBPATH="${HOME}/.vim/caches"
 
 function list_files
 {
@@ -14,36 +16,33 @@ function list_files
 if [ ${mode} == "setup" ];then
     if [ -e "${GTAGSROOT}/GTAGS" ];then
 
-        rm $GTAGSROOT/GTAGS 
+        rm ${GTAGSROOT}/GTAGS 
 
     fi
 
     if [ -e "${GTAGSROOT}/GRTAGS" ];then
 
-        rm $GTAGSROOT/GRTAGS 
+        rm ${GTAGSROOT}/GRTAGS 
 
     fi
 
     if [ -e "${GTAGSROOT}/GPATH" ];then
 
-        rm $GTAGSROOT/GPATH
+        rm ${GTAGSROOT}/GPATH
 
     fi
 
     cd ${HOME}/code/
-    gtags -f "${HOME}/.vim/caches/gtags.files" "${HOME}/.vim/caches/"
+    list_files $GTAGSROOT $GTAGSDBPATH
+    gtags -f "${GTAGSDBPATH}/gtags.files" ${GTAGSDBPATH}
 
 elif [ ${mode} == "files" ];then
 
     path=${2:-"."}
-    list_files $path "${HOME}/.vim/caches"
-    
+    list_files $path $GTAGSDBPATH    
 else 
 
-    cd ${HOME}/code/
-    export GTAGSROOT="${HOME}/code"
-    export GTAGSDBPATH="${HOME}/.vim/caches"
-
+    cd ${GTAGSROOT}
     global -u &
 fi
 

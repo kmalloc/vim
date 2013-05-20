@@ -124,7 +124,8 @@ map <M-m> :call ToggleToolsBar()<CR>
 "this will replace the previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
 map <F11> :call List_lookup_file_for_cur_folder()<CR>
-map <F12> :call RefreshGuiCodeData()<CR> "RefreshCscopeDataForGuiCode()<CR>
+map <F12> :call RefreshGuiCodeData()<CR> 
+"RefreshCscopeDataForGuiCode()<CR>
 
 
 "tab key mapping
@@ -475,20 +476,20 @@ function! RefreshCscopeDataForGuiCode()
 
     if g:UseGlobalOverCscope == 0
 
-        if !filereadable(csFiles)	
+        if !filereadable(l:csFiles)	
             silent! execute "!~/.vim/list.cscope.files.sh& "
         endif
 
     else
 
-        silent! execute "! ~/.vim/gtags.setup.sh files&"
+        "silent! execute "! ~/.vim/gtags.setup.sh files&"
         silent! execute "! ~/.vim/gtags.setup.sh setup&"
 
     endif
 
-    if filereadable(csOut)
+    if filereadable(l:csOut)
         silent! execute "normal :"
-        silent! execute "cs add ".csOut
+        silent! execute "cs add ".l:csOut
     endif
 
 
