@@ -405,7 +405,7 @@ function! P4CheckOut(file)
 endfunction
 
 function! UpdateGtags()
-    silent! execute "! cd ~/code && global -u"
+    silent! execute "! gtags.setup.sh update"
     silent! execute "cs kill -1"
     silent! execute "cs add ".g:mycodetags 
 endfunction
@@ -478,7 +478,7 @@ function! RefreshGuiCodeFiles()
           
         else
 
-            silent! execute "! ~/.vim/gtags.setup.sh"
+            silent! execute "! ~/.vim/gtags.setup.sh setup"
 
         endif
 
@@ -707,9 +707,6 @@ function! SetupCscope()
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
         silent! execute "cd ".$HOME."/code/"
   
-        "export environment variable
-        silent! execute "! ~/.vim/gtags.setup.sh env"
-
     elseif filereadable(g:CscopePath)
 
         let g:UseGlobalOverCscope = 0 

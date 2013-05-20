@@ -1,12 +1,8 @@
 #! /bin/bash
 
-mode = ${1:-"full"}
+mode=${1:-"update"}
 
-export GTAGSROOT="~/code"
-export GTAGSDBPATH="~/.vim/caches"
-
-if [ $mode != "env" ];then
-
+if [ ${mode} == "setup" ];then
     if [ -e "${GTAGSROOT}/GTAGS" ];then
 
         rm $GTAGSROOT/GTAGS 
@@ -25,8 +21,12 @@ if [ $mode != "env" ];then
 
     fi
 
-    gtags $GTAGSDBPATH
+    cd ${GTAGSROOT}
+    GTAGSROOT="${HOME}/code" GTAGSDBPATH="${HOME}/.vim/caches" gtags $GTAGSDBPATH
+
+else
+
+    cd ${GTAGSROOT}
+    GTAGSROOT="${HOME}/code" GTAGSDBPATH="${HOME}/.vim/caches" global -u"
 
 fi
-
-
