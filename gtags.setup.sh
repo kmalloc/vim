@@ -2,6 +2,15 @@
 
 mode=${1:-"update"}
 
+function list_files
+{
+    search_path=${1:-"."}
+    out_path=${2:-"."}
+
+    find ${search_path} -name \*.cpp -o -name \*.h -o -name \*.cc -o -name \*.hpp -o -name \*.sh -o -name \*.c > ${out_path}/gtags.files
+}
+
+
 if [ ${mode} == "setup" ];then
     if [ -e "${GTAGSROOT}/GTAGS" ];then
 
@@ -22,11 +31,20 @@ if [ ${mode} == "setup" ];then
     fi
 
     cd ${GTAGSROOT}
-    GTAGSROOT="${HOME}/code" GTAGSDBPATH="${HOME}/.vim/caches" gtags $GTAGSDBPATH
+    gtags -f "${HOME}/.vim/caches/gtags.files" "${HOME}/.vim/caches/"
 
-else
+elif [ ${mode} == "files" ];then
+
+    path=${2:-"."}
+    list_files $path "${HOME}/.vim/caches"
+    
+else 
 
     cd ${GTAGSROOT}
-    GTAGSROOT="${HOME}/code" GTAGSDBPATH="${HOME}/.vim/caches" global -u"
+    env GTAGSROOT="${HOME}/code" GTAGSDBPATH="${HOME}/.vim/caches" global -u
 
 fi
+
+
+
+

@@ -123,8 +123,8 @@ map <M-m> :call ToggleToolsBar()<CR>
 "generate file names list
 "this will replace the previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
-map <F11> :call List_lookup_file()<CR>
-map <F12> :call RefreshGuiCodeFiles()<CR>
+map <F11> :call List_lookup_file_for_cur_folder()<CR>
+map <F12> :call RefreshGuiCodeData()<CR> "RefreshCscopeDataForGuiCode()<CR>
 
 
 "tab key mapping
@@ -425,13 +425,29 @@ function! ToggleToolsBar()
 endfunction
 
 
+function! Refresh_filelookup_data()
+
+    let l:lookupfiles = $HOME."/.vim/caches/filenametags"
+    if filereadable(l:lookupfiles)
+        delete(l:lookupfiles)
+    endif
+
+    silent! execute "!~/.vim/list.all.files&"
+    if filereadable(l:lookupfiles)
+        execute "let g:LookupFile_TagExpr='\"".l:lookupfiles."\"'"
+    endif 
+
+endfunction
+
+
+
 "refresh code in folder ~/code/gui_tflex/
 "setup caches for lookupFile, cscope.
-function! RefreshGuiCodeFiles()
+function! RefreshCscopeDataForGuiCode()
     "let dir = getcwd()
 
-    if has("cscope")
-        silent! execute "cs kill -1"
+    if !has("cscope")
+        return
     endif
 
 
@@ -445,56 +461,45 @@ function! RefreshGuiCodeFiles()
 
         let l:csOut = $HOME."/.vim/caches/cscope.out"
         if filereadable(l:csOut)
-            let csoutdeleted=delete(l:csOut)
+            delete(l:csOut)
         endif
 
     else
        
-        let l:csOut = $HOME."/code/GTAGS"
+        let l:csOut = $HOME."/.vim/caches/GTAGS"
         delete(l:csOut)
 
     endif
 
 
-    let l:lookupfiles = $HOME."/.vim/caches/filenametags"
-    if filereadable(lookupfiles)
-        let filetagsdeleted=delete(lookupfiles)
-    endif
+    if g:UseGlobalOverCscope == 0
 
-    silent! execute "!~/.vim/list.all.files&"
-    if filereadable(lookupfiles)
-        execute "let g:LookupFile_TagExpr='\"".lookupfiles."\"'"
-    endif 
-
-
-    if(has('cscope'))
-
-
-        if g:UseGlobalOverCscope == 0
-
-            if !filereadable(csFiles)	
-                silent! execute "!~/.vim/list.cscope.files.sh "
-            endif
-          
-        else
-
-            silent! execute "! ~/.vim/gtags.setup.sh setup"
-
-        endif
-
-        if filereadable(csOut)
-            silent! execute "normal :"
-            silent! execute "cs add ".csOut
+        if !filereadable(csFiles)	
+            silent! execute "!~/.vim/list.cscope.files.sh "
         endif
 
     else
-        echo "please install cscope first"
+
+        silent! execute "! ~/.vim/gtags.setup.sh files"
+        silent! execute "! ~/.vim/gtags.setup.sh setup"
+
     endif
+
+    if filereadable(csOut)
+        silent! execute "normal :"
+        silent! execute "cs add ".csOut
+    endif
+
 
     redraw!
 
 endfunction
 
+
+function! RefreshGuiCodeData()
+    call Refresh_filelookup_data()
+    call RefreshCscopeDataForGuiCode()
+endfunction
 
 function! RefreshCodeTags()
 
@@ -512,7 +517,7 @@ endfunction
 
 
 "setup files in current folder for LookupFiel, Cscope.
-function! List_lookup_file()
+function! List_lookup_file_for_cur_folder()
 
     let txt="y"
     if filereadable("filenametags")
