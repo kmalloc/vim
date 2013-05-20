@@ -405,9 +405,10 @@ function! P4CheckOut(file)
 endfunction
 
 function! UpdateGtags()
-    silent! execute "! gtags.setup.sh update"
+    silent! execute "! ~/.vim/gtags.setup.sh update &"
     silent! execute "cs kill -1"
     silent! execute "cs add ".g:mycodetags 
+    redraw!
 endfunction
 
 function! ToggleToolsBar()
@@ -475,13 +476,13 @@ function! RefreshCscopeDataForGuiCode()
     if g:UseGlobalOverCscope == 0
 
         if !filereadable(csFiles)	
-            silent! execute "!~/.vim/list.cscope.files.sh "
+            silent! execute "!~/.vim/list.cscope.files.sh& "
         endif
 
     else
 
-        silent! execute "! ~/.vim/gtags.setup.sh files"
-        silent! execute "! ~/.vim/gtags.setup.sh setup"
+        silent! execute "! ~/.vim/gtags.setup.sh files&"
+        silent! execute "! ~/.vim/gtags.setup.sh setup&"
 
     endif
 
@@ -693,6 +694,7 @@ endfunction
 function! CscopeFind(file,type)
     silent! execute "cs find ".a:type." ".a:file 
     silent! call OpenCscopeSearchList()
+    redraw!
 endfunction
 
 

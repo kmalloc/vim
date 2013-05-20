@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 mode=${1:-"update"}
 
@@ -30,7 +30,7 @@ if [ ${mode} == "setup" ];then
 
     fi
 
-    cd ${GTAGSROOT}
+    cd ${HOME}/code/
     gtags -f "${HOME}/.vim/caches/gtags.files" "${HOME}/.vim/caches/"
 
 elif [ ${mode} == "files" ];then
@@ -40,9 +40,11 @@ elif [ ${mode} == "files" ];then
     
 else 
 
-    cd ${GTAGSROOT}
-    env GTAGSROOT="${HOME}/code" GTAGSDBPATH="${HOME}/.vim/caches" global -u
+    cd ${HOME}/code/
+    export GTAGSROOT="${HOME}/code"
+    export GTAGSDBPATH="${HOME}/.vim/caches"
 
+    global -u &
 fi
 
 
