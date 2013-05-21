@@ -123,7 +123,8 @@ map <M-m> :call ToggleToolsBar()<CR>
 "generate file names list
 "this will replace the previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
-map <F11> :call List_lookup_file_for_cur_folder()<CR>
+map <F11> :call SetupCurFolderData()<CR>
+"List_lookup_file_for_cur_folder()<CR>
 map <F12> :call RefreshGuiCodeData()<CR> 
 "RefreshCscopeDataForGuiCode()<CR>
 
@@ -323,6 +324,8 @@ augroup AutoEventHandler
 augroup end
 "---------------------function ------------------------------------
 
+   "-----------------autocmd handler---------------
+
 function! OnBufWrite(file)
 
     if (g:PerforceExisted == 0)
@@ -335,7 +338,6 @@ function! OnBufWrite(file)
 
     "silent! execute("! cp ".a:file." change.cc")
 endfunction
-
 
 
 function! OnBufEnter()
@@ -378,6 +380,17 @@ function! OnTabEnter()
 
 endfunction
 
+function! UpdateGtags()
+    silent! execute "! ~/.vim/gtags.setup.sh update &"
+    silent! execute "cs kill -1"
+    call CsAddTags(g:mycodetags) 
+    redraw!
+endfunction
+
+   "----------------end autocmd handler------------------
+
+
+   "----------------handle shell cmd---------------------- 
 function! IsShellCmdExist(cmd)
 
     silent! execute "! which ".a:cmd." > /dev/null 2>&1"
@@ -405,27 +418,11 @@ function! P4CheckOut(file)
 
 endfunction
 
-function! UpdateGtags()
-    silent! execute "! ~/.vim/gtags.setup.sh update &"
-    silent! execute "cs kill -1"
-    silent! execute "cs add ".g:mycodetags 
-    redraw!
-endfunction
+     "----------------end handling shell cmd-----------------------
 
-function! ToggleToolsBar()
 
-    if(has("gui_running"))
-        if &guioptions =~# 'T'
-            execute"set guioptions-=T"
-            execute"set guioptions-=m"
-        else
-            execute"set guioptions+=T"
-            execute"set guioptions+=m"
-        endif
-    endif
 
-endfunction
-
+     "---------------code writting helper----------------------
 
 function! Refresh_filelookup_data()
 
@@ -487,11 +484,7 @@ function! RefreshCscopeDataForGuiCode()
 
     endif
 
-    if filereadable(l:csOut)
-        silent! execute "normal :"
-        silent! execute "cs add ".l:csOut
-    endif
-
+    call CsAddTags(l:csOut)
 
     redraw!
 
@@ -532,26 +525,37 @@ function! List_lookup_file_for_cur_folder()
 
     execute "let g:LookupFile_TagExpr='\"filenametags\"'"
 
-    if filereadable("cscope.files")
-        let txt="cscope.files existed, rebuild or not?(y/n)"
-    endif
-
-
-    if txt == "y"
-        execute "! ~/.vim/list.cscope.files.sh cur"
-    endif
-
-    silent! execute "! cscope -C -Rbq -i cscope.files"
-
-    if filereadable("cscope.out")
-        silent! execute "normal :"
-        silent! execute "cs add cscope.out"
-    endif
-
-    redraw!
 
 endfunction
 
+
+function! SetupCscopeForCurFolder()
+
+    if !has("cscope")
+        return
+    endif
+
+    let l:tags = "cscope.out"
+    if g:UseGlobalOverCscope == 0
+
+       silent! execute "!~/.vim/list.cscope.files.sh cur &"
+
+    else
+
+        let l:tags = "GTAGS"
+        silent! execute "! ~/.vim/gtags.setup.sh setup cur&"
+
+    endif
+
+    call CsAddTags(l:tags)
+
+endfunction
+
+function! SetupCurFolderData()
+    call List_lookup_file_for_cur_folder()
+    call SetupCscopeForCurFolder()
+    redraw!
+endfunction
 
 function! FindReference()
     let txt = input('enter text:')
@@ -567,6 +571,77 @@ function! FindReference()
 endfunction
 
 
+function! OpenCscopeSearchList()
+    if g:IsQuickfixOpen == 0
+        call ToggleQuickfix()
+    endif
+endfunction
+
+
+function! CscopeFind(file,type)
+    silent! execute "cs find ".a:type." ".a:file 
+    silent! call OpenCscopeSearchList()
+    redraw!
+endfunction
+
+
+function! CsAddTags(tags)
+
+    if filereadable(a:tags)
+        silent! execute "normal :"
+        silent! execute "cs add ".a:tags.' . -Ca'
+
+    else
+        echo "can not find cscope.out,f12 please"
+    endif
+
+endfunction
+
+"setup cscope database.
+function! SetupCscope()
+
+    if(!has('cscope'))
+        return
+    endif
+
+    if  g:IgnoreGtags == 0 && filereadable(g:gtagsCscopePath)
+
+        set csprg =gtags-cscope
+        let g:UseGlobalOverCscope = 1
+        
+        let g:mycodetags = $HOME."/.vim/caches/GTAGS"
+        silent! execute "cd ".$HOME."/code/"
+        silent! execute "! ~/.vim/gtags.setup.sh env"
+  
+    elseif filereadable(g:CscopePath)
+
+        let g:UseGlobalOverCscope = 0 
+        set cscopetag
+
+        set csprg=cscope
+    endif
+
+    call CsAddTags(g:mycodetags)
+    set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
+
+endfunction
+
+  "---------------end code writing helper.------------------------
+
+  "---------------UI setup --------------------------------------
+function! ToggleToolsBar()
+
+    if(has("gui_running"))
+        if &guioptions =~# 'T'
+            execute"set guioptions-=T"
+            execute"set guioptions-=m"
+        else
+            execute"set guioptions+=T"
+            execute"set guioptions+=m"
+        endif
+    endif
+
+endfunction
 
 function! BookMarkHere()
     let txt = input("bookmark name:")
@@ -685,54 +760,6 @@ function! CloseWin(buffer)
 endfunction
 
 
-function! OpenCscopeSearchList()
-    if g:IsQuickfixOpen == 0
-        call ToggleQuickfix()
-    endif
-endfunction
-
-
-function! CscopeFind(file,type)
-    silent! execute "cs find ".a:type." ".a:file 
-    silent! call OpenCscopeSearchList()
-    redraw!
-endfunction
-
-
-"setup cscope database.
-function! SetupCscope()
-
-    if(!has('cscope'))
-        return
-    endif
-
-
-    if  g:IgnoreGtags == 0 && filereadable(g:gtagsCscopePath)
-
-        set csprg =gtags-cscope
-        let g:UseGlobalOverCscope = 1
-        
-        let g:mycodetags = $HOME."/.vim/caches/GTAGS"
-        silent! execute "cd ".$HOME."/code/"
-  
-    elseif filereadable(g:CscopePath)
-
-        let g:UseGlobalOverCscope = 0 
-        set cscopetag
-
-        set csprg=cscope
-    endif
-
-    if filereadable(g:mycodetags)
-        silent! execute "normal :"
-        silent! execute "cs add ".g:mycodetags
-    else
-        echo "can not find cscope.out,f12 please"
-    endif
-
-    set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
-
-endfunction
 
 "------------------------------call function to setup environment----
 

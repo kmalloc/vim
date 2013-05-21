@@ -1,8 +1,15 @@
 #! /bin/sh
 
 mode=${1:-"update"}
-export GTAGSROOT="${HOME}/code"
-export GTAGSDBPATH="${HOME}/.vim/caches"
+GTAGSROOT="${HOME}/code"
+GTAGSDBPATH="${HOME}/.vim/caches"
+
+if [ ${mode} != "cur" ] && [ `whoami` == "miliao" ];then
+    GTAGSROOT=$GTAGSROOT/gui_tflex
+elif [ ${mode} == "cur" ];then
+    GTAGSROOT="`pwd`"
+    GTAGSDBPATH=${GTAGSROOT}
+fi
 
 function list_files
 {
@@ -12,34 +19,62 @@ function list_files
     find ${search_path} -name \*.cpp -o -name \*.h -o -name \*.cc -o -name \*.hpp -o -name \*.sh -o -name \*.c > ${out_path}/gtags.files
 }
 
+function set_link 
+{
+    file=${1:?"please specify file to link"}
+    if [ ! -e "${GTAGSROOT}/${file}" ] && [ -e ${GTAGSDBPATH}/$file ];then
+        ln -s ${HOME}/.vim/caches/$file ${GTAGSROOT}
+    fi
+}
+
+
+function setup_tags
+{
+    root=${1:?"please specify root to search"}
+    out_dir=${2:?"please specify output directory"}
+
+    cd ${root}
+    list_files $root $out_dir
+    gtags -f "${out_dir}/gtags.files" ${out_dir}
+}
 
 if [ ${mode} == "setup" ];then
-    if [ -e "${GTAGSROOT}/GTAGS" ];then
 
-        rm ${GTAGSROOT}/GTAGS 
+    if [ -e "${GTAGSDBPATH}/GTAGS" ];then
 
-    fi
-
-    if [ -e "${GTAGSROOT}/GRTAGS" ];then
-
-        rm ${GTAGSROOT}/GRTAGS 
+        rm ${GTAGSDBPATH}/GTAGS 
 
     fi
 
-    if [ -e "${GTAGSROOT}/GPATH" ];then
+    if [ -e "${GTAGSDBPATH}/GRTAGS" ];then
 
-        rm ${GTAGSROOT}/GPATH
+        rm ${GTAGSDBPATH}/GRTAGS 
 
     fi
 
-    cd ${HOME}/code/
-    list_files $GTAGSROOT $GTAGSDBPATH
-    gtags -f "${GTAGSDBPATH}/gtags.files" ${GTAGSDBPATH}
+    if [ -e "${GTAGSDBPATH}/GPATH" ];then
+
+        rm ${GTAGSDBPATH}/GPATH
+
+    fi
+
+    setup_tags ${GTAGSROOT} $GTAGSDBPATH
+
+elif [ ${mode} == "cur" ];then
+
+    setup_tags ${GTAGSROOT} $GTAGSDBPATH
 
 elif [ ${mode} == "files" ];then
 
     path=${2:-"."}
     list_files $path $GTAGSDBPATH    
+
+elif [ ${mode} == "env" ];then
+
+    set_link GTAGS
+    set_link GPATH
+    set_link GRTAGS
+
 else 
 
     cd ${GTAGSROOT}
