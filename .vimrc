@@ -324,7 +324,7 @@ augroup AutoEventHandler
 augroup end
 "---------------------function ------------------------------------
 
-   "-----------------autocmd handler---------------
+"-----------------autocmd handler---------------
 
 function! OnBufWrite(file)
 
@@ -387,10 +387,10 @@ function! UpdateGtags()
     redraw!
 endfunction
 
-   "----------------end autocmd handler------------------
+"----------------end autocmd handler------------------
 
 
-   "----------------handle shell cmd---------------------- 
+"----------------handle shell cmd---------------------- 
 function! IsShellCmdExist(cmd)
 
     silent! execute "! which ".a:cmd." > /dev/null 2>&1"
@@ -418,11 +418,11 @@ function! P4CheckOut(file)
 
 endfunction
 
-     "----------------end handling shell cmd-----------------------
+"----------------end handling shell cmd-----------------------
 
 
 
-     "---------------code writting helper----------------------
+"---------------code writting helper----------------------
 
 function! Refresh_filelookup_data()
 
@@ -464,7 +464,7 @@ function! RefreshCscopeDataForGuiCode()
         endif
 
     else
-       
+
         let l:csOut = $HOME."/.vim/caches/GTAGS"
         delete(l:csOut)
 
@@ -538,7 +538,7 @@ function! SetupCscopeForCurFolder()
     let l:tags = "cscope.out"
     if g:UseGlobalOverCscope == 0
 
-       silent! execute "!~/.vim/list.cscope.files.sh cur &"
+        silent! execute "!~/.vim/list.cscope.files.sh cur &"
 
     else
 
@@ -608,9 +608,14 @@ function! SetupCscope()
 
         set csprg =gtags-cscope
         let g:UseGlobalOverCscope = 1
-        
+        let l:coderoot=$HOME."/code/" 
+
+        if $USER == "miliao"
+            let l:coderoot = l:coderoot."gui_tflex"
+        endif
+
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
-        silent! execute "cd ".$HOME."/code/"
+        silent! execute "cd ".l:coderoot  
         silent! execute "! ~/.vim/gtags.setup.sh env"
   
     elseif filereadable(g:CscopePath)
