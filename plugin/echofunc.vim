@@ -316,12 +316,18 @@ function! s:GetFuncName(text)
 endfunction
 
 function! EchoFunc()
-    let l:ret = PrepareResults()
-    if l:ret == ''
+
+    if g:EchoFunc_AutoTrigger == 1
+        let l:ret = PrepareResults()
+        if l:ret == ''
+            return ''
+        endif
+        call s:EchoFuncDisplay()
+        return ''
+    else
         return ''
     endif
-    call s:EchoFuncDisplay()
-    return ''
+
 endfunction
 
 
@@ -397,13 +403,12 @@ function! EchoFuncStart()
     let s:ShowMode=&showmode
     let s:CmdHeight=&cmdheight
 
-    if g:EchoFunc_AutoTrigger == 1
-        inoremap <silent> <buffer>  (   (<c-r>=EchoFunc()<cr>
-        inoremap <silent> <buffer>  )    <c-r>=EchoFuncClear()<cr>)
-    endif
+    inoremap <silent> <buffer>  (   (<c-r>=EchoFunc()<cr>
+    inoremap <silent> <buffer>  )    <c-r>=EchoFuncClear()<cr>)
 
-    exec 'noremap <silent> <buffer> ' . g:EchoFuncKeyNext . ' <c-r>=EchoFuncN()<cr>'
-    exec 'noremap <silent> <buffer> ' . g:EchoFuncKeyPrev . ' <c-r>=EchoFuncP()<cr>'
+    exec 'inoremap <silent> <buffer> ' . g:EchoFuncKeyNext . ' <c-r>=EchoFuncN()<cr>'
+    exec 'inoremap <silent> <buffer> ' . g:EchoFuncKeyPrev . ' <c-r>=EchoFuncP()<cr>'
+    exec 'inoremap <silent> <buffer> ' . g:EchoFuncKeyClear . ' <c-r>=EchoFuncClear()<cr>'
 endfunction
 
 function! EchoFuncClear()
@@ -420,6 +425,7 @@ function! EchoFuncStop()
     iunmap      <buffer>    )
     exec 'iunmap <buffer> ' . g:EchoFuncKeyNext
     exec 'iunmap <buffer> ' . g:EchoFuncKeyPrev
+    exec 'iunmap <buffer> ' . g:EchoFuncKeyClear
     unlet b:EchoFuncStarted
 endfunction
 
@@ -538,6 +544,10 @@ if !exists("g:EchoFuncKeyPrev")
     else
         let g:EchoFuncKeyPrev='<M-->'
     endif
+endif
+
+if !exists("g:EchoFuncKeyClear")
+    let g:EchoFuncKeyClear = '<M-c>'
 endif
 
 if !exists("g:EchoFuncShowOnStatus")

@@ -46,8 +46,9 @@ if(!has("gui_running"))
     exe "set <M-2>=\<ESC>2"
     exe "set <M-d>=\<ESC>d"
     exe "set <M-u>=\<ESC>u"
-    exe "set <M-=>=\<ESC>="
-    exe "set <M-->=\<ESC>-"
+    exe "set <M-n>=\<ESC>n"
+    exe "set <M-p>=\<ESC>p"
+    exe "set <M-c>=\<ESC>c"
 endif
 
 let cpptags=$HOME."/.vim/cpp.tags/tags"
@@ -283,6 +284,8 @@ let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 let g:EchoFuncShowOnStatus=0
 let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration 
 let g:EchoFunc_AutoTrigger = 0
+let g:EchoFuncKeyPrev='<M-p>'
+let g:EchoFuncKeyNext='<M-n>'
 "need to find an appropriate mapping,
 "otherwhise default mapping will not work in terminal.
 "let g:EchoFuncKeyNext='<C-->'
