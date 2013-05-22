@@ -89,17 +89,17 @@ set guifont=Courier\ 10\ Pitch\ 16
 if (has("gui_running"))
     set background=dark
     colorscheme  solarized "deveiate 
+
+    set guioptions-=m "hide menu bar.
+    set guioptions-=T "hide tool bar.
 else
-    colorscheme  torte
+    colorscheme torte
 endif
 
 "pacific
 "molokai
 "torte
-"darkburn
 
-set guioptions-=m "hide menu bar.
-set guioptions-=T "hide tool bar.
 set completeopt-=preview "remove preview window for autocompletio
 "set statusline+=%{EchoFuncGetStatusLine()}
 
@@ -131,6 +131,7 @@ map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
 "List_lookup_file_for_cur_folder()<CR>
 map <F12> :call RefreshGuiCodeData()<CR> 
 "RefreshCscopeDataForGuiCode()<CR>
+map <F8>  :call ToggleGtags()<CR>
 
 
 "tab key mapping
@@ -646,6 +647,37 @@ function! SetupCscope()
 
     call CsAddTags(g:mycodetags)
     set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
+
+endfunction
+
+
+function! ToggleGtags()
+    
+
+    if g:UseGlobalOverCscope == 1 && filereadable(g:CscopePath)
+        
+        let g:UseGlobalOverCscope = 0
+        set csprg = cscope
+        let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+
+    elseif g:UseGlobalOverCscope == 0 && filereadable(g:gtagsCscopePath)
+
+        set csprg =gtags-cscope
+        let g:UseGlobalOverCscope = 1
+        let l:coderoot=$HOME."/code/" 
+
+        if $USER == "miliao"
+            let l:coderoot = l:coderoot."gui_tflex"
+        endif
+
+        let g:mycodetags = $HOME."/.vim/caches/GTAGS"
+        silent! execute "cd ".l:coderoot  
+        silent! execute "! ~/.vim/gtags.setup.sh env"
+
+     endif
+
+    call CsAddTags(g:mycodetags)
+    redraw!
 
 endfunction
 

@@ -78,7 +78,7 @@ elif [ ${mode} == "env" ];then
 else 
 
     cd ${GTAGSROOT}
-    global -u &
+    global -u  > /dev/null 2>&1 &
 fi
 
 
