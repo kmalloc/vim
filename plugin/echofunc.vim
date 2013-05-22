@@ -316,19 +316,44 @@ function! s:GetFuncName(text)
 endfunction
 
 function! EchoFunc()
-    let name=s:GetFuncName(getline('.')[:(col('.')-3)])
-    if name==''
+    let l:ret = PrepareResults()
+    if l:ret == ''
         return ''
     endif
-    call s:GetFunctions(name, 1)
     call s:EchoFuncDisplay()
     return ''
 endfunction
 
-function! EchoFuncN()
-    if s:res==[]
+
+function! PrepareResults()
+
+    let name=s:GetFuncName(getline('.')[:(col('.')-3)])
+    if name==''
         return ''
     endif
+
+    call s:GetFunctions(name, 1)
+    return "suc"
+
+endfunction
+
+function! EchoFuncN()
+
+    if s:res==[]
+
+        if g:EchoFunc_AutoTrigger == 0
+
+            call PrepareResults()
+
+            if s:res==[]
+                return ''
+            endif
+        else
+            return ''
+        endif
+
+    endif
+
     if s:count==len(s:res)
         let s:count=1
     else
@@ -339,9 +364,22 @@ function! EchoFuncN()
 endfunction
 
 function! EchoFuncP()
+
     if s:res==[]
-        return ''
+
+        if g:EchoFunc_AutoTrigger == 0
+
+            call PrepareResults()
+
+            if s:res==[]
+                return ''
+            endif
+        else
+            return ''
+        endif
+
     endif
+
     if s:count==1
         let s:count=len(s:res)
     else
@@ -358,10 +396,14 @@ function! EchoFuncStart()
     let b:EchoFuncStarted=1
     let s:ShowMode=&showmode
     let s:CmdHeight=&cmdheight
-    inoremap <silent> <buffer>  (   (<c-r>=EchoFunc()<cr>
-    inoremap <silent> <buffer>  )    <c-r>=EchoFuncClear()<cr>)
-    exec 'inoremap <silent> <buffer> ' . g:EchoFuncKeyNext . ' <c-r>=EchoFuncN()<cr>'
-    exec 'inoremap <silent> <buffer> ' . g:EchoFuncKeyPrev . ' <c-r>=EchoFuncP()<cr>'
+
+    if g:EchoFunc_AutoTrigger == 1
+        inoremap <silent> <buffer>  (   (<c-r>=EchoFunc()<cr>
+        inoremap <silent> <buffer>  )    <c-r>=EchoFuncClear()<cr>)
+    endif
+
+    exec 'noremap <silent> <buffer> ' . g:EchoFuncKeyNext . ' <c-r>=EchoFuncN()<cr>'
+    exec 'noremap <silent> <buffer> ' . g:EchoFuncKeyPrev . ' <c-r>=EchoFuncP()<cr>'
 endfunction
 
 function! EchoFuncClear()

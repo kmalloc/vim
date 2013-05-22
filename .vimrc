@@ -46,6 +46,8 @@ if(!has("gui_running"))
     exe "set <M-2>=\<ESC>2"
     exe "set <M-d>=\<ESC>d"
     exe "set <M-u>=\<ESC>u"
+    exe "set <M-=>=\<ESC>="
+    exe "set <M-->=\<ESC>-"
 endif
 
 let cpptags=$HOME."/.vim/cpp.tags/tags"
