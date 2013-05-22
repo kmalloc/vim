@@ -16,7 +16,7 @@ function list_files
     search_path=${1:-"."}
     out_path=${2:-"."}
 
-    find ${search_path} -name \*.cpp -o -name \*.h -o -name \*.cc -o -name \*.hpp -o -name \*.sh -o -name \*.c > ${out_path}/gtags.files
+    find ${search_path} -name \*.cpp -o -name \*.h -o -name \*.pl -o -name \*.pm -o -name \*.cc -o -name \*.hpp -o -name \*.sh -o -name \*.c > ${out_path}/gtags.files
 }
 
 function set_link 

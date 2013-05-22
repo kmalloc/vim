@@ -16,7 +16,7 @@ fi
 
 rm ${outLoc} 
 
-find ${searchLoc} -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.cc' -o -name '*.hpp' > ${outLoc}
+find ${searchLoc} -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.cc' -o -name '*.hpp' -o -name '*.pl' -o -name '*.pm' > ${outLoc}
 
 cscope -C -Rbq -i ${outLoc}
 

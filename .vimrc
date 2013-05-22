@@ -124,6 +124,7 @@ map <M-m> :call ToggleToolsBar()<CR>
 "this will replace the previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
 map <F11> :call SetupCurFolderData()<CR>
+map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
 "List_lookup_file_for_cur_folder()<CR>
 map <F12> :call RefreshGuiCodeData()<CR> 
 "RefreshCscopeDataForGuiCode()<CR>
@@ -321,10 +322,21 @@ augroup AutoEventHandler
     autocmd BufWinLeave * call CloseWin(expand("<afile>"))
 
     autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx  TlistOpen
+    autocmd VimEnter * call SetupVim()
+
 augroup end
 "---------------------function ------------------------------------
 
 "-----------------autocmd handler---------------
+
+function! SetupVim()
+
+    call IsP4Exist()
+    call SetupCscope()
+
+endfunction
+
+
 
 function! OnBufWrite(file)
 
@@ -382,7 +394,6 @@ endfunction
 
 function! UpdateGtags()
     silent! execute "! ~/.vim/gtags.setup.sh update &"
-    silent! execute "cs kill -1"
     call CsAddTags(g:mycodetags) 
     redraw!
 endfunction
@@ -543,7 +554,7 @@ function! SetupCscopeForCurFolder()
     else
 
         let l:tags = "GTAGS"
-        silent! execute "! ~/.vim/gtags.setup.sh setup cur&"
+        silent! execute "! ~/.vim/gtags.setup.sh cur &"
 
     endif
 
@@ -588,6 +599,8 @@ endfunction
 function! CsAddTags(tags)
 
     if filereadable(a:tags)
+
+        silent! execute "cs kill -1"
         silent! execute "normal :"
         silent! execute "cs add ".a:tags.' . -Ca'
 
@@ -766,8 +779,5 @@ endfunction
 
 
 
-"------------------------------call function to setup environment----
 
-call IsP4Exist()
-call SetupCscope()
 
