@@ -114,8 +114,9 @@ highlight PmenuSel guibg=brown ctermbg=brown
 noremap ;;  <ESC>
 inoremap ;;  <ESC>
 
+
 "edit my vimrc
-map <leader>ev :tabedit $MYVIMRC<CR>
+map <leader>ev :call EditMyVimrc()<CR>
 map <F9> :so ~/.vimrc<CR>
 map <F6> :call ToggleQuickfix()<CR> 
 map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
@@ -825,6 +826,31 @@ function! CloseWin(buffer)
 
 endfunction
 
+function! EditMyVimrc()
+
+    let l:buflist = tabpagebuflist() "[]
+    let l:len = len(l:buflist)
+    let l:new = 0
+    if len(l:buflist) > 1 
+        let l:new = 1
+    elseif l:len == 1
+        let l:name = bufname(winbufnr(0))
+        if strlen(l:name) == 0
+            let l:new = 0
+        else
+            let l:new = 1
+        endif
+    else
+        let l:new = 0
+    endif
+
+    if l:new == 1
+        execute "tabedit $MYVIMRC"
+    else
+        execute "edit $MYVIMRC"
+    endif
+
+endfunction
 
 
 
