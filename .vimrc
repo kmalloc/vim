@@ -327,7 +327,7 @@ augroup AutoEventHandler
     "multiple windows.
     autocmd BufWinLeave * call CloseWin(expand("<afile>"))
 
-    autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx  TlistOpen
+    autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx call AutoOpenTaglistOnVimStartup() 
     autocmd VimEnter * call SetupVim()
 
 augroup end
@@ -342,6 +342,13 @@ function! SetupVim()
 
 endfunction
 
+function! AutoOpenTaglistOnVimStartup()
+
+    if &diff == 0
+        TlistOpen
+    endif
+
+endfunction
 
 
 function! OnBufWrite(file)
@@ -360,7 +367,7 @@ endfunction
 
 function! OnBufEnter()
 
-    if bufwinnr(g:TaglistName) == -1
+    if bufwinnr(g:TaglistName) == -1 && &diff == 0
         let l:win = winnr()
         silent! execute "normal:"
         silent! execute "TlistOpen"
@@ -732,7 +739,6 @@ function! ToggleBufferExp(file)
     silent! execute "BufExplorer"
 
 endfunction
-
 
 function! ToggleQuickfix()
 
