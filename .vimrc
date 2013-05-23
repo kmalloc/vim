@@ -338,8 +338,8 @@ augroup end
 
 function! SetupVim()
 
-    silent! execute! "call IsP4Exist()"
-    silent! execute! "call SetupCscope()"
+    silent! execute "call IsP4Exist()"
+    silent! execute "call SetupCscope()"
 
 endfunction
 
@@ -620,7 +620,8 @@ function! CsAddTags(tags)
         if g:UseGlobalOverCscope == 0
             silent! execute "cs add ".a:tags
         else
-            silent! execute "cs add ".a:tags." -Ca"
+            silent! execute "cs add ".a:tags
+            "silent! execute "cs add ".a:tags." -Ca"
         endif
 
     else
@@ -660,6 +661,7 @@ function! SetupCscope()
 
     call CsAddTags(g:mycodetags)
     set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
+    redraw!
 
 endfunction
 
