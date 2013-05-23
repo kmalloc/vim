@@ -555,7 +555,7 @@ function! SetupCscopeForCurFolder()
     let l:tags = "cscope.out"
     if g:UseGlobalOverCscope == 0
 
-        silent! execute "!~/.vim/list.cscope.files.sh cur &"
+        silent! execute "!~/.vim/list.cscope.files.sh cur"
 
     else
 
@@ -608,7 +608,12 @@ function! CsAddTags(tags)
 
         silent! execute "cs kill -1"
         silent! execute "normal :"
-        silent! execute "cs add ".a:tags.' . -Ca'
+
+        if g:UseGlobalOverCscope == 0
+            silent! execute "cs add ".a:tags
+        else
+            silent! execute "cs add ".a:tags." -Ca"
+        endif
 
     else
         echo "can not find cscope.out,f12 please"
@@ -625,7 +630,7 @@ function! SetupCscope()
 
     if  g:IgnoreGtags == 0 && filereadable(g:gtagsCscopePath)
 
-        set csprg =gtags-cscope
+        set csprg=gtags-cscope
         let g:UseGlobalOverCscope = 1
         let l:coderoot=$HOME."/code/" 
 
@@ -657,12 +662,12 @@ function! ToggleGtags()
     if g:UseGlobalOverCscope == 1 && filereadable(g:CscopePath)
         
         let g:UseGlobalOverCscope = 0
-        set csprg = cscope
+        set csprg=cscope 
         let g:mycodetags = $HOME."/.vim/caches/cscope.out"
 
     elseif g:UseGlobalOverCscope == 0 && filereadable(g:gtagsCscopePath)
 
-        set csprg =gtags-cscope
+        set csprg=gtags-cscope
         let g:UseGlobalOverCscope = 1
         let l:coderoot=$HOME."/code/" 
 
