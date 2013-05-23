@@ -337,8 +337,8 @@ augroup end
 
 function! SetupVim()
 
-    call IsP4Exist()
-    call SetupCscope()
+    silent! execute! "call IsP4Exist()"
+    silent! execute! "call SetupCscope()"
 
 endfunction
 
