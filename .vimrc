@@ -104,9 +104,8 @@ set completeopt-=preview "remove preview window for autocompletio
 "set statusline+=%{EchoFuncGetStatusLine()}
 
 "context menu
-highlight Pmenu guibg=darkblue ctermbg=darkblue
-highlight PmenuSel guibg=brown ctermbg=brown
-
+highlight Pmenu guibg=darkblue ctermbg=blue
+highlight PmenuSel guibg=brown ctermbg=darkgreen
 
 
 "-------------key mapping-------------------------------
@@ -157,6 +156,7 @@ map <C-A> ggVG
 
 "window operation 
 map <S-TAB> <C-W>w
+map <S-TAB-TAB> <C-W>p
 
 nmap <silent> <C-Left>    <C-W><:unlet! t:flwwinlayout<CR>
 nmap <silent> <C-Right>   <C-W>>:unlet! t:flwwinlayout<CR>
