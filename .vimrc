@@ -194,6 +194,7 @@ map md :call DelBookMark()<CR>
 
 
 
+map <C-c-t> :call OpenShellBuffer()<CR>
 "------cscope key mapping.
 
 "find reference 
@@ -222,6 +223,8 @@ map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
 
 
 "------------------------plugin setting--------------------------------------
+
+
 
 "taglist.vim setting
 let Tlist_Show_One_File=1
@@ -853,5 +856,11 @@ function! EditMyVimrc()
 endfunction
 
 
+function! OpenShellBuffer()
+    
+    silent! execute "TlistClose"
+    silent! execute "ConqueTermVSplit bash"
+
+endfunction
 
 
