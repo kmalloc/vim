@@ -110,9 +110,7 @@ highlight PmenuSel guibg=brown ctermbg=darkgreen
 
 "-------------key mapping-------------------------------
 "a better way to replace esc
-noremap ;;  <ESC>
-inoremap ;;  <ESC>
-
+"noremap ;; <ESC>
 
 "edit my vimrc
 map <leader>ev :call EditMyVimrc()<CR>
