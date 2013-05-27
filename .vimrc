@@ -308,6 +308,7 @@ let g:IsHistoryWinOpened = 0
 let g:UseGlobalOverCscope = 0
 let g:IgnoreGtags = 0 "value '1' to disable using gtags.
 let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+
 let g:WorkingInCurrDir = 0
 
 let g:gtagsCscopePath = system("which gtags-cscope")
@@ -614,10 +615,11 @@ endfunction
 
 
 function! CsAddTags(tags)
+    
+    silent! execute "cs kill -1"
 
     if filereadable(a:tags)
 
-        silent! execute "cs kill -1"
         silent! execute "normal :"
 
         if g:UseGlobalOverCscope == 0
@@ -628,7 +630,7 @@ function! CsAddTags(tags)
         endif
 
     else
-        echo "can not find cscope.out,f12 please"
+        execute "echoerr \"can not find cscope.out, f11 or f12 please\""
     endif
 
 endfunction
