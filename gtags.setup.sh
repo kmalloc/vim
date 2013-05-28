@@ -22,7 +22,13 @@ function list_files
 function set_link 
 {
     file=${1:?"please specify file to link"}
-    if [ ! -e "${GTAGSROOT}/${file}" ] && [ -e ${GTAGSDBPATH}/$file ];then
+
+    if [ -e "${GTAGSROOT}/${file}" ];then
+        rm ${GTAGSROOT}/${file};
+    fi
+    
+
+    if [ -e ${GTAGSDBPATH}/$file ];then
         ln -s ${HOME}/.vim/caches/$file ${GTAGSROOT}
     fi
 }
@@ -78,7 +84,8 @@ elif [ ${mode} == "env" ];then
 else 
 
     cd ${GTAGSROOT}
-    global -u  > /dev/null 2>&1 &
+
+    global -u > /dev/null 2>&1
 fi
 
 

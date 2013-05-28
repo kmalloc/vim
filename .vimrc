@@ -310,6 +310,7 @@ let g:IgnoreGtags = 0 "value '1' to disable using gtags.
 let g:mycodetags = $HOME."/.vim/caches/cscope.out"
 
 let g:WorkingInCurrDir = 0
+let g:mycoderoot=$HOME."/code/" 
 
 let g:gtagsCscopePath = system("which gtags-cscope")
 let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
@@ -580,6 +581,12 @@ function! SetupCscopeForCurFolder()
 endfunction
 
 function! SetupCurFolderData()
+    let l:cur = getcwd()
+
+    if (g:mycoderoot == l:cur)
+        return ''
+    endif
+
     call List_lookup_file_for_cur_folder()
     call SetupCscopeForCurFolder()
     let g:WorkingInCurrDir = 1
@@ -646,14 +653,14 @@ function! SetupCscope()
 
         set csprg=gtags-cscope
         let g:UseGlobalOverCscope = 1
-        let l:coderoot=$HOME."/code/" 
+        let g:mycoderoot=$HOME."/code/" 
 
         if $USER == "miliao"
-            let l:coderoot = l:coderoot."gui_tflex"
+            let g:mycoderoot = g:mycoderoot."gui_tflex"
         endif
 
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
-        silent! execute "cd ".l:coderoot  
+        silent! execute "cd ".g:mycoderoot  
         silent! execute "! ~/.vim/gtags.setup.sh env"
   
     elseif filereadable(g:CscopePath)
