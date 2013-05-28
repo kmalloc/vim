@@ -194,7 +194,7 @@ map md :call DelBookMark()<CR>
 
 
 
-map <C-c-t> :call OpenShellBuffer()<CR>
+"map <C-c-t> :call OpenShellBuffer()<CR>
 "------cscope key mapping.
 
 "find reference 
@@ -242,14 +242,14 @@ let Tlist_Use_Right_Window=1
 let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
 let g:LookupFile_PreserveLastPattern = 0 "do not preserve last search pattern.
 let g:LookupFile_PreservePatternHistory = 0 "preserve search history
-let g:LookupFile_AlwaysAcceptFirst = 1
+let g:LookupFile_AlwaysAcceptFirst = 0
 let g:LookupFile_AllowNewFiles=0
 let g:LookupFile_MinPatLength = 3
 let g:LookupFile_UsingSpecializedTags = 1 
 let g:LookupFile_ignorecase=1
 "make arrow work normally.
 let g:LookupFile_EscCancelsPopup = 0
-"let g:LookupFile_SearchForBufsInTabs = 1
+let g:LookupFile_SearchForBufsInTabs = 1
 let g:LookupFile_Bufs_LikeBufCmd = 0 
 
 
@@ -325,7 +325,7 @@ augroup AutoEventHandler
     autocmd BufWritePost */code/*.cpp,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
 
-    "note: this event will not trigger for those buffer that is displayed in
+    "note: this event will not trigger for those buffers that is displayed in
     "multiple windows.
     autocmd BufWinLeave * call CloseWin(expand("<afile>"))
 
@@ -825,6 +825,8 @@ function! CloseWin(buffer)
     "use <afile> instead.
     if a:buffer == g:MruBufferName
         call CloseHistoryBuffer()
+    elseif (strpart(a:buffer,0,6) == "bash-")
+        silent! execute "bw ".a:buffer
     endif
 
 endfunction
