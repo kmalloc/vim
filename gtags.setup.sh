@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 mode=${1:-"update"}
 GTAGSROOT="${HOME}/code"
@@ -40,6 +40,8 @@ function setup_tags
     out_dir=${2:?"please specify output directory"}
 
     cd ${root}
+
+    pgrep gtags|xargs kill -9
     list_files $root $out_dir
     gtags -f "${out_dir}/gtags.files" ${out_dir}
 }
@@ -84,7 +86,7 @@ elif [ ${mode} == "env" ];then
 else 
 
     cd ${GTAGSROOT}
-
+    pgrep gtags|xargs kill -9
     global -u > /dev/null 2>&1
 fi
 

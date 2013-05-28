@@ -297,26 +297,33 @@ let g:EchoFuncKeyNext='<M-n>'
 "gtags-cscope
 let g:GtagsCscope_Ignore_Case = 1
 let g:GtagsCscope_Absolute_Path = 1
+
 "----------------------global variable---------------------------
-let g:IsQuickfixOpen = 0
-let g:PerforceExisted = 0
-let g:MruBufferName = "__MRU_Files__"
-let g:TaglistName = "__Tag_List__"
-let g:IsHistoryWinOpened = 0
+let s:IsInitialized = 0 
 
-"using gtags by default if gtags has installed in folder: ~/tools/gtags 
-let g:UseGlobalOverCscope = 0
-let g:IgnoreGtags = 0 "value '1' to disable using gtags.
-let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+if (!s:IsInitialized)
 
-let g:WorkingInCurrDir = 0
-let g:mycoderoot=$HOME."/code/" 
+    let g:IsQuickfixOpen = 0
+    let g:PerforceExisted = 0
+    let g:MruBufferName = "__MRU_Files__"
+    let g:TaglistName = "__Tag_List__"
+    let g:IsHistoryWinOpened = 0
 
-let g:gtagsCscopePath = system("which gtags-cscope")
-let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
-let g:CscopePath = system("which cscope")
-let g:CscopePath = substitute(g:CscopePath,'\n$','','')
-"$HOME."/tools/gtags/bin/gtags-cscope"
+    "using gtags by default if gtags has installed in folder: ~/tools/gtags 
+    let g:UseGlobalOverCscope = 0
+    let g:IgnoreGtags = 0 "value '1' to disable using gtags.
+    let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+
+    let g:WorkingInCurrDir = 0
+    let g:mycoderoot=$HOME."/code/" 
+
+    let g:gtagsCscopePath = system("which gtags-cscope")
+    let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
+    let g:CscopePath = system("which cscope")
+    let g:CscopePath = substitute(g:CscopePath,'\n$','','')
+    "$HOME."/tools/gtags/bin/gtags-cscope"
+
+endif
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
@@ -342,8 +349,10 @@ augroup end
 
 function! SetupVim()
 
+    let s:IsInitialized = 1 
     silent! execute "call IsP4Exist()"
     silent! execute "call SetupCscope()"
+    redraw!
 
 endfunction
 
@@ -359,6 +368,10 @@ endfunction
 function! OnBufWrite(file)
 
     if (g:PerforceExisted == 0)
+        if( $USER == "miliao" )
+            echoerr "p4 command not available."
+        endif
+        
         return
     else
 
@@ -481,20 +494,20 @@ function! RefreshCscopeDataForGuiCode()
 
     if g:UseGlobalOverCscope == 0
 
-        let l:csFiles = $HOME."/.vim/caches/cscope.files"
+        let l:csFiles=$HOME."/.vim/caches/cscope.files"
 
         if filereadable(l:csFiles)
             let csfilesdeleted=delete(l:csFiles)
         endif
 
-        let l:csOut = $HOME."/.vim/caches/cscope.out"
+        let l:csOut=$HOME."/.vim/caches/cscope.out"
         if filereadable(l:csOut)
             delete(l:csOut)
         endif
 
     else
 
-        let l:csOut = $HOME."/.vim/caches/GTAGS"
+        let l:csOut=$HOME."/.vim/caches/GTAGS"
         delete(l:csOut)
 
     endif
