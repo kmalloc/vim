@@ -309,6 +309,8 @@ let g:UseGlobalOverCscope = 0
 let g:IgnoreGtags = 0 "value '1' to disable using gtags.
 let g:mycodetags = $HOME."/.vim/caches/cscope.out"
 
+let g:WorkingInCurrDir = 0
+
 let g:gtagsCscopePath = system("which gtags-cscope")
 let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
 let g:CscopePath = system("which cscope")
@@ -580,6 +582,7 @@ endfunction
 function! SetupCurFolderData()
     call List_lookup_file_for_cur_folder()
     call SetupCscopeForCurFolder()
+    let g:WorkingInCurrDir = 1
     redraw!
 endfunction
 
@@ -612,10 +615,11 @@ endfunction
 
 
 function! CsAddTags(tags)
+    
+    silent! execute "cs kill -1"
 
     if filereadable(a:tags)
 
-        silent! execute "cs kill -1"
         silent! execute "normal :"
 
         if g:UseGlobalOverCscope == 0
@@ -626,7 +630,7 @@ function! CsAddTags(tags)
         endif
 
     else
-        echo "can not find cscope.out,f12 please"
+        execute "echoerr \"can not find cscope.out, f11 or f12 please\""
     endif
 
 endfunction
@@ -669,26 +673,28 @@ endfunction
 
 function! ToggleGtags()
     
+    if g:WorkingInCurrDir == 0
+        let g:mycodetags = $HOME."/.vim/caches"
+    else
+        let g:mycodetags = "."
+    endif
 
     if g:UseGlobalOverCscope == 1 && filereadable(g:CscopePath)
         
         let g:UseGlobalOverCscope = 0
         set csprg=cscope 
-        let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+        let g:mycodetags = g:mycodetags."/cscope.out"
 
     elseif g:UseGlobalOverCscope == 0 && filereadable(g:gtagsCscopePath)
 
         set csprg=gtags-cscope
         let g:UseGlobalOverCscope = 1
-        let l:coderoot=$HOME."/code/" 
 
-        if $USER == "miliao"
-            let l:coderoot = l:coderoot."gui_tflex"
+        let g:mycodetags = g:mycodetags."/GTAGS"
+
+        if (g:WorkingInCurrDir != 1)
+            silent! execute "! ~/.vim/gtags.setup.sh env"
         endif
-
-        let g:mycodetags = $HOME."/.vim/caches/GTAGS"
-        silent! execute "cd ".l:coderoot  
-        silent! execute "! ~/.vim/gtags.setup.sh env"
 
      endif
 
