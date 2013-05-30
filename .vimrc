@@ -351,7 +351,13 @@ function! SetupVim()
 
     let s:IsInitialized = 1 
     silent! execute "call IsP4Exist()"
-    silent! execute "call SetupCscope()"
+
+    if filereadable("filenametags")
+        silent! execute "call SetupCurFolderData()"
+    else
+        silent! execute "call SetupCscope()"
+    endif
+
     redraw!
 
 endfunction
