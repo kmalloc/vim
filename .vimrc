@@ -124,7 +124,7 @@ map <M-m> :call ToggleToolsBar()<CR>
 "generate file names list
 "this will replace the previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
-map <F11> :call SetupCurFolderData()<CR>
+map <F11> :call SetupCurFolderData("scan")<CR>
 map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
 "List_lookup_file_for_cur_folder()<CR>
 map <F12> :call RefreshGuiCodeData()<CR> 
@@ -353,7 +353,7 @@ function! SetupVim()
     silent! execute "call IsP4Exist()"
 
     if filereadable("filenametags")
-        silent! execute "call SetupCurFolderData()"
+        silent! execute "call SetupCurFolderData(\"skip\")"
     else
         silent! execute "call SetupCscope()"
     endif
@@ -560,10 +560,11 @@ endfunction
 
 
 "setup files in current folder for LookupFiel, Cscope.
-function! List_lookup_file_for_cur_folder()
+function! List_lookup_file_for_cur_folder(mode)
 
     let txt="y"
-    if filereadable("filenametags")
+
+    if a:mode == 'scan' && filereadable("filenametags")
         let txt = input("filenametags existed,rebuild or not ?(y/n)") 
     endif
 
@@ -577,21 +578,26 @@ function! List_lookup_file_for_cur_folder()
 endfunction
 
 
-function! SetupCscopeForCurFolder()
+function! SetupCscopeForCurFolder(mode)
 
     if !has("cscope")
         return
     endif
 
     let l:tags = "cscope.out"
-    if g:UseGlobalOverCscope == 0
 
-        silent! execute "!~/.vim/list.cscope.files.sh cur"
+    if a:mode == "scan"
 
-    else
+        if g:UseGlobalOverCscope == 0
 
-        let l:tags = "GTAGS"
-        silent! execute "! ~/.vim/gtags.setup.sh cur &"
+            silent! execute "!~/.vim/list.cscope.files.sh cur"
+
+        else
+
+            let l:tags = "GTAGS"
+            silent! execute "! ~/.vim/gtags.setup.sh cur &"
+
+        endif
 
     endif
 
@@ -599,17 +605,19 @@ function! SetupCscopeForCurFolder()
 
 endfunction
 
-function! SetupCurFolderData()
+function! SetupCurFolderData(mode)
+
     let l:cur = getcwd()
 
-    if (g:mycoderoot == l:cur)
+    if (a:mode == "scan" && g:mycoderoot == l:cur)
         return ''
     endif
 
-    call List_lookup_file_for_cur_folder()
-    call SetupCscopeForCurFolder()
+    call List_lookup_file_for_cur_folder(a:mode)
+    call SetupCscopeForCurFolder(a:mode)
     let g:WorkingInCurrDir = 1
     redraw!
+
 endfunction
 
 function! FindReference()
@@ -679,7 +687,7 @@ function! SetupCscope()
         endif
 
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
-        silent! execute "cd ".g:mycoderoot  
+        "silent! execute "cd ".g:mycoderoot  
         silent! execute "! ~/.vim/gtags.setup.sh env"
   
     elseif filereadable(g:CscopePath)
