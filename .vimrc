@@ -125,6 +125,7 @@ map <M-m> :call ToggleToolsBar()<CR>
 "this will replace the previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
 map <F11> :call SetupCurFolderData("scan")<CR>
+map <F11><F11> :call SwitchToCodeBase()<CR>
 map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
 "List_lookup_file_for_cur_folder()<CR>
 map <F12> :call RefreshGuiCodeData()<CR> 
@@ -311,7 +312,7 @@ if (!s:IsInitialized)
 
     "using gtags by default if gtags has installed in folder: ~/tools/gtags 
     let g:UseGlobalOverCscope = 0
-    let g:IgnoreGtags = 0 "value '1' to disable using gtags.
+    let g:IgnoreGtags = 1 "value '1' to disable using gtags.
     let g:mycodetags = $HOME."/.vim/caches/cscope.out"
 
     let g:WorkingInCurrDir = 0
@@ -330,7 +331,7 @@ augroup AutoEventHandler
     autocmd!
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx,*.vimrc call OnBufEnter()
     autocmd BufWinEnter * call OnBufferWinEnter()
-    autocmd BufWritePost */code/gui_tflex/*.cpp,*/code/gui_tflex/*.cc,*/code/gui_tflex/*.c,*/code/gui_tflex/*.cxx,*/code/gui_tflex/*.h,*/code/gui_tflex/*.hpp,*/code/gui_tflex/*.sh,*/code/gui_tflex/*.mk call OnBufWrite(expand("<afile>"))
+    autocmd BufWritePost */code/gui_tflex/*.cpp,*/code/gui_tflex/*.cc,*/code/gui_tflex/*.c,*/code/gui_tflex/*.cxx,*/code/gui_tflex/*.h,*/code/gui_tflex/*.hpp,*/code/gui_tflex/*.sh,*/code/gui_tflex/*.pl,*/code/gui_tflex/*.mk call OnBufWrite(expand("<afile>"))
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
@@ -430,9 +431,13 @@ function! OnTabEnter()
 endfunction
 
 function! UpdateGtags()
-    silent! execute "! ~/.vim/gtags.setup.sh update &"
-    call CsAddTags(g:mycodetags) 
-    redraw!
+
+    if(g:UseGlobalOverCscope)
+        silent! execute "! ~/.vim/gtags.setup.sh update &"
+        call CsAddTags(g:mycodetags) 
+        redraw!
+    endif
+
 endfunction
 
 "----------------end autocmd handler------------------
@@ -448,6 +453,7 @@ endfunction
 
 function! IsP4Exist()
     let g:PerforceExisted = IsShellCmdExist("p4") 
+    redraw!
 endfunction
 
 function! P4CheckOut(file)
@@ -618,6 +624,22 @@ function! SetupCurFolderData(mode)
     let g:WorkingInCurrDir = 1
     redraw!
 
+endfunction
+
+
+function! SwitchToCodeBase()
+
+    let g:WorkingInCurrDir = 0
+    let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
+    
+    if (g:UseGlobalOverCscope)
+        let g:mycodetags = $HOME."/.vim/caches/GTAGS"
+    else
+        let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+    endif
+
+    call CsAddTags(g:mycodetags)
+    
 endfunction
 
 function! FindReference()
