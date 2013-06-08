@@ -5,6 +5,8 @@
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 
 
+set term=$TERM
+set nocompatible
 
 set textwidth=0
 let mapleader=","
@@ -17,7 +19,6 @@ set ignorecase
 set incsearch
 
 "document
-set nocompatible
 set nobackup
 set autoread
 set encoding=utf-8
@@ -65,7 +66,6 @@ set cindent
 set smartindent
 set autoindent
 set ruler
-set nocp
 set showmatch
 set expandtab "replace tab with space, always.
 set tabstop=4
@@ -675,8 +675,6 @@ function! CsAddTags(tags)
     silent! execute "cs kill -1"
 
     if filereadable(a:tags)
-
-        silent! execute "normal :"
 
         if g:UseGlobalOverCscope == 0
             silent! execute "cs add ".a:tags
