@@ -676,8 +676,6 @@ function! CsAddTags(tags)
 
     if filereadable(a:tags)
 
-        silent! execute "normal :"
-
         if g:UseGlobalOverCscope == 0
             silent! execute "cs add ".a:tags
         else
