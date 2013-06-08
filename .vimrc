@@ -5,6 +5,8 @@
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 
 
+set term=$TERM
+set nocompatible
 
 set nocompatible
 set term=$TERM
