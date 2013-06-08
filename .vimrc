@@ -6,6 +6,9 @@
 
 
 
+set nocompatible
+set term=$TERM
+
 set textwidth=0
 let mapleader=","
 set number
@@ -17,7 +20,6 @@ set ignorecase
 set incsearch
 
 "document
-set nocompatible
 set nobackup
 set autoread
 set encoding=utf-8
@@ -65,7 +67,6 @@ set cindent
 set smartindent
 set autoindent
 set ruler
-set nocp
 set showmatch
 set expandtab "replace tab with space, always.
 set tabstop=4
