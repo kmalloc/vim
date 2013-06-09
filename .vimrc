@@ -134,6 +134,7 @@ map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
 map <F12> :call RefreshGuiCodeData()<CR> 
 "RefreshCscopeDataForGuiCode()<CR>
 map <F8>  :call ToggleGtags()<CR>
+map <F5>  :call ShowTerminal()<CR>
 
 
 "tab key mapping
@@ -255,6 +256,7 @@ let g:LookupFile_ignorecase=1
 let g:LookupFile_EscCancelsPopup = 0
 let g:LookupFile_SearchForBufsInTabs = 1
 let g:LookupFile_Bufs_LikeBufCmd = 0 
+let g:LookupFile_DisableDefaultMap = 1 "I prefer f5 to open terminal window.
 
 
 "autocomplete setting.
@@ -313,6 +315,8 @@ if (!s:IsInitialized)
     let g:TaglistName = "__Tag_List__"
     let g:IsHistoryWinOpened = 0
 
+    let g:TerminalName = "bash - "
+
     "using gtags by default if gtags has installed in folder: ~/tools/gtags 
     let g:UseGlobalOverCscope = 0
     let g:IgnoreGtags = 1 "value '1' to disable using gtags.
@@ -332,7 +336,7 @@ endif
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
     autocmd!
-    autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx,*.vimrc call OnBufEnter()
+    autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call OnBufEnter(expand("<afile>"))
     autocmd BufWinEnter * call OnBufferWinEnter()
     autocmd BufWritePost */code/gui_tflex/*.cpp,*/code/gui_tflex/*.cc,*/code/gui_tflex/*.c,*/code/gui_tflex/*.cxx,*/code/gui_tflex/*.h,*/code/gui_tflex/*.hpp,*/code/gui_tflex/*.sh,*/code/gui_tflex/*.pl,*/code/gui_tflex/*.mk call OnBufWrite(expand("<afile>"))
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
@@ -393,11 +397,26 @@ function! OnBufWrite(file)
 endfunction
 
 
-function! OnBufEnter()
+function! ShouldSuppressTlist(file)
 
-    if bufwinnr(g:TaglistName) == -1 && &diff == 0
+    if &diff 
+        return 1
+    else
+        if match(a:file, g:TerminalName) > -1
+            retur 1
+        endif
+    endif
+
+    return 0
+
+endfunction
+
+function! OnBufEnter(file)
+
+    let l:skip = ShouldSuppressTlist(a:file)
+
+    if bufwinnr(g:TaglistName) == -1 && l:skip == 0
         let l:win = winnr()
-        silent! execute "normal:"
         silent! execute "TlistOpen"
         silent! execute l:win."wincmd w"
     endif
@@ -888,8 +907,8 @@ function! CloseWin(buffer)
     "use <afile> instead.
     if a:buffer == g:MruBufferName
         call CloseHistoryBuffer()
-    elseif (strpart(a:buffer,0,6) == "bash-")
-        silent! execute "bw ".a:buffer
+    elseif match(a:buffer, g:TerminalName) > -1
+        silent! execute "bw! ".g:TerminalName
     endif
 
 endfunction
@@ -929,3 +948,37 @@ function! OpenShellBuffer()
 endfunction
 
 
+function! ShowTerminal()
+   
+    let l:buf = FindBufferWithName("bash - ")
+
+    if l:buf > 0
+        silent execute "vsplit"
+        silent execute "buffer ".l:buf
+    else
+        silent! execute "ConqueTermVSplit bash"
+    endif
+
+    silent! execute "TlistClose"
+
+endfunction
+
+"find the first buffer with the name specified in parameter "name"
+"regular expression is supported in "name"
+function! FindBufferWithName(name)
+    let l:bufcount = bufnr("$")
+    let l:currbufnr = 1
+
+    while currbufnr <= bufcount
+        if (bufexists(currbufnr))
+            let l:currbufname = bufname(currbufnr)
+            if (match(l:currbufname, a:name) > -1)
+                return currbufnr
+            endif
+        endif
+
+        let l:currbufnr = l:currbufnr + 1
+    endwhile
+
+    return 0
+endfunction
