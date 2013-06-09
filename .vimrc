@@ -950,7 +950,14 @@ endfunction
 
 function! ShowTerminal()
    
-    let l:buf = FindBufferWithName("bash - ")
+    let l:win = bufwinnr(g:TerminalName)
+    if (l:win != -1)
+        silent! execute l:win."wincmd w"
+        silent! execute "q"
+        return 
+    endif
+
+    let l:buf = FindBufferWithName(g:TerminalName)
 
     if l:buf > 0
         silent execute "vsplit"
@@ -982,3 +989,4 @@ function! FindBufferWithName(name)
 
     return 0
 endfunction
+
