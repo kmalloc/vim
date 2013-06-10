@@ -342,6 +342,8 @@ augroup AutoEventHandler
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
+    autocmd WinEnter * call OnWinEnter(expand("<afile>"))
+    autocmd BufEnter * call HandleAcp(expand("<afile>"))
 
     "note: this event will not trigger for those buffers that is displayed in
     "multiple windows.
@@ -404,6 +406,8 @@ function! ShouldSuppressTlist(file)
     else
         if match(a:file, g:TerminalName) > -1
             retur 1
+        elseif bufwinnr(g:TerminalName) != -1
+            return 1
         endif
     endif
 
@@ -421,6 +425,20 @@ function! OnBufEnter(file)
         silent! execute l:win."wincmd w"
     endif
 
+endfunction
+
+
+function! HandleAcp(file)
+    if match(a:file,g:TerminalName) > -1
+        silent! execute "AcpDisable"
+    else
+        silent! execute "AcpEnable"
+    endif
+endfunction
+
+
+function! OnWinEnter(file)
+    call HandleAcp(a:file)
 endfunction
 
 
