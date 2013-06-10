@@ -14,7 +14,9 @@ elif [ "${mode}" == "cur" ];then
     outLoc="${searchLoc}/cscope.files"
 fi
 
-rm ${outLoc} 
+if [ -e $outLoc ];then
+    rm ${outLoc} 
+fi
 
 find ${searchLoc} -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.cc' -o -name '*.hpp' -o -name '*.pl' -o -name '*.pm' > ${outLoc}
 

@@ -636,7 +636,7 @@ function! SetupCscopeForCurFolder(mode)
 
         if g:UseGlobalOverCscope == 0
 
-            silent! execute "!~/.vim/list.cscope.files.sh cur"
+            silent! execute "! ~/.vim/list.cscope.files.sh cur"
 
         else
 
