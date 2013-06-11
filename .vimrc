@@ -431,16 +431,22 @@ endfunction
 function! HandleAcp(file)
     if match(a:file,g:TerminalName) > -1
         silent! execute "AcpDisable"
+        return 1
     else
         silent! execute "AcpEnable"
+        return 0
     endif
 endfunction
 
 
 function! OnWinEnter(file)
-    call HandleAcp(a:file)
+    let l:ret = HandleAcp(a:file)
+    if l:ret
+        silent! execute "startinsert"
+    else
+        silent! execute "stopinsert"
+    endif
 endfunction
-
 
 function! OnBufferWinEnter()
 
