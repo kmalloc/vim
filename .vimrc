@@ -690,9 +690,8 @@ function! FindReference()
 
     echo "...searching..."
 
-    "silent! execute "tabedit"
     silent! execute "cs find e ".txt
-    "call ToggleQuickfix()
+    silent! call OpenCscopeSearchList()
 endfunction
 
 
