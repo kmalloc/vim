@@ -723,6 +723,8 @@ function! CsAddTags(tags)
             "silent! execute "cs add ".a:tags." -Ca"
         endif
 
+        set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
+
     else
         execute "echoerr \"can not find cscope.out, f11 or f12 please\""
     endif
@@ -759,7 +761,6 @@ function! SetupCscope()
     endif
 
     call CsAddTags(g:mycodetags)
-    set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
     redraw!
 
 endfunction
