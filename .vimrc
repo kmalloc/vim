@@ -198,8 +198,6 @@ map mc :call OpenBookMark()<CR>
 map md :call DelBookMark()<CR>
 
 
-
-"map <C-c-t> :call OpenShellBuffer()<CR>
 "------cscope key mapping.
 
 "find reference 
@@ -964,14 +962,6 @@ function! EditMyVimrc()
 endfunction
 
 
-function! OpenShellBuffer()
-    
-    silent! execute "TlistClose"
-    silent! execute "ConqueTermVSplit bash"
-
-endfunction
-
-
 function! ShowTerminal()
    
     let l:win = bufwinnr(g:TerminalName)
@@ -984,10 +974,10 @@ function! ShowTerminal()
     let l:buf = FindBufferWithName(g:TerminalName)
 
     if l:buf > 0
-        silent execute "vsplit"
         silent execute "buffer ".l:buf
     else
-        silent! execute "ConqueTermVSplit bash"
+        silent! execute "ConqueTermTab bash"
+        "ConqueTermVSplit
     endif
 
     silent! execute "TlistClose"
