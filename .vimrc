@@ -935,11 +935,10 @@ function! CloseWin(buffer)
 
 endfunction
 
-function! EditMyVimrc()
+function! IsNullTab()
 
     let l:buflist = tabpagebuflist() "[]
     let l:len = len(l:buflist)
-    let l:new = 0
     if len(l:buflist) > 1 
         let l:new = 1
     elseif l:len == 1
@@ -953,7 +952,15 @@ function! EditMyVimrc()
         let l:new = 0
     endif
 
-    if l:new == 1
+    return l:new == 0
+
+endfunction
+
+function! EditMyVimrc()
+
+    let l:new = IsNullTab()
+    
+    if !l:new
         execute "tabedit $MYVIMRC"
     else
         execute "edit $MYVIMRC"
@@ -976,7 +983,12 @@ function! ShowTerminal()
     if l:buf > 0
         silent execute "buffer ".l:buf
     else
-        silent! execute "ConqueTermTab bash"
+        let l:null = IsNullTab()
+        if l:null
+            silent! execute "ConqueTerm bash"
+        else
+            silent! execute "ConqueTermTab bash"
+        endif
         "ConqueTermVSplit
     endif
 
