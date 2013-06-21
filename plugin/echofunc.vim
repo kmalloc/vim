@@ -352,6 +352,7 @@ function! EchoFuncN()
             call PrepareResults()
 
             if s:res==[]
+                silent! execute "stopinsert"
                 return ''
             endif
         else
@@ -378,6 +379,7 @@ function! EchoFuncP()
             call PrepareResults()
 
             if s:res==[]
+                silent! execute "stopinsert"
                 return ''
             endif
         else
