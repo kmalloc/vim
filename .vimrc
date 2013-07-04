@@ -314,6 +314,7 @@ if (!s:IsInitialized)
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
     let g:IsHistoryWinOpened = 0
+    let g:AutoOpenTlist = 1
 
     let g:TerminalName = "bash - "
 
@@ -400,6 +401,10 @@ endfunction
 
 
 function! ShouldSuppressTlist(file)
+
+    if g:AutoOpenTlist == 0
+        return 1
+    endif
 
     if &diff 
         return 1
