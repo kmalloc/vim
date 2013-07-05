@@ -314,9 +314,11 @@ if (!s:IsInitialized)
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
     let g:IsHistoryWinOpened = 0
-    let g:AutoOpenTlist = 1
+    let g:AutoOpenTlist = 0
 
     let g:TerminalName = "bash - "
+
+    let g:files_checkout = {} "files that have been checkout by p4
 
     "using gtags by default if gtags has installed in folder: ~/tools/gtags 
     let g:UseGlobalOverCscope = 0
@@ -384,6 +386,12 @@ endfunction
 
 function! OnBufWrite(file)
 
+    let l:nr = bufnr('%')
+    if exists("g:files_checkout[l:nr]") && g:files_checkout[l:nr] == 1
+        return
+    endif
+
+    let l:ret = 0
     if (g:PerforceExisted == 0)
         if( $USER == "miliao" )
             echoerr "p4 command not available."
@@ -391,12 +399,13 @@ function! OnBufWrite(file)
         
         return
     else
-
-        call P4CheckOut(a:file)
-
+        let l:ret = P4CheckOut(a:file)
     endif
 
-    "silent! execute("! cp ".a:file." change.cc")
+    if (l:ret == 1)
+        let g:files_checkout[l:nr] = 1
+    endif
+
 endfunction
 
 
@@ -509,17 +518,14 @@ endfunction
 
 function! P4CheckOut(file)
 
-    if( filewritable(a:file) == 0)
+    silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
 
-        silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
-
-        if v:shell_error
-            echo "p4 edit error,please check if you are log in"
-        endif
-
-    else
-        silent! echom "file writable"
+    if v:shell_error
+        echo "p4 edit error,please check if you are log in"
+        return 0
     endif
+
+    return 1
 
 endfunction
 
