@@ -1,8 +1,4 @@
 " Vim color file
-" Maintainer:	allanhuang<allanhuang@tencent.com>
-" Last Change:	$Date: 2012/08/07 $
-" URL:		
-" Version:	
 
 set background=dark
 let g:colors_name="allan"
@@ -106,7 +102,9 @@ hi Error	cterm=bold ctermfg=7 ctermbg=1
 "空行符
 hi NonText ctermfg=24
 "hi StatusLine ctermbg=darkred  ctermfg=lightgreen
-hi Pmenu ctermbg=24 ctermfg=gray
+"hi Pmenu ctermbg=24 ctermfg=gray
+highlight Pmenu guibg=darkblue ctermbg=blue
+highlight PmenuSel guibg=brown ctermbg=darkgreen
 
 hi MoreMsg ctermbg=red ctermfg=red
 hi SpecialKey ctermbg=red ctermfg=red
