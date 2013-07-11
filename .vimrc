@@ -98,7 +98,8 @@ if (has("gui_running"))
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 else
-    colorscheme torte
+    "colorscheme torte
+    colorscheme allan
 endif
 
 "pacific
@@ -114,8 +115,6 @@ highlight PmenuSel guibg=brown ctermbg=darkgreen
 
 
 "-------------key mapping-------------------------------
-"a better way to replace esc
-"noremap ;; <ESC>
 
 "edit my vimrc
 map <leader>ev :call EditMyVimrc()<CR>
