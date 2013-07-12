@@ -5,9 +5,6 @@
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 
 
-set term=$TERM
-set nocompatible
-
 set nocompatible
 set term=$TERM
 
@@ -39,7 +36,7 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start
 
-set timeout timeoutlen=350 ttimeoutlen=100
+"set timeout timeoutlen=350 ttimeoutlen=100
 
 "enable alt key in terminal
 "set <M-key>=<Esc>key
@@ -54,7 +51,6 @@ if(!has("gui_running"))
     exe "set <M-u>=\<ESC>u"
     exe "set <M-n>=\<ESC>n"
     exe "set <M-p>=\<ESC>p"
-    exe "set <M-c>=\<ESC>c"
 endif
 
 let cpptags=$HOME."/.vim/cpp.tags/tags"
