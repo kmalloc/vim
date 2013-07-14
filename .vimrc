@@ -5,9 +5,6 @@
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 
 
-set term=$TERM
-set nocompatible
-
 set nocompatible
 set term=$TERM
 
@@ -39,7 +36,7 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start
 
-set timeout timeoutlen=350 ttimeoutlen=100
+"set timeout timeoutlen=350 ttimeoutlen=100
 
 "enable alt key in terminal
 "set <M-key>=<Esc>key
@@ -54,7 +51,6 @@ if(!has("gui_running"))
     exe "set <M-u>=\<ESC>u"
     exe "set <M-n>=\<ESC>n"
     exe "set <M-p>=\<ESC>p"
-    exe "set <M-c>=\<ESC>c"
 endif
 
 let cpptags=$HOME."/.vim/cpp.tags/tags"
@@ -98,8 +94,8 @@ if (has("gui_running"))
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 else
-    "colorscheme torte
-    colorscheme allan
+    colorscheme torte
+    "colorscheme allan
 endif
 
 "pacific
@@ -151,7 +147,7 @@ map <C-j> :tabp<CR>
 map <C-k> :tabn<CR>
 
 map <M-o> :tabnew %<CR> :A<CR>
-map <C-h> :A<CR>
+map <C-h> :A<CR><CR>
 
 map <F2>  :call ToggleHistoryWin()<CR>
 "map <F3>  :AS<CR>
@@ -185,15 +181,12 @@ map <F7> :call FindReference()<CR>
 map <leader>co   :!p4 edit %<CR>
 map <leader>add  :!p4 add %<CR>
 
-
 map <leader>sstf :mksession! ~/session/tflex<CR>
 map <leader>ss :mksession! ~/session/<CR>
 map <leader>sotf :so ~/session/tflex<CR>
 map <leader>sos :so ~/session/<CR>
 
-
 "bookmark setting
-
 map mm :call BookMarkHere()<CR>
 map mc :call OpenBookMark()<CR>
 map md :call DelBookMark()<CR>
@@ -225,10 +218,7 @@ map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
 "map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
 
 
-
 "------------------------plugin setting--------------------------------------
-
-
 
 "taglist.vim setting
 let Tlist_Show_One_File=1
@@ -341,6 +331,7 @@ augroup AutoEventHandler
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call OnBufEnter(expand("<afile>"))
     autocmd BufWinEnter * call OnBufferWinEnter()
     autocmd BufWritePost */code/gui_tflex/*.cpp,*/code/gui_tflex/*.cc,*/code/gui_tflex/*.c,*/code/gui_tflex/*.cxx,*/code/gui_tflex/*.h,*/code/gui_tflex/*.hpp,*/code/gui_tflex/*.sh,*/code/gui_tflex/*.pl,*/code/gui_tflex/*.mk call OnBufWrite(expand("<afile>"))
+
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
