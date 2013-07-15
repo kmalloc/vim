@@ -36,7 +36,7 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start
 
-"set timeout timeoutlen=350 ttimeoutlen=100
+set timeout timeoutlen=300 ttimeoutlen=100
 
 "enable alt key in terminal
 "set <M-key>=<Esc>key
