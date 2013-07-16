@@ -395,7 +395,7 @@ function! OnBufWrite(file)
         
         return
     else
-        let l:ret = P4CheckOut(a:file)
+        let l:ret = P4CheckOut(expand("%:p"))
     endif
 
     if (l:ret == 1)
@@ -512,9 +512,46 @@ function! IsP4Exist()
     redraw!
 endfunction
 
+
+function! NormalizePath(file)
+
+    let l:id = stridx(a:file, "..")
+    if l:id == -1
+        return a:file
+    endif
+
+    let l:left = l:id + 2
+
+    while l:id > 0 && a:file[l:id] != '/'
+        let l:id = l:id - 1
+    endwhile
+
+    if l:id > 0
+        let l:id = l:id - 1
+    endif
+
+    while l:id >= 0 && a:file[l:id] != '/'
+        let l:id = l:id - 1
+    endwhile
+
+    if l:id < 0
+        return a:file
+    endif
+
+    let l:pre = strpart(a:file, 0, l:id)
+    let l:pos = strpart(a:file, l:left)
+
+    let l:path = l:pre.l:pos
+
+    return l:path
+
+endfunction
+
 function! P4CheckOut(file)
 
-    silent! execute("! p4 edit ".a:file." > /dev/null 2>&1")
+    let l:path = NormalizePath(a:file)
+
+    silent! execute("! p4 edit ".l:path." > /dev/null 2>&1")
 
     if v:shell_error
         echo "p4 edit error,please check if you are log in"
