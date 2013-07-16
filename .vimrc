@@ -147,7 +147,7 @@ map <C-j> :tabp<CR>
 map <C-k> :tabn<CR>
 
 map <M-o> :tabnew %<CR> :A<CR>
-map <C-h> :A<CR>
+map <C-h> :A<CR><CR>
 
 map <F2>  :call ToggleHistoryWin()<CR>
 "map <F3>  :AS<CR>
@@ -181,15 +181,12 @@ map <F7> :call FindReference()<CR>
 map <leader>co   :!p4 edit %<CR>
 map <leader>add  :!p4 add %<CR>
 
-
 map <leader>sstf :mksession! ~/session/tflex<CR>
 map <leader>ss :mksession! ~/session/<CR>
 map <leader>sotf :so ~/session/tflex<CR>
 map <leader>sos :so ~/session/<CR>
 
-
 "bookmark setting
-
 map mm :call BookMarkHere()<CR>
 map mc :call OpenBookMark()<CR>
 map md :call DelBookMark()<CR>
@@ -221,10 +218,7 @@ map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
 "map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
 
 
-
 "------------------------plugin setting--------------------------------------
-
-
 
 "taglist.vim setting
 let Tlist_Show_One_File=1
