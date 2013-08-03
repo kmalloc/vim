@@ -378,7 +378,7 @@ endfunction
 function! OnBufWrite(file)
 
     let l:nr = bufnr('%')
-    if exists("g:files_checkout[l:nr]") && g:files_checkout[l:nr] == 1
+    if exists("g:files_checkout[l:nr]") && filewritable(l:nr) && g:files_checkout[l:nr] == 1
         return
     endif
 
