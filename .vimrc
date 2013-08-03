@@ -24,6 +24,7 @@ set autoread
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
+set path+=~/code/*
 
 set foldenable
 set foldmethod=manual
@@ -36,7 +37,7 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start
 
-set timeout timeoutlen=300 ttimeoutlen=100
+set timeout timeoutlen=250 ttimeoutlen=100
 
 "enable alt key in terminal
 "set <M-key>=<Esc>key
