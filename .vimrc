@@ -24,6 +24,9 @@ set autoread
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
+"set colorcolumn=90 "make column 90th visible
+set list "visible last column of each line
+set spell spelllang=en_us
 
 set foldenable
 set foldmethod=manual
