@@ -1,16 +1,14 @@
 "author               : miliao.
 "vim version required : vim 7.0 and above.
-"other requirment     : compile vim with option: --enable-cscope.
+"other requirment     : compile vim with option: --enable-cscope, --enable-pythoninterp, --with-features=huge
 "plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
 "                       echofunc,bufExplorer,vimExplorer,MRU.
-
 
 set nocompatible
 set term=$TERM
 
 set textwidth=0
 let mapleader=","
-set number
 
 "search 
 set hlsearch
@@ -19,6 +17,7 @@ set ignorecase
 set incsearch
 
 "document
+set number
 set nobackup
 set autoread
 set encoding=utf-8
@@ -106,7 +105,7 @@ endif
 "molokai
 "torte
 
-set completeopt-=preview "remove preview window for autocompletio
+set completeopt-=preview "remove preview window for autocompletion
 "set statusline+=%{EchoFuncGetStatusLine()}
 
 "context menu
@@ -196,7 +195,7 @@ map mc :call OpenBookMark()<CR>
 map md :call DelBookMark()<CR>
 
 
-"------cscope key mapping.
+"------cscope key mapping------------------------------------------
 
 "find reference 
 map <leader>fr :call CscopeFind(expand("<cword>"),"s")<CR>
@@ -375,7 +374,7 @@ endfunction
 
 function! AutoOpenTaglistOnVimStartup()
 
-    if &diff == 0
+    if &diff == 0 " if not in diff mode
         TlistOpen
     endif
 
@@ -474,7 +473,6 @@ endfunction
 
 
 function! OnTabEnter()
-
 
     if g:IsQuickfixOpen == 1
         let l:win = winnr()
