@@ -3,6 +3,7 @@
 "other requirment     : compile vim with option: --enable-cscope, --enable-pythoninterp, --with-features=huge
 "plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
 "                       echofunc,bufExplorer,vimExplorer,MRU.
+"others               : some shell scripts are put in .vim/
 
 set nocompatible
 set term=$TERM
@@ -150,7 +151,9 @@ map <C-j> :tabp<CR>
 map <C-k> :tabn<CR>
 
 map <M-o> :tabnew %<CR> :A<CR>
-map <C-h> :A<CR><CR>
+
+"toggle header/cpp file
+map <C-h> :A<CR>
 
 map <F2>  :call ToggleHistoryWin()<CR>
 "map <F3>  :AS<CR>
@@ -375,7 +378,9 @@ endfunction
 function! AutoOpenTaglistOnVimStartup()
 
     if &diff == 0 " if not in diff mode
+        let l:win = winnr()
         TlistOpen
+        silent! execute l:win."wincmd w"
     endif
 
 endfunction
