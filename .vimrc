@@ -1,16 +1,14 @@
 "author               : miliao.
 "vim version required : vim 7.0 and above.
-"other requirment     : compile vim with option: --enable-cscope.
+"other requirment     : compile vim with option: --enable-cscope, --enable-pythoninterp, --with-features=huge
 "plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
 "                       echofunc,bufExplorer,vimExplorer,MRU.
-
 
 set nocompatible
 set term=$TERM
 
 set textwidth=0
 let mapleader=","
-set number
 
 "search 
 set hlsearch
@@ -19,14 +17,16 @@ set ignorecase
 set incsearch
 
 "document
+set number
 set nobackup
 set autoread
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
+set path+=~/code/*
 "set colorcolumn=90 "make column 90th visible
-set list "visible last column of each line
-set spell spelllang=en_us
+"set list "visible last column of each line
+"set spell spelllang=en_us
 
 set foldenable
 set foldmethod=manual
@@ -39,7 +39,7 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start
 
-set timeout timeoutlen=300 ttimeoutlen=100
+set timeout timeoutlen=250 ttimeoutlen=100
 
 "enable alt key in terminal
 "set <M-key>=<Esc>key
@@ -105,7 +105,7 @@ endif
 "molokai
 "torte
 
-set completeopt-=preview "remove preview window for autocompletio
+set completeopt-=preview "remove preview window for autocompletion
 "set statusline+=%{EchoFuncGetStatusLine()}
 
 "context menu
@@ -195,7 +195,7 @@ map mc :call OpenBookMark()<CR>
 map md :call DelBookMark()<CR>
 
 
-"------cscope key mapping.
+"------cscope key mapping------------------------------------------
 
 "find reference 
 map <leader>fr :call CscopeFind(expand("<cword>"),"s")<CR>
@@ -302,7 +302,11 @@ let s:IsInitialized = 0
 if (!s:IsInitialized)
 
     let g:IsQuickfixOpen = 0
-    let g:PerforceExisted = 0
+
+    if !exists("g:PerforceExisted")
+        let g:PerforceExisted = 0
+    endif
+
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
     let g:IsHistoryWinOpened = 0
@@ -370,7 +374,7 @@ endfunction
 
 function! AutoOpenTaglistOnVimStartup()
 
-    if &diff == 0
+    if &diff == 0 " if not in diff mode
         TlistOpen
     endif
 
@@ -469,7 +473,6 @@ endfunction
 
 
 function! OnTabEnter()
-
 
     if g:IsQuickfixOpen == 1
         let l:win = winnr()

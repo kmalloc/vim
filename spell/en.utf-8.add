@@ -1,8 +1,33 @@
 autocompletio
 colorcolumn
 Esc
+<<<<<<< HEAD
 localhost
 miliao
 pwd
 vim
 cd
+=======
+taglist
+F3
+cscope
+p4
+TlistClose
+ConqueTermVSplit
+ConqueTermTab
+ConqueTerm
+miliao
+vim
+requirment
+plugin
+LookupFile
+TagList
+autocomplete
+acp
+echofunc
+bufExplorer
+vimExplorer
+MRU
+nohlsearch
+gvim
+>>>>>>> e01e0130d28f6ce2d369f7eff06bff460e89b379
