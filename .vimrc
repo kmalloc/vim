@@ -911,6 +911,8 @@ function! ToggleQuickfix()
         let g:IsQuickfixOpen = 0 
     endif
 
+    silent! execute "redraw!"
+
 endfunction
 
 
