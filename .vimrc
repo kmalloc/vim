@@ -6,7 +6,6 @@
 "others               : some shell scripts are put in .vim/
 
 set nocompatible
-set term=$TERM
 
 set textwidth=0
 let mapleader=","
@@ -84,7 +83,6 @@ set hidden
 filetype plugin on
 filetype indent on
 
-
 "appearance
 syntax on
 set t_Co=256
@@ -93,15 +91,18 @@ set guifont=Courier\ 10\ Pitch\ 16
 
 if (has("gui_running"))
     set background=dark
-    colorscheme  solarized "deveiate 
+    colorscheme DimGreen 
 
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 else
+    set term=$TERM
     colorscheme torte
     "colorscheme allan
 endif
 
+"solarized
+"allan deviate
 "pacific
 "molokai
 "torte
@@ -242,7 +243,7 @@ let Tlist_Use_Right_Window=1
 let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
 let g:LookupFile_PreserveLastPattern = 0 "do not preserve last search pattern.
 let g:LookupFile_PreservePatternHistory = 0 "preserve search history
-let g:LookupFile_AlwaysAcceptFirst = 1
+let g:LookupFile_AlwaysAcceptFirst = 0
 let g:LookupFile_AllowNewFiles=0
 let g:LookupFile_MinPatLength = 3
 let g:LookupFile_UsingSpecializedTags = 1 
