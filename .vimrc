@@ -7,6 +7,11 @@
 
 set nocompatible
 
+"must set term before setting alt key binding.
+if (!has("gui_running"))
+    set term=$TERM
+endif
+
 set textwidth=0
 let mapleader=","
 
@@ -86,17 +91,16 @@ filetype indent on
 "appearance
 syntax on
 set t_Co=256
-set guifont=Courier\ 10\ Pitch\ 16
 "set background=light
 
 if (has("gui_running"))
     set background=dark
     colorscheme DimGreen 
 
+    set guifont=MiscFixed\ 16
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 else
-    set term=$TERM
     colorscheme torte
     "colorscheme allan
 endif
