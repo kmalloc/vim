@@ -5,6 +5,7 @@
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 "others               : some shell scripts are put in .vim/
 
+"test 2
 "test 1
 set nocompatible
 set term=$TERM
