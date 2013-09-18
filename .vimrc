@@ -97,7 +97,7 @@ if (has("gui_running"))
     set background=dark
     colorscheme DimGreen 
 
-    set guifont=MiscFixed\ 16
+    set guifont=MiscFixed\ 18
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 else
@@ -406,7 +406,7 @@ function! OnBufWrite(file)
         
         return
     else
-        let l:ret = P4CheckOut(expand("%:p"))
+        let l:ret = P4CheckOut(a:file) "expand("%:p")
     endif
 
     if (l:ret == 1)
@@ -523,6 +523,8 @@ function! IsP4Exist()
 endfunction
 
 
+"deal with path like: /home/miliao/code/aa/../cc
+"output should be:/home/miliao/code/cc
 function! NormalizePath(file)
 
     let l:id = stridx(a:file, "..")
@@ -532,6 +534,10 @@ function! NormalizePath(file)
 
     let l:left = l:id + 2
 
+    while a:file[l:left] == '/'
+        let l:left = l:left + 1
+    endwhile
+
     while l:id > 0 && a:file[l:id] != '/'
         let l:id = l:id - 1
     endwhile
@@ -540,7 +546,13 @@ function! NormalizePath(file)
         let l:id = l:id - 1
     endif
 
+    "now move up
     while l:id >= 0 && a:file[l:id] != '/'
+        let l:id = l:id - 1
+    endwhile
+
+    "eliminate extra '/'
+    while l:id > 0 && a:file[l:id - 1] == '/'
         let l:id = l:id - 1
     endwhile
 
@@ -551,7 +563,7 @@ function! NormalizePath(file)
     let l:pre = strpart(a:file, 0, l:id)
     let l:pos = strpart(a:file, l:left)
 
-    let l:path = l:pre.l:pos
+    let l:path = l:pre."/".l:pos
 
     return l:path
 
@@ -563,8 +575,11 @@ function! P4CheckOut(file)
 
     silent! execute("! p4 edit ".l:path." > /dev/null 2>&1")
 
+    "echo "origin path:".a:file."\n"
+    "echo "path:".l:path
+
     if v:shell_error
-        echo "p4 edit error,please check if you are log in"
+        echo "p4 edit error,please check if you are log in\n"
         return 0
     endif
 
