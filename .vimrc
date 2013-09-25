@@ -597,7 +597,7 @@ function! Refresh_filelookup_data()
 
     let l:lookupfiles = $HOME."/.vim/caches/filenametags"
     if filereadable(l:lookupfiles)
-        delete(l:lookupfiles)
+        silent! execute "!rm ".l:lookupfiles
     endif
 
     silent! execute "!~/.vim/list.all.files&"
@@ -629,13 +629,13 @@ function! RefreshCscopeDataForGuiCode()
 
         let l:csOut=$HOME."/.vim/caches/cscope.out"
         if filereadable(l:csOut)
-            delete(l:csOut)
+            silent! execute "!rm ".l:csOut
         endif
 
     else
 
         let l:csOut=$HOME."/.vim/caches/GTAGS"
-        delete(l:csOut)
+        silent! execute "!rm ".l:csOut
 
     endif
 
@@ -643,7 +643,7 @@ function! RefreshCscopeDataForGuiCode()
     if g:UseGlobalOverCscope == 0
 
         if !filereadable(l:csFiles)	
-            silent! execute "!~/.vim/list.cscope.files.sh& "
+            silent! execute "!~/.vim/list.cscope.files.sh&"
         endif
 
     else
@@ -788,18 +788,16 @@ function! CsAddTags(tags)
     
     silent! execute "cs kill -1"
 
-    if filereadable(a:tags)
-
-        if g:UseGlobalOverCscope == 0
-            silent! execute "cs add ".a:tags
-        else
-            silent! execute "cs add ".a:tags
-            "silent! execute "cs add ".a:tags." -Ca"
-        endif
-
-        set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
-
+    if g:UseGlobalOverCscope == 0
+        silent! execute "cs add ".a:tags
     else
+        silent! execute "cs add ".a:tags
+        "silent! execute "cs add ".a:tags." -Ca"
+    endif
+
+    set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
+
+    if !filereadable(a:tags)
         execute "echoerr \"can not find cscope.out, f11 or f12 please\""
     endif
 
