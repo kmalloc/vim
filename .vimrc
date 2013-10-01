@@ -95,11 +95,12 @@ set t_Co=256
 
 if (has("gui_running"))
     set background=dark
-    colorscheme DimGreen 
 
     set guifont=MiscFixed\ 18
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
+
+    colorscheme DimGreen 
 else
     colorscheme torte
     "colorscheme allan
@@ -406,7 +407,7 @@ function! OnBufWrite(file)
         
         return
     else
-        let l:ret = P4CheckOut(a:file) "expand("%:p")
+        let l:ret = P4CheckOut(expand("%:p"))
     endif
 
     if (l:ret == 1)
@@ -525,20 +526,34 @@ endfunction
 
 "deal with path like: /home/miliao/code/aa/../cc
 "output should be:/home/miliao/code/cc
-function! NormalizePath(file)
+"
+"/nfs/all/home/miliao/code/cc
+"output: /home/miliao/code/cc
+function! NormalizePath(file_)
 
-    let l:id = stridx(a:file, "..")
-    if l:id == -1
-        return a:file
+    "try to remove absolute path
+    let l:s = stridx(a:file_, "/home/")
+
+    if l:s == -1
+        let l:s = 0
     endif
 
+    let l:file = strpart(a:file_, l:s)
+
+    "try to translate ..
+    let l:id = stridx(l:file, "..")
+    if l:id == -1
+        return l:file
+    endif
+
+    "try to extract parent folder.
     let l:left = l:id + 2
 
-    while a:file[l:left] == '/'
+    while l:file[l:left] == '/'
         let l:left = l:left + 1
     endwhile
 
-    while l:id > 0 && a:file[l:id] != '/'
+    while l:id > 0 && l:file[l:id] != '/'
         let l:id = l:id - 1
     endwhile
 
@@ -547,21 +562,21 @@ function! NormalizePath(file)
     endif
 
     "now move up
-    while l:id >= 0 && a:file[l:id] != '/'
+    while l:id >= 0 && l:file[l:id] != '/'
         let l:id = l:id - 1
     endwhile
 
     "eliminate extra '/'
-    while l:id > 0 && a:file[l:id - 1] == '/'
+    while l:id > 0 && l:file[l:id - 1] == '/'
         let l:id = l:id - 1
     endwhile
 
     if l:id < 0
-        return a:file
+        return l:file
     endif
 
-    let l:pre = strpart(a:file, 0, l:id)
-    let l:pos = strpart(a:file, l:left)
+    let l:pre = strpart(l:file, 0, l:id)
+    let l:pos = strpart(l:file, l:left)
 
     let l:path = l:pre."/".l:pos
 
@@ -679,7 +694,6 @@ function! RefreshCodeTags()
 endfunction
 
 
-
 "setup files in current folder for LookupFiel, Cscope.
 function! List_lookup_file_for_cur_folder(mode)
 
@@ -741,7 +755,6 @@ function! SetupCurFolderData(mode)
 
 endfunction
 
-
 function! SwitchToCodeBase()
 
     let g:WorkingInCurrDir = 0
@@ -782,7 +795,6 @@ function! CscopeFind(file,type)
     silent! call OpenCscopeSearchList()
     redraw!
 endfunction
-
 
 function! CsAddTags(tags)
     
