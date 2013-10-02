@@ -141,7 +141,8 @@ map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
 map <F12> :call RefreshGuiCodeData()<CR> 
 "RefreshCscopeDataForGuiCode()<CR>
 map <F8>  :call ToggleGtags()<CR>
-map <F5>  :call ShowTerminal()<CR>
+map <F5>  :call ShowTerminal("tab")<CR>
+map <F5><F5>  :call ShowTerminal("win")<CR>
 
 
 "tab key mapping
@@ -155,6 +156,7 @@ map <M-1> :tabp<CR>
 map <M-2> :tabn<CR>
 map <C-j> :tabp<CR>
 map <C-k> :tabn<CR>
+" tabm +1 tabm -1
 
 map <M-o> :tabnew %<CR> :A<CR>
 
@@ -1018,7 +1020,7 @@ function! CloseWin(buffer)
 
 endfunction
 
-function! IsNullTab()
+function! IsCurrentTabEmpty()
 
     let l:buflist = tabpagebuflist() "[]
     let l:len = len(l:buflist)
@@ -1041,7 +1043,7 @@ endfunction
 
 function! EditMyVimrc()
 
-    let l:new = IsNullTab()
+    let l:new = IsCurrentTabEmpty()
     
     if !l:new
         execute "tabedit $MYVIMRC"
@@ -1052,10 +1054,11 @@ function! EditMyVimrc()
 endfunction
 
 
-function! ShowTerminal()
+function! ShowTerminal(mode)
    
     let l:win = bufwinnr(g:TerminalName)
     if (l:win != -1)
+        "toggle, if teminal already opened, then close it.
         silent! execute l:win."wincmd w"
         silent! execute "q"
         return 
@@ -1064,15 +1067,16 @@ function! ShowTerminal()
     let l:buf = FindBufferWithName(g:TerminalName)
 
     if l:buf > 0
-        silent execute "buffer ".l:buf
+        silent execute "sb ".l:buf
     else
-        let l:null = IsNullTab()
+        let l:null = IsCurrentTabEmpty()
         if l:null
             silent! execute "ConqueTerm bash"
-        else
+        elseif a:mode == "tab"
             silent! execute "ConqueTermTab bash"
+        else
+            silent! execute "ConqueTermVSplit bash"
         endif
-        "ConqueTermVSplit
     endif
 
     silent! execute "TlistClose"
