@@ -1,6 +1,7 @@
 #! /bin/bash
 
 mode=${1:-"update"}
+
 GTAGSROOT="${HOME}/code"
 GTAGSDBPATH="${HOME}/.vim/caches"
 

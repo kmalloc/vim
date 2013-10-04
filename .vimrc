@@ -30,7 +30,7 @@ set fileencoding=utf-8
 set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
 set path+=~/code/*
 "set colorcolumn=90 "make column 90th visible
-"set list "visible last column of each line
+"set list "visible last column of each line, set nolist
 "set spell spelllang=en_us
 
 set foldenable
@@ -42,7 +42,7 @@ set clipboard=unnamed
 "key and mouse
 set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
-set backspace=indent,eol,start
+set backspace=indent,eol,start "set backspace key
 
 set timeout timeoutlen=250 ttimeoutlen=100
 
@@ -61,7 +61,6 @@ if(!has("gui_running"))
     exe "set <M-p>=\<ESC>p"
 endif
 
-let cpptags=$HOME."/.vim/cpp.tags/tags"
 set tags=~/.vim/cpp.tags/tags
 set tags+=~/.vim/gui.tags/tags
 set tags+=~/.vim/wx.tags/tags
@@ -120,16 +119,76 @@ highlight Pmenu guibg=darkblue ctermbg=blue
 highlight PmenuSel guibg=brown ctermbg=darkgreen
 
 
+"----------------------global variable---------------------------
+let s:IsInitialized = 0
+
+if (!s:IsInitialized)
+
+    let g:IsQuickfixOpen = 0
+
+    if !exists("g:PerforceExisted")
+        let g:PerforceExisted = 0
+    endif
+
+    let g:MruBufferName = "__MRU_Files__"
+    let g:TaglistName = "__Tag_List__"
+    let g:IsHistoryWinOpened = 0
+
+    "if set AutoOpenTlist to 1, then each time open a c/c++ file,
+    "taglist will popout to the right.
+    let g:AutoOpenTlist = 0
+
+    let g:TerminalName = "bash - "
+
+
+    "rule of thumb: try to avoid hard-coded path for code base in vimrc.
+    "instead, put all code base relative path in shell script.
+
+    "code base for work
+    "let g:code_base_for_work = $HOME."/code/gui_tflex"
+    let g:is_in_work = ($USER == "miliao")
+
+    "set support_p4_edit_event to checkout file if file is changed.
+    if g:is_in_work
+        let g:support_p4_edit_event = 1
+    else
+        let g:support_p4_edit_event = 0
+    endif
+
+    if g:support_p4_edit_event
+        let g:files_checkout = {} "files that have been checkout by p4
+    endif
+
+    "using gtags by default if gtags has installed in folder: ~/tools/gtags
+    let g:UseGlobalOverCscope = 0
+    let g:IgnoreGtags = 1 "value '1' to disable using gtags.
+
+    "cache file for gtags or for cscope
+    let g:mycodetags = $HOME."/.vim/caches/cscope.out"
+
+    let g:WorkingInCurrDir = 0
+
+    let g:gtagsCscopePath = system("which gtags-cscope")
+    let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
+    let g:CscopePath = system("which cscope")
+    let g:CscopePath = substitute(g:CscopePath,'\n$','','')
+    "$HOME."/tools/gtags/bin/gtags-cscope"
+
+endif
+
+
 "-------------key mapping-------------------------------
 
 "edit my vimrc
 map <leader>ev :call EditMyVimrc()<CR>
 map <F9> :so ~/.vimrc<CR>
-map <F6> :call ToggleQuickfix()<CR> 
+map <F6> :call ToggleQuickfix()<CR>
 map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
 
 "toggle gvim tool bar.
-map <M-m> :call ToggleToolsBar()<CR> 
+if (has("gui_running"))
+    map <M-m> :call ToggleToolsBar()<CR>
+endif
 
 "generate file names list
 "this will replace the previous TagExpr setting.
@@ -138,10 +197,15 @@ map <F11> :call SetupCurFolderData("scan")<CR>
 map <F11><F11> :call SwitchToCodeBase()<CR>
 map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
 "List_lookup_file_for_cur_folder()<CR>
-map <F12> :call RefreshGuiCodeData()<CR> 
-"RefreshCscopeDataForGuiCode()<CR>
+map <F12> :call RefreshCodeData()<CR>
+
+"use gtags, or cscope to find reference. note, gtags does not support perl for the moment.
 map <F8>  :call ToggleGtags()<CR>
+
+"open terminal to a new tab, if terminal already open, switch to it.
 map <F5>  :call ShowTerminal("tab")<CR>
+
+"open termial to a vertical split window within current tab.
 map <F5><F5>  :call ShowTerminal("win")<CR>
 
 
@@ -156,7 +220,7 @@ map <M-1> :tabp<CR>
 map <M-2> :tabn<CR>
 map <C-j> :tabp<CR>
 map <C-k> :tabn<CR>
-" tabm +1 tabm -1
+"tabm +1 tabm -1
 
 map <M-o> :tabnew %<CR> :A<CR>
 
@@ -166,12 +230,14 @@ map <C-h> :A<CR>
 map <F2>  :call ToggleHistoryWin()<CR>
 "map <F3>  :AS<CR>
 
+"select all
 map <C-A> ggVG
 
 "window operation 
 map <S-TAB> <C-W>w
 map <S-TAB-TAB> <C-W>p
 
+"resize current window
 nmap <silent> <C-Left>    <C-W><:unlet! t:flwwinlayout<CR>
 nmap <silent> <C-Right>   <C-W>>:unlet! t:flwwinlayout<CR>
 nmap <silent> <C-Up>      <C-W>+:unlet! t:flwwinlayout<CR>
@@ -183,7 +249,6 @@ map <F4> :Tlist<CR>
 
 "file explorer
 map <leader>ve :Ve<CR><CR>
-map <leader>fe :tabnew<CR>:Ve <CR><C-W><C-W>:x<CR> 
 
 "look up file
 map <leader>lf :LookupFile<CR>
@@ -192,13 +257,14 @@ map <leader>lf :LookupFile<CR>
 map <F7> :call FindReference()<CR>
 
 "checkout file using p4.
-map <leader>co   :!p4 edit %<CR>
-map <leader>add  :!p4 add %<CR>
+if g:support_p4_edit_event
+    map <leader>co   :!p4 edit %<CR>
+    map <leader>add  :!p4 add %<CR>
+endif
 
-map <leader>sstf :mksession! ~/session/tflex<CR>
-map <leader>ss :mksession! ~/session/<CR>
-map <leader>sotf :so ~/session/tflex<CR>
-map <leader>sos :so ~/session/<CR>
+"save session
+map <leader>ss :mksession! ~/session/vs<CR>
+map <leader>sos :so ~/session/vs<CR>
 
 "bookmark setting
 map mm :call BookMarkHere()<CR>
@@ -245,12 +311,11 @@ let Tlist_Use_Right_Window=1
 "let Tlist_Highlight_Tag_On_BufEnter = 0
 
 
-
 "filelookup setting.
 let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
 let g:LookupFile_PreserveLastPattern = 0 "do not preserve last search pattern.
 let g:LookupFile_PreservePatternHistory = 0 "preserve search history
-let g:LookupFile_AlwaysAcceptFirst = 0
+let g:LookupFile_AlwaysAcceptFirst = 1
 let g:LookupFile_AllowNewFiles=0
 let g:LookupFile_MinPatLength = 3
 let g:LookupFile_UsingSpecializedTags = 1 
@@ -283,8 +348,8 @@ let g:bufExplorerSortBy='name'       " Sort by the buffer's name.
 "let g:vbookmark_bookmarkSaveFile=$HOME.'/.vimbookmark'
 
 let g:simple_bookmarks_signs = 1
-let g:simple_bookmarks_new_tab = 1 
-let g:simple_bookmarks_auto_close = 0 
+let g:simple_bookmarks_new_tab = 0
+let g:simple_bookmarks_auto_close = 0
 
 "a.vim setting: search path.
 let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
@@ -307,41 +372,6 @@ let g:EchoFuncKeyNext='<M-n>'
 let g:GtagsCscope_Ignore_Case = 1
 let g:GtagsCscope_Absolute_Path = 1
 
-"----------------------global variable---------------------------
-let s:IsInitialized = 0 
-
-if (!s:IsInitialized)
-
-    let g:IsQuickfixOpen = 0
-
-    if !exists("g:PerforceExisted")
-        let g:PerforceExisted = 0
-    endif
-
-    let g:MruBufferName = "__MRU_Files__"
-    let g:TaglistName = "__Tag_List__"
-    let g:IsHistoryWinOpened = 0
-    let g:AutoOpenTlist = 0
-
-    let g:TerminalName = "bash - "
-
-    let g:files_checkout = {} "files that have been checkout by p4
-
-    "using gtags by default if gtags has installed in folder: ~/tools/gtags 
-    let g:UseGlobalOverCscope = 0
-    let g:IgnoreGtags = 1 "value '1' to disable using gtags.
-    let g:mycodetags = $HOME."/.vim/caches/cscope.out"
-
-    let g:WorkingInCurrDir = 0
-    let g:mycoderoot=$HOME."/code/" 
-
-    let g:gtagsCscopePath = system("which gtags-cscope")
-    let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
-    let g:CscopePath = system("which cscope")
-    let g:CscopePath = substitute(g:CscopePath,'\n$','','')
-    "$HOME."/tools/gtags/bin/gtags-cscope"
-
-endif
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
@@ -371,7 +401,10 @@ augroup end
 function! SetupVim()
 
     let s:IsInitialized = 1 
-    silent! execute "call IsP4Exist()"
+
+    if g:support_p4_edit_event
+        silent! execute "call IsP4Exist()"
+    endif
 
     if filereadable("filenametags")
         silent! execute "call SetupCurFolderData(\"skip\")"
@@ -385,7 +418,7 @@ endfunction
 
 function! AutoOpenTaglistOnVimStartup()
 
-    if &diff == 0 " if not in diff mode
+    if &diff == 0 "if not in diff mode
         let l:win = winnr()
         TlistOpen
         silent! execute l:win."wincmd w"
@@ -396,6 +429,11 @@ endfunction
 
 function! OnBufWrite(file)
 
+    "currently, this event only for checkout file for p4.
+    if g:support_p4_edit_event == 0
+        return
+    endif
+
     let l:nr = bufnr('%')
     if exists("g:files_checkout[l:nr]") && filewritable(l:nr) && g:files_checkout[l:nr] == 1
         return
@@ -403,10 +441,7 @@ function! OnBufWrite(file)
 
     let l:ret = 0
     if (g:PerforceExisted == 0)
-        if( $USER == "miliao" )
-            echoerr "p4 command not available."
-        endif
-        
+        echoerr "p4 command not available."
         return
     else
         let l:ret = P4CheckOut(expand("%:p"))
@@ -521,7 +556,7 @@ function! IsShellCmdExist(cmd)
 endfunction
 
 function! IsP4Exist()
-    let g:PerforceExisted = IsShellCmdExist("p4") 
+    let g:PerforceExisted = IsShellCmdExist("p4")
     redraw!
 endfunction
 
@@ -625,16 +660,13 @@ function! Refresh_filelookup_data()
 endfunction
 
 
-
-"refresh code in folder ~/code/gui_tflex/
-"setup caches for lookupFile, cscope.
-function! RefreshCscopeDataForGuiCode()
+"refresh code in code base, eg, ~/code/gui_tflex/, the specific path is decided in the shell script.
+function! RefreshCscopeData()
     "let dir = getcwd()
 
     if !has("cscope")
         return
     endif
-
 
     if g:UseGlobalOverCscope == 0
 
@@ -665,7 +697,6 @@ function! RefreshCscopeDataForGuiCode()
 
     else
 
-        "silent! execute "! ~/.vim/gtags.setup.sh files&"
         silent! execute "! ~/.vim/gtags.setup.sh setup&"
 
     endif
@@ -677,9 +708,9 @@ function! RefreshCscopeDataForGuiCode()
 endfunction
 
 
-function! RefreshGuiCodeData()
+function! RefreshCodeData()
     call Refresh_filelookup_data()
-    call RefreshCscopeDataForGuiCode()
+    call RefreshCscopeData()
 endfunction
 
 function! RefreshCodeTags()
@@ -743,12 +774,6 @@ function! SetupCscopeForCurFolder(mode)
 endfunction
 
 function! SetupCurFolderData(mode)
-
-    let l:cur = getcwd()
-
-    if (a:mode == "scan" && g:mycoderoot == l:cur)
-        return ''
-    endif
 
     call List_lookup_file_for_cur_folder(a:mode)
     call SetupCscopeForCurFolder(a:mode)
@@ -820,7 +845,7 @@ endfunction
 "setup cscope database.
 function! SetupCscope()
 
-    if(!has('cscope'))
+    if(!has('cscope')) "if vim compiled with cscope, then proceed.
         return
     endif
 
@@ -828,22 +853,18 @@ function! SetupCscope()
 
         set csprg=gtags-cscope
         let g:UseGlobalOverCscope = 1
-        let g:mycoderoot=$HOME."/code/" 
-
-        if $USER == "miliao"
-            let g:mycoderoot = g:mycoderoot."gui_tflex"
-        endif
 
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
-        "silent! execute "cd ".g:mycoderoot  
+
+        "gtags.setup.sh will set up link to code root, prepare cache, etc.
         silent! execute "! ~/.vim/gtags.setup.sh env"
   
     elseif filereadable(g:CscopePath)
 
         let g:UseGlobalOverCscope = 0 
         set cscopetag
-
         set csprg=cscope
+
     endif
 
     call CsAddTags(g:mycodetags)
@@ -924,6 +945,7 @@ function! DelBookMark()
 endfunction
 
 
+"handle functional window, taglist, quickfix, etc.
 function! ToggleBufferExp(file)
 
     silent! execute "TlistClose"
