@@ -385,6 +385,8 @@ let g:EchoFuncKeyNext='<M-n>'
 let g:GtagsCscope_Ignore_Case = 1
 let g:GtagsCscope_Absolute_Path = 1
 
+"put a space after comment
+let g:NERDSpaceDelims = 1
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
