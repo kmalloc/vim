@@ -111,6 +111,7 @@ endif
 "molokai
 "torte
 
+set laststatus=2 "always show status line
 set completeopt-=preview "remove preview window for autocompletion
 "set statusline+=%{EchoFuncGetStatusLine()}
 
