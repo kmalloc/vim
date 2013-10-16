@@ -853,7 +853,7 @@ function! CsAddTags(tags)
     set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
 
     if !filereadable(a:tags)
-        execute "echoerr \"can not find cscope.out, f11 or f12 please\""
+        execute "echoerr \"can not find ".a:tags.", f11 or f12 please\""
     endif
 
 endfunction
