@@ -106,11 +106,12 @@ else
 endif
 
 "solarized
-"allan deviate
+"allan deveiate
 "pacific
 "molokai
 "torte
 
+set cursorline "highlight current line
 set laststatus=2 "always show status line
 set completeopt-=preview "remove preview window for autocompletion
 "set statusline+=%{EchoFuncGetStatusLine()}
@@ -119,13 +120,15 @@ set completeopt-=preview "remove preview window for autocompletion
 highlight Pmenu guibg=darkblue ctermbg=blue
 highlight PmenuSel guibg=brown ctermbg=darkgreen
 
+highlight cursorline term=bold ctermfg=brown gui=bold guifg=brown guibg=bg "ctermbg=gray
+
 hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred "ctermfg=
 hi User2 guifg=#dd3333 guibg=#222222 ctermfg=darkblue
 hi User3 guifg=#ff66ff guibg=#222222 ctermfg=darkgreen
 hi User4 guifg=#a0ee40 guibg=#222222 ctermfg=darkyellow
 hi User5 guifg=#eeee40 guibg=#222222 ctermfg=cyan
 
-set statusline =%3*[%F]
+set statusline =%3*[%F]              "full path of current file
 set statusline +=%4*%r               "modified flag
 set statusline +=%1*[%v]             "virtual column number
 set statusline +=%5*%m               "modified flag
@@ -134,32 +137,30 @@ set statusline +=%5*%m               "modified flag
 "set statusline +=%5*%{&ff}          "file format
 
 "----------------------global variable---------------------------
-let s:IsInitialized = 0
+if !exists("s:IsInitialized")
+    let s:IsInitialized = 0
+endif
 
+" initialize global variables when vim is launched.
 if (!s:IsInitialized)
 
     let g:IsQuickfixOpen = 0
+    let g:PerforceExisted = 0
 
-    if !exists("g:PerforceExisted")
-        let g:PerforceExisted = 0
-    endif
-
+    let g:BufExplorerName = "BufExplorer"
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
     let g:IsHistoryWinOpened = 0
 
-    "if set AutoOpenTlist to 1, then each time open a c/c++ file,
-    "taglist will popout to the right.
+    "setting AutoOpenTlist to 1, then each time open a c/c++ file,
+    "taglist will popout to the right automatically.
     let g:AutoOpenTlist = 0
 
     let g:TerminalName = "bash - "
 
-
     "rule of thumb: try to avoid hard-coded path for code base in vimrc.
     "instead, put all code base relative path in shell script.
 
-    "code base for work
-    "let g:code_base_for_work = $HOME."/code/gui_tflex"
     let g:is_in_work = ($USER == "miliao")
 
     "set support_p4_edit_event to checkout file if file is changed.
@@ -386,7 +387,7 @@ let g:EchoFuncKeyNext='<M-n>'
 let g:GtagsCscope_Ignore_Case = 1
 let g:GtagsCscope_Absolute_Path = 1
 
-"put a space after comment
+"put a space after comment sign
 let g:NERDSpaceDelims = 1
 
 "----------------------autocmd------------------------------------
@@ -443,9 +444,9 @@ function! AutoOpenTaglistOnVimStartup()
 endfunction
 
 
-function! OnBufWrite(file)
+function! OnBufferWriteByP4(file)
 
-    "currently, this event only for checkout file for p4.
+    "if we don't have p4 here, skip it.
     if g:support_p4_edit_event == 0
         return
     endif
@@ -470,6 +471,16 @@ function! OnBufWrite(file)
 endfunction
 
 
+function! OnBufWrite(file)
+
+    call OnBufferWriteByP4(a:file)
+
+endfunction
+
+" should we open tlist window when entering a buffer window?
+" rules are:
+" 1. not in diff mode.
+" 2. not in terminal window.
 function! ShouldSuppressTlist(file)
 
     if g:AutoOpenTlist == 0
@@ -502,13 +513,16 @@ function! OnBufEnter(file)
 
 endfunction
 
-
+"when in terminal window, disable autocomplete plugin
+"otherwise enable it
 function! HandleAcp(file)
     if match(a:file,g:TerminalName) > -1
         silent! execute "AcpDisable"
+        silent! execute "set cursorline!"
         return 1
     else
         silent! execute "AcpEnable"
+        silent! execute "set cursorline"
         return 0
     endif
 endfunction
@@ -564,6 +578,7 @@ endfunction
 
 
 "----------------handle shell cmd---------------------- 
+"check whether shell command "cmd" exist
 function! IsShellCmdExist(cmd)
 
     silent! execute "! which ".a:cmd." > /dev/null 2>&1"
@@ -582,6 +597,8 @@ endfunction
 "
 "/nfs/all/home/miliao/code/cc
 "output: /home/miliao/code/cc
+
+"not quite familiar with vim script resulting in writting such a huge function
 function! NormalizePath(file_)
 
     "try to remove absolute path
@@ -637,6 +654,7 @@ function! NormalizePath(file_)
 
 endfunction
 
+"use p4 command to checkout a file
 function! P4CheckOut(file)
 
     let l:path = NormalizePath(a:file)
@@ -729,6 +747,8 @@ function! RefreshCodeData()
     call RefreshCscopeData()
 endfunction
 
+"refreshing ctags data. pretty much not in use often.
+"ctags data is currently used by omni complete plugin only.
 function! RefreshCodeTags()
 
     let txt=input("refresh code base? otherwise refresh current path.(y/n):")
@@ -798,7 +818,14 @@ function! SetupCurFolderData(mode)
 
 endfunction
 
+"if we are in WorkingInCurrDir mode, then switch to code base mode.
+"this two mode is different in that: cscope date, file look up data, ctags data is different.
+"thus influencing auto complete, etc.
 function! SwitchToCodeBase()
+
+    if (g:WorkingInCurrDir == 0)
+        return
+    endif
 
     let g:WorkingInCurrDir = 0
     let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
@@ -813,6 +840,8 @@ function! SwitchToCodeBase()
     
 endfunction
 
+"using cscope to find reference by searching text.
+"this type of searching is extremely unefficient, and will block vim for quite a while.
 function! FindReference()
     let txt = input('enter text:')
     if txt == ""
@@ -832,13 +861,15 @@ function! OpenCscopeSearchList()
     endif
 endfunction
 
-
+"find symbol from cscope cached data.
+"very fast, but may not be accurate if cache is out of date.
 function! CscopeFind(file,type)
     silent! execute "cs find ".a:type." ".a:file 
     silent! call OpenCscopeSearchList()
     redraw!
 endfunction
 
+"setup cscope cached data path
 function! CsAddTags(tags)
     
     silent! execute "cs kill -1"
@@ -964,8 +995,18 @@ endfunction
 "handle functional window, taglist, quickfix, etc.
 function! ToggleBufferExp(file)
 
-    silent! execute "TlistClose"
-    silent! execute "BufExplorer"
+    let l:buf = ToggleWinByName(g:BufExplorerName)
+
+    if l:buf == -2
+        return
+    endif 
+
+    if l:buf > 0
+        silent! execute "sb ".l:buf
+    else
+        silent! execute "TlistClose"
+        silent! execute "BufExplorer"
+    endif
 
 endfunction
 
@@ -984,7 +1025,6 @@ function! ToggleQuickfix()
     silent! execute "redraw!"
 
 endfunction
-
 
 function! OpenBookMark()
     let l:win = winnr()
@@ -1091,18 +1131,32 @@ function! EditMyVimrc()
 
 endfunction
 
+"if buffer by name is existed in current tab, then close it
+"otherwise return buffer number.
+function! ToggleWinByName(name)
+
+    let l:win = IsBufShowInCurrTab(a:name)
+    if (l:win != -1)
+        "toggle, if window already opened, then close it.
+        let l:win = bufwinnr(l:win) 
+        silent! execute l:win."wincmd w"
+        silent! execute "q"
+        return -2 
+    endif
+
+    let l:buf = FindBufferWithName(a:name)
+
+    return l:buf
+
+endfunction
 
 function! ShowTerminal(mode)
    
-    let l:win = bufwinnr(g:TerminalName)
-    if (l:win != -1)
-        "toggle, if teminal already opened, then close it.
-        silent! execute l:win."wincmd w"
-        silent! execute "q"
-        return 
-    endif
+    let l:buf = ToggleWinByName(g:TerminalName)
 
-    let l:buf = FindBufferWithName(g:TerminalName)
+    if l:buf == -2
+        return
+    endif
 
     if l:buf > 0
         silent execute "sb ".l:buf
@@ -1139,5 +1193,42 @@ function! FindBufferWithName(name)
     endwhile
 
     return 0
+endfunction
+
+function! CleanHiddenBuffer()
+
+    let visible = {}
+    for t in range(1, tabpagenr('$'))
+        for b in tabpagebuflist(t)
+            let visible[b] = 1
+        endfor
+    endfor
+
+    for b in range(1, bufnr("$"))
+        if bufloaded(b) && !has_key(visible, b)
+            execute "bd ".b
+        endif
+    endfor
+
+endfunction
+
+"can not just bufwinnr() to judge whether a buffer show in current tab.
+"some hidden buffer is not excluded by bufwinnr()
+function! IsBufShowInCurrTab(name)
+
+    let l:nr = FindBufferWithName(a:name)
+
+    if l:nr <= 0
+        return -1
+    endif
+
+    for b in tabpagebuflist(tabpagenr())
+        if l:nr == b
+            return l:nr
+        endif
+    endfor
+
+    return -1
+
 endfunction
 
