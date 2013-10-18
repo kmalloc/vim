@@ -1001,11 +1001,13 @@ function! ToggleBufferExp(file)
         return
     endif 
 
-    if l:buf > 0
-        silent! execute "sb ".l:buf
-    else
+    let l:null = IsCurrentTabEmpty()
+
+    if l:null
         silent! execute "TlistClose"
         silent! execute "BufExplorer"
+    else
+        silent! execute "BufExplorerVerticalSplit"
     endif
 
 endfunction
@@ -1064,7 +1066,7 @@ function! ToggleHistoryWin()
     if l:mruwinnr != -1
         let g:IsHistoryWinOpened = 0
         execute l:mruwinnr."wincmd w"
-        execute "q"
+        execute "x"
     else
         call OpenHistory()
     endif
@@ -1077,7 +1079,7 @@ function! CloseHistoryBuffer()
     let g:IsHistoryWinOpened = 0
     let l:mruwinnr = bufnr(g:MruBufferName)
     if l:mruwinnr != -1
-        silent! execute "bd! ".l:mruwinnr
+        silent! execute "bw! ".l:mruwinnr
     endif
 
 endfunction
@@ -1093,7 +1095,8 @@ function! CloseWin(buffer)
     if a:buffer == g:MruBufferName
         call CloseHistoryBuffer()
     elseif match(a:buffer, g:TerminalName) > -1
-        silent! execute "bw! ".g:TerminalName
+        let l:bn = FindBufferWithName(a:buffer)
+        silent! execute "bw! ".l:bn
     endif
 
 endfunction
@@ -1105,12 +1108,15 @@ function! IsCurrentTabEmpty()
     if len(l:buflist) > 1 
         let l:new = 1
     elseif l:len == 1
+
         let l:name = bufname(winbufnr(0))
+
         if strlen(l:name) == 0
             let l:new = 0
         else
             let l:new = 1
         endif
+
     else
         let l:new = 0
     endif
@@ -1135,12 +1141,16 @@ endfunction
 "otherwise return buffer number.
 function! ToggleWinByName(name)
 
-    let l:win = IsBufShowInCurrTab(a:name)
-    if (l:win != -1)
+    let l:buf = IsBufShowInCurrTab(a:name)
+
+    if (l:buf != -1)
         "toggle, if window already opened, then close it.
-        let l:win = bufwinnr(l:win) 
-        silent! execute l:win."wincmd w"
-        silent! execute "q"
+        let l:win = bufwinnr(l:buf) 
+
+        " echoerr "to close(".l:buf.",".l:win.")"
+        " silent! execute l:win."wincmd w"
+        " silent! execute "x"
+        silent! execute "bw! ".l:buf
         return -2 
     endif
 
@@ -1159,19 +1169,29 @@ function! ShowTerminal(mode)
     endif
 
     if l:buf > 0
-        silent execute "sb ".l:buf
-    else
-        let l:null = IsCurrentTabEmpty()
-        if l:null
-            silent! execute "ConqueTerm bash"
-        elseif a:mode == "tab"
-            silent! execute "ConqueTermTab bash"
-        else
-            silent! execute "ConqueTermVSplit bash"
+
+        let l:h = IsBuffHidden(l:buf)
+        " echoerr "is hidden(".l:h.",".l:buf.")"
+        if !l:h
+            silent execute "sb ".l:buf
+            return
         endif
+
+    endif
+
+    let l:null = IsCurrentTabEmpty()
+
+    if l:null
+        silent! execute "ConqueTerm bash"
+    elseif a:mode == "tab"
+        silent! execute "ConqueTermTab bash"
+    else
+        silent! execute "ConqueTermVSplit bash"
     endif
 
     silent! execute "TlistClose"
+
+    redraw!
 
 endfunction
 
@@ -1206,9 +1226,26 @@ function! CleanHiddenBuffer()
 
     for b in range(1, bufnr("$"))
         if bufloaded(b) && !has_key(visible, b)
-            execute "bd ".b
+            execute "bw! ".b
         endif
     endfor
+
+endfunction
+
+function! IsBuffHidden(buf)
+
+    let visible = {}
+    for t in range(1, tabpagenr('$'))
+        for b in tabpagebuflist(t)
+            let visible[b] = 1
+        endfor
+    endfor
+
+    if bufloaded(a:buf) && has_key(visible, a:buf)
+        return 0
+    endif
+
+    return 1
 
 endfunction
 
