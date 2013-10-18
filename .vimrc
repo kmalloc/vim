@@ -223,6 +223,9 @@ map <F5>  :call ShowTerminal("tab")<CR>
 "open termial to a vertical split window within current tab.
 map <F5><F5>  :call ShowTerminal("win")<CR>
 
+map <F1>  :call ShowTerminal("tab")<CR>
+map <F1><F1>  :call ShowTerminal("win")<CR>
+
 
 "tab key mapping
 map <C-t> :tabnew<CR>
