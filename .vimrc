@@ -114,7 +114,6 @@ endif
 set cursorline "highlight current line
 set laststatus=2 "always show status line
 set completeopt-=preview "remove preview window for autocompletion
-"set statusline+=%{EchoFuncGetStatusLine()}
 
 "context menu
 highlight Pmenu guibg=darkblue ctermbg=blue
@@ -122,15 +121,15 @@ highlight PmenuSel guibg=brown ctermbg=darkgreen
 
 highlight cursorline term=bold ctermfg=brown gui=bold guifg=brown guibg=bg "ctermbg=gray
 
-hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred "ctermfg=
-hi User2 guifg=#dd3333 guibg=#222222 ctermfg=darkblue
-hi User3 guifg=#ff66ff guibg=#222222 ctermfg=darkgreen
-hi User4 guifg=#a0ee40 guibg=#222222 ctermfg=darkyellow
-hi User5 guifg=#eeee40 guibg=#222222 ctermfg=cyan
+hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred    ctermbg=darkblue
+hi User2 guifg=#dd3333 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
+hi User3 guifg=#ff66ff guibg=#222222 ctermfg=darkgreen  ctermbg=darkblue
+hi User4 guifg=#a0ee40 guibg=#222222 ctermfg=darkyellow ctermbg=darkblue
+hi User5 guifg=#eeee40 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
 
 set statusline =%3*[%F]              "full path of current file
-set statusline +=%4*%r               "modified flag
-set statusline +=%1*[%v]             "virtual column number
+set statusline +=%1*%r               "readonly flag
+set statusline +=%4*[%v]             "virtual column number
 set statusline +=%5*%m               "modified flag
 "set statusline +=%2*%L              "total lines
 "set statusline +=%1*%n              "buffer number
@@ -210,8 +209,7 @@ endif
 map <F10> :call RefreshCodeTags()<CR>
 map <F11> :call SetupCurFolderData("scan")<CR>
 map <F11><F11> :call SwitchToCodeBase()<CR>
-map <S-F11> :call List_lookup_file_for_cur_folder()<CR>
-"List_lookup_file_for_cur_folder()<CR>
+map <S-F11> :call List_lookup_file_for_cur_folder("scan")<CR>
 map <F12> :call RefreshCodeData()<CR>
 
 "use gtags, or cscope to find reference. note, gtags does not support perl for the moment.
@@ -423,7 +421,7 @@ function! SetupVim()
     let s:IsInitialized = 1 
 
     if g:support_p4_edit_event
-        silent! execute "call IsP4Exist()"
+        silent! execute "call CheckPerforce()"
     endif
 
     if filereadable("filenametags")
@@ -431,8 +429,6 @@ function! SetupVim()
     else
         silent! execute "call SetupCscope()"
     endif
-
-    redraw!
 
 endfunction
 
@@ -589,9 +585,8 @@ function! IsShellCmdExist(cmd)
 
 endfunction
 
-function! IsP4Exist()
+function! CheckPerforce()
     let g:PerforceExisted = IsShellCmdExist("p4")
-    redraw!
 endfunction
 
 
@@ -769,18 +764,17 @@ endfunction
 "setup files in current folder for LookupFiel, Cscope.
 function! List_lookup_file_for_cur_folder(mode)
 
-    let txt="y"
+    let txt="n"
 
-    if a:mode == 'scan' && filereadable("filenametags")
+    if a:mode == "scan" && filereadable("filenametags")
         let txt = input("filenametags existed,rebuild or not ?(y/n)") 
     endif
 
     if txt == "y"
-        execute "! ~/.vim/list.all.files \"cur\""
+        silent! execute "! ~/.vim/list.all.files \"cur\""
     endif
 
     execute "let g:LookupFile_TagExpr='\"filenametags\"'"
-
 
 endfunction
 
@@ -817,7 +811,6 @@ function! SetupCurFolderData(mode)
     call List_lookup_file_for_cur_folder(a:mode)
     call SetupCscopeForCurFolder(a:mode)
     let g:WorkingInCurrDir = 1
-    redraw!
 
 endfunction
 
@@ -918,7 +911,6 @@ function! SetupCscope()
     endif
 
     call CsAddTags(g:mycodetags)
-    redraw!
 
 endfunction
 
@@ -962,11 +954,11 @@ function! ToggleToolsBar()
 
     if(has("gui_running"))
         if &guioptions =~# 'T'
-            execute"set guioptions-=T"
-            execute"set guioptions-=m"
+            silent! execute"set guioptions-=T"
+            silent! execute"set guioptions-=m"
         else
-            execute"set guioptions+=T"
-            execute"set guioptions+=m"
+            silent! execute"set guioptions+=T"
+            silent! execute"set guioptions+=m"
         endif
     endif
 
@@ -1043,7 +1035,7 @@ function! OpenHistory()
 
     let g:IsHistoryWinOpened = 1
     let l:win = winnr()
-    execute "MRU"
+    silent! execute "MRU"
     silent! execute l:win."wincmd w"
 
 endfunction
@@ -1068,8 +1060,8 @@ function! ToggleHistoryWin()
     let l:mruwinnr = bufwinnr(g:MruBufferName)
     if l:mruwinnr != -1
         let g:IsHistoryWinOpened = 0
-        execute l:mruwinnr."wincmd w"
-        execute "x"
+        silent! execute l:mruwinnr."wincmd w"
+        silent! execute "x"
     else
         call OpenHistory()
     endif
@@ -1133,9 +1125,9 @@ function! EditMyVimrc()
     let l:new = IsCurrentTabEmpty()
     
     if !l:new
-        execute "tabedit $MYVIMRC"
+        silent! execute "tabedit $MYVIMRC"
     else
-        execute "edit $MYVIMRC"
+        silent! execute "edit $MYVIMRC"
     endif
 
 endfunction
@@ -1229,7 +1221,7 @@ function! CleanHiddenBuffer()
 
     for b in range(1, bufnr("$"))
         if bufloaded(b) && !has_key(visible, b)
-            execute "bw! ".b
+            silent! execute "bw! ".b
         endif
     endfor
 
