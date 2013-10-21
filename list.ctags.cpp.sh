@@ -18,12 +18,9 @@ ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q /usr/inclu
 mkdir -p ${HOME}/.vim/cpp.tags
 mv tags ${HOME}/.vim/cpp.tags
 
-
-name="miliao"
-
-if [ "`whoami`" == "$name" ];then
-    wxPath=/usr/local/brion/wxWidgets/2.8.9/include
-	ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${wxPath} 
+if [$WX_SOURCE_PATH ];then
+    # wxPath=/usr/local/brion/wxWidgets/2.8.9/include
+	ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${WX_SOURCE_PATH} 
 	mkdir -p ${HOME}/.vim/wx.tags
 	mv tags ${HOME}/.vim/wx.tags
 else

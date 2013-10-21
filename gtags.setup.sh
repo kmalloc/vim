@@ -1,13 +1,15 @@
 #! /bin/bash
 
-mode=${1:-"update"}
+#code base is defined by env varaible: MD_CODE_BASE
+#default is ~/code
+GTAGSROOT=${MD_CODE_BASE:-"${HOME}/code"}
 
-GTAGSROOT="${HOME}/code"
+#hard-coded cache data path
 GTAGSDBPATH="${HOME}/.vim/caches"
 
-if [ ${mode} != "cur" ] && [ `whoami` == "miliao" ];then
-    GTAGSROOT=$GTAGSROOT/gui_tflex
-elif [ ${mode} == "cur" ];then
+mode=${1:-"update"}
+
+if [ ${mode} == "cur" ];then
     GTAGSROOT="`pwd`"
     GTAGSDBPATH=${GTAGSROOT}
 fi
@@ -33,7 +35,6 @@ function set_link
         ln -s ${HOME}/.vim/caches/$file ${GTAGSROOT}
     fi
 }
-
 
 function setup_tags
 {

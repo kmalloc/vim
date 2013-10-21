@@ -1,42 +1,32 @@
 #/bin/sh
 
 mode=${1:-"code"}
-path=${HOME}/code
-user="miliao"
 
-if [ "${mode}" == "code" ];then
-	if [ "${user}" == "`whoami`" ];then
-		path=${HOME}/code/gui_tflex
-		mode="gui"
-	else
-		mode="cur"
-	fi
-else
+path=${MD_CODE_BASE:-"${HOME}/code"}
+
+if [ "${mode}" == "cur" ];then
 	path="`pwd`"
 fi
 
 if [ -e "tags" ];then
-	rm tags
+	rm $path/tags
 fi
 
+codeTarget=${HOME}/.vim/code.ctags/tags
 
-guiTarget=${HOME}/.vim/gui.tags/tags
-if [ -e "${guiTarget}" ];then
-	rm ${guiTarget}
+if [ -e "${codeTarget}" ];then
+	rm ${codeTarget}
 fi
 
 
 ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${path}
 
 if [ "${mode}" == "cur" ];then
-	mkdir -p ${HOME}/.vim/cur.tags
-	mv tags ${HOME}/.vim/cur.tags
-elif [ "${mode}" == "gui" ];then
-	mkdir -p ${HOME}/.vim/gui.tags
-	mv tags ${HOME}/.vim/gui.tags
+	mkdir -p ${HOME}/.vim/cur.ctags
+	mv tags ${HOME}/.vim/cur.ctags
+elif [ "${mode}" == "code" ];then
+	mkdir -p ${HOME}/.vim/code.ctags
+	mv tags ${HOME}/.vim/code.ctags
 fi
-
-
-
 
 

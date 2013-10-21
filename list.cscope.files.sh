@@ -1,15 +1,14 @@
-#
+#! /bin/env bash
 
 mode=${1:-"code"}
-user="`whoami`"
-officeUser="miliao"
+
+#file path to store cscope files list
 outLoc=${HOME}/.vim/caches/cscope.files
-searchLoc=${HOME}/code
 
+#code path is defined by env variable:MD_CODE_BASE, default is ~/code
+searchLoc=${MD_CODE_BASE:-"${HOME}/code"}
 
-if [ "${mode}" == "code" ] && [ "${user}" == "${officeUser}" ];then
-	searchLoc="${HOME}/code/gui_tflex"
-elif [ "${mode}" == "cur" ];then
+if [ "${mode}" == "cur" ];then
 	searchLoc="`pwd`"
     outLoc="${searchLoc}/cscope.files"
 fi

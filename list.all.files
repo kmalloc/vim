@@ -1,13 +1,9 @@
 #!/bin/sh
 
-officeUser="miliao"
-user="`whoami`"
-
+#2 different modes:
 #cur:search current directory.
 #code:search code path(different in office and home)
-#probe:to be decide. dynamically decide the search mode using user name.
 mode=${1:-"code"} 
-
 
 
 function makelist
@@ -22,14 +18,10 @@ function makelist
   sort -f >> ${outloc}/filenametags
 }
 
-
 mkdir -p ~/.vim/caches
 
-if [ "${user}" == "${officeUser}" ];then
-	code="${HOME}/code/gui_tflex"
-else
-	code="${HOME}/code"
-fi
+#default code path is ~/code, if env variable MD_CODE_BASE is not defined
+code=${MD_CODE_BASE:-"${HOME}/code"}
 
 
 if [ "${mode}" == "code" ]; then
@@ -39,7 +31,4 @@ elif [ "${mode}" == "cur" ]; then
 else
 	echo "invalid input."
 fi
-
-
-
 
