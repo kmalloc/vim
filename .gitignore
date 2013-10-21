@@ -1,12 +1,13 @@
 caches/
 misc/
-gui.tags/
-cur.tags/
-wx.tags/
-cpp.tags/
+code.ctags/
+cur.ctags/
+wx.ctags/
+cpp.ctags/
 doc/tags
 doc/tags-ja
 *.swp
 .netrwhist
 filenametags
 *.swo
+*.swn

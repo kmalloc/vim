@@ -3,7 +3,10 @@
 "other requirment     : compile vim with option: --enable-cscope, --enable-pythoninterp, --with-features=huge
 "plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
 "                       echofunc,bufExplorer,vimExplorer,MRU.
+"usage                : to enable cscope&ctags usage, please setup environment variable "MD_CODE_BASE" to specify the code path
+"                     : to enable perforce checkout event on file changed, setup "MD_P4_CODE_BASE" env variable
 "others               : some shell scripts are put in .vim/
+
 
 set nocompatible
 
@@ -16,10 +19,9 @@ set textwidth=0
 let mapleader=","
 
 "search 
-set hlsearch
-"set nohlsearch
 set ignorecase
 set incsearch
+set hlsearch
 
 "document
 set number
@@ -61,10 +63,10 @@ if(!has("gui_running"))
     exe "set <M-p>=\<ESC>p"
 endif
 
-set tags=~/.vim/cpp.tags/tags
-set tags+=~/.vim/gui.tags/tags
-set tags+=~/.vim/wx.tags/tags
-set tags+=~/.vim/cur.tags/tags
+set tags=~/.vim/cpp.ctags/tags
+set tags+=~/.vim/code.ctags/tags
+set tags+=~/.vim/wx.ctags/tags
+set tags+=~/.vim/cur.ctags/tags
 set tags+=~/.vim/caches/tags
 
 "indention
@@ -119,7 +121,7 @@ set completeopt-=preview "remove preview window for autocompletion
 highlight Pmenu guibg=darkblue ctermbg=blue
 highlight PmenuSel guibg=brown ctermbg=darkgreen
 
-highlight cursorline term=bold ctermfg=brown gui=bold guifg=brown guibg=bg "ctermbg=gray
+highlight cursorline term=bold ctermfg=brown gui=bold guifg=brown guibg=bg
 
 hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred    ctermbg=darkblue
 hi User2 guifg=#dd3333 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
@@ -143,6 +145,7 @@ endif
 " initialize global variables when vim is launched.
 if (!s:IsInitialized)
 
+    let g:p4_code_base = $MD_P4_CODE_BASE
     let g:IsQuickfixOpen = 0
     let g:PerforceExisted = 0
 
@@ -396,10 +399,14 @@ augroup AutoEventHandler
     autocmd!
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call OnBufEnter(expand("<afile>"))
     autocmd BufWinEnter * call OnBufferWinEnter()
-    autocmd BufWritePost */code/gui_tflex/*.cpp,*/code/gui_tflex/*.cc,*/code/gui_tflex/*.c,*/code/gui_tflex/*.cxx,*/code/gui_tflex/*.h,*/code/gui_tflex/*.hpp,*/code/gui_tflex/*.sh,*/code/gui_tflex/*.pl,*/code/gui_tflex/*.mk call OnBufWrite(expand("<afile>"))
+
+    "invoke code-changed event: for p4 to checkout file
+    if g:PerforceExisted
+        autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
+    endif
 
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
-    autocmd BufWritePost */code/*.cpp,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
+    autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
     autocmd WinEnter * call OnWinEnter(expand("<afile>"))
     autocmd BufEnter * call HandleAcp(expand("<afile>"))
@@ -415,6 +422,7 @@ augroup end
 "---------------------function ------------------------------------
 
 "-----------------autocmd handler---------------
+
 
 function! SetupVim()
 
@@ -446,7 +454,13 @@ endfunction
 function! OnBufferWriteByP4(file)
 
     "if we don't have p4 here, skip it.
-    if g:support_p4_edit_event == 0
+    if g:support_p4_edit_event == 0 || g:PerforceExisted == 0
+        echo "p4 command not available."
+        return
+    endif
+
+    let l:index = stridx(a:file, g:p4_code_base)
+    if l:index == -1
         return
     endif
 
@@ -455,13 +469,7 @@ function! OnBufferWriteByP4(file)
         return
     endif
 
-    let l:ret = 0
-    if (g:PerforceExisted == 0)
-        echoerr "p4 command not available."
-        return
-    else
-        let l:ret = P4CheckOut(expand("%:p"))
-    endif
+    let l:ret = P4CheckOut(expand("%:p"))
 
     if (l:ret == 1)
         let g:files_checkout[l:nr] = 1
@@ -706,6 +714,10 @@ function! RefreshCscopeData()
 
         if filereadable(l:csFiles)
             let csfilesdeleted=delete(l:csFiles)
+            if (!csfilesdeleted)
+                echo "refresh cache failed, can not delete ".l:csFiles."\n"
+                return
+            endif
         endif
 
         let l:csOut=$HOME."/.vim/caches/cscope.out"
@@ -818,10 +830,6 @@ endfunction
 "this two mode is different in that: cscope date, file look up data, ctags data is different.
 "thus influencing auto complete, etc.
 function! SwitchToCodeBase()
-
-    if (g:WorkingInCurrDir == 0)
-        return
-    endif
 
     let g:WorkingInCurrDir = 0
     let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
@@ -954,11 +962,11 @@ function! ToggleToolsBar()
 
     if(has("gui_running"))
         if &guioptions =~# 'T'
-            silent! execute"set guioptions-=T"
-            silent! execute"set guioptions-=m"
+            silent! execute "set guioptions-=T"
+            silent! execute "set guioptions-=m"
         else
-            silent! execute"set guioptions+=T"
-            silent! execute"set guioptions+=m"
+            silent! execute "set guioptions+=T"
+            silent! execute "set guioptions+=m"
         endif
     endif
 

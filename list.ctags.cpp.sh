@@ -15,17 +15,14 @@ if [ -e "tags" ];then
 fi
 
 ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q /usr/include/
-mkdir -p ${HOME}/.vim/cpp.tags
-mv tags ${HOME}/.vim/cpp.tags
+mkdir -p ${HOME}/.vim/cpp.ctags
+mv tags ${HOME}/.vim/cpp.ctags
 
-
-name="miliao"
-
-if [ "`whoami`" == "$name" ];then
-    wxPath=/usr/local/brion/wxWidgets/2.8.9/include
-	ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${wxPath} 
-	mkdir -p ${HOME}/.vim/wx.tags
-	mv tags ${HOME}/.vim/wx.tags
+if [ $MD_WX_SOURCE_PATH ];then
+    # wxPath=/usr/local/brion/wxWidgets/2.8.9/include
+	ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${MD_WX_SOURCE_PATH}
+	mkdir -p ${HOME}/.vim/wx.ctags
+	mv tags ${HOME}/.vim/wx.ctags
 else
 	echo "not office computer.wx code is not going to be ctags"
 fi
