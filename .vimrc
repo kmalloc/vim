@@ -580,7 +580,7 @@ endfunction
 "check whether shell command "cmd" exist
 function! IsShellCmdExist(cmd)
 
-    silent! execute "! which ".a:cmd." > /dev/null 2>&1"
+    silent! execute "! which ".a:cmd." 2>&1 1>/dev/null"
     return !v:shell_error
 
 endfunction
