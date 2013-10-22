@@ -319,6 +319,10 @@ map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
 
 "------------------------plugin setting--------------------------------------
 
+"ConqueTerm setting
+let g:ConqueTerm_Color=1
+
+
 "taglist.vim setting
 let Tlist_Show_One_File=1
 let Tlist_Exit_OnlyWindow=1
@@ -396,6 +400,7 @@ let g:NERDSpaceDelims = 1
 
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
+
     autocmd!
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call OnBufEnter(expand("<afile>"))
     autocmd BufWinEnter * call OnBufferWinEnter()
@@ -484,6 +489,19 @@ function! OnBufWrite(file)
 
 endfunction
 
+
+function! IsTerminalWin(file)
+
+    if match(a:file, g:TerminalName) > -1
+        retur 1
+    elseif bufwinnr(g:TerminalName) != -1
+        return 1
+    endif
+
+    return 0
+
+endfunction
+
 " should we open tlist window when entering a buffer window?
 " rules are:
 " 1. not in diff mode.
@@ -496,15 +514,9 @@ function! ShouldSuppressTlist(file)
 
     if &diff 
         return 1
-    else
-        if match(a:file, g:TerminalName) > -1
-            retur 1
-        elseif bufwinnr(g:TerminalName) != -1
-            return 1
-        endif
     endif
 
-    return 0
+    return IsTerminalWin(a:file)
 
 endfunction
 
@@ -534,7 +546,6 @@ function! HandleAcp(file)
     endif
 endfunction
 
-
 function! OnWinEnter(file)
     let l:ret = HandleAcp(a:file)
     if l:ret
@@ -552,21 +563,15 @@ function! OnBufferWinEnter()
         quit
     endif
 
-    call OpenHistoryIfNecessary()
-
 endfunction
-
 
 function! OnTabEnter()
 
-    if g:IsQuickfixOpen == 1
-        let l:win = winnr()
-        silent! execute "bo copen"
-        silent! execute l:win."wincmd w"
-    else
-        silent! execute "cclose"
+    if winnr("$") == 1 && IsBufShowInCurrTab(g:TerminalName) > 0
+        return
     endif
 
+    call ShowQuickfixIfNecessary()
     call OpenHistoryIfNecessary()
 
 endfunction
@@ -714,7 +719,7 @@ function! RefreshCscopeData()
 
         if filereadable(l:csFiles)
             let csfilesdeleted=delete(l:csFiles)
-            if (!csfilesdeleted)
+            if (filereadable(l:csFiles))
                 echo "refresh cache failed, can not delete ".l:csFiles."\n"
                 return
             endif
@@ -1076,7 +1081,6 @@ function! ToggleHistoryWin()
 
 endfunction
 
-
 function! CloseHistoryBuffer()
 
     let g:IsHistoryWinOpened = 0
@@ -1165,6 +1169,22 @@ function! ToggleWinByName(name)
 
 endfunction
 
+function! CloseAuxiliaryWin()
+    cclose
+endfunction
+
+function! ShowQuickfixIfNecessary()
+
+    if g:IsQuickfixOpen == 1
+        let l:win = winnr()
+        silent! execute "bo copen"
+        silent! execute l:win."wincmd w"
+    else
+        silent! execute "cclose"
+    endif
+
+endfunction
+
 function! ShowTerminal(mode)
    
     let l:buf = ToggleWinByName(g:TerminalName)
@@ -1184,11 +1204,10 @@ function! ShowTerminal(mode)
         silent! execute "ConqueTerm bash"
     elseif a:mode == "tab"
         silent! execute "ConqueTermTab bash"
+        call CloseAuxiliaryWin()
     else
         silent! execute "ConqueTermVSplit bash"
     endif
-
-    silent! execute "TlistClose"
 
     redraw!
 
