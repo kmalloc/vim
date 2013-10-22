@@ -63,11 +63,11 @@ if(!has("gui_running"))
     exe "set <M-p>=\<ESC>p"
 endif
 
-set tags=~/.vim/cpp.ctags/tags
-set tags+=~/.vim/code.ctags/tags
-set tags+=~/.vim/wx.ctags/tags
-set tags+=~/.vim/cur.ctags/tags
-set tags+=~/.vim/caches/tags
+set tags=~/.vim/caches/cpp.ctags/tags
+set tags+=~/.vim/caches/code.ctags/tags
+set tags+=~/.vim/caches/wx.ctags/tags
+set tags+=~/.vim/caches/cur.ctags/tags
+set tags+=~/.vim/caches/caches/tags
 
 "indention
 set ai

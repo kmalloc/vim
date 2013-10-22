@@ -1,13 +1,13 @@
 #/bin/sh
 
-cpptarget=${HOME}/.vim/cpp.tags/tags
-if [ -e ${cpptarget} ];then
-	rm ${cpptarget}
+cppOutDir=${HOME}/.vim/caches/cpp.ctags
+if [ -e ${cppOutDir}/tags ];then
+	rm ${cppOutDir}/tags
 fi
 
-wxtarget=${HOME}/.vim/wx.tags/tags
-if [ -e ${wxtarget} ];then
-	rm ${wxtarget}
+wxOutDir=${HOME}/.vim/caches/wx.ctags
+if [ -e ${wxOutDir}/tags ];then
+	rm ${wxOutDir}/tags
 fi
 
 if [ -e "tags" ];then
@@ -15,14 +15,15 @@ if [ -e "tags" ];then
 fi
 
 ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q /usr/include/
-mkdir -p ${HOME}/.vim/cpp.ctags
-mv tags ${HOME}/.vim/cpp.ctags
+
+mkdir -p ${cppOutDir}
+mv tags ${cppOutDir}/tags
 
 if [ $MD_WX_SOURCE_PATH ];then
     # wxPath=/usr/local/brion/wxWidgets/2.8.9/include
 	ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${MD_WX_SOURCE_PATH}
-	mkdir -p ${HOME}/.vim/wx.ctags
-	mv tags ${HOME}/.vim/wx.ctags
+	mkdir -p $wxOutDir
+	mv tags ${wxOutDir}/tags
 else
 	echo "not office computer.wx code is not going to be ctags"
 fi

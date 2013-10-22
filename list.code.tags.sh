@@ -3,30 +3,23 @@
 mode=${1:-"code"}
 
 path=${MD_CODE_BASE:-"${HOME}/code"}
+outPutDir=${HOME}/.vim/caches/code.ctags
 
 if [ "${mode}" == "cur" ];then
 	path="`pwd`"
+    outPutDir=${HOME}/.vim/caches/cur.ctags
 fi
 
 if [ -e "tags" ];then
 	rm $path/tags
 fi
 
-codeTarget=${HOME}/.vim/code.ctags/tags
-
-if [ -e "${codeTarget}" ];then
-	rm ${codeTarget}
+if [ -e "${outPutDir}/tags" ];then
+	rm ${outPutDir}/tags
 fi
-
 
 ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${path}
 
-if [ "${mode}" == "cur" ];then
-	mkdir -p ${HOME}/.vim/cur.ctags
-	mv tags ${HOME}/.vim/cur.ctags
-elif [ "${mode}" == "code" ];then
-	mkdir -p ${HOME}/.vim/code.ctags
-	mv tags ${HOME}/.vim/code.ctags
-fi
-
+mkdir -p $outPutDir
+mv tags $outPutDir/tags
 
