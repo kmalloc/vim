@@ -1146,6 +1146,8 @@ function! ToggleWinByName(name)
 
     let l:buf = IsBufShowInCurrTab(a:name)
 
+    " echoerr "win ".a:name." existed:".l:buf.", closing it"
+
     if (l:buf != -1)
         "toggle, if window already opened, then close it.
         let l:win = bufwinnr(l:buf) 
@@ -1172,14 +1174,8 @@ function! ShowTerminal(mode)
     endif
 
     if l:buf > 0
-
-        let l:h = IsBuffHidden(l:buf)
-        " echoerr "is hidden(".l:h.",".l:buf.")"
-        if !l:h
-            silent execute "sb ".l:buf
-            return
-        endif
-
+        silent execute "sb ".l:buf
+        return
     endif
 
     let l:null = IsCurrentTabEmpty()
@@ -1261,6 +1257,8 @@ function! IsBufShowInCurrTab(name)
     if l:nr <= 0
         return -1
     endif
+
+    " echoerr "find ".a:name." in current tab ".l:nr
 
     for b in tabpagebuflist(tabpagenr())
         if l:nr == b
