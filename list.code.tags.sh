@@ -3,6 +3,8 @@
 mode=${1:-"code"}
 
 path=${MD_CODE_BASE:-"${HOME}/code"}
+path=${path/#~/$HOME}
+
 outPutDir=${HOME}/.vim/caches/code.ctags
 
 if [ "${mode}" == "cur" ];then

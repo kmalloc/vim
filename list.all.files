@@ -18,11 +18,12 @@ function makelist
   sort -f >> ${outloc}/filenametags
 }
 
-mkdir -p ~/.vim/caches
+mkdir -p $HOME/.vim/caches
 
 #default code path is ~/code, if env variable MD_CODE_BASE is not defined
 code=${MD_CODE_BASE:-"${HOME}/code"}
 
+code=${code/#~/$HOME}
 
 if [ "${mode}" == "code" ]; then
 	makelist "${HOME}/.vim/caches" "${code}"
