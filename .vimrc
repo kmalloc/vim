@@ -719,7 +719,7 @@ function! RefreshCscopeData()
 
         if filereadable(l:csFiles)
             let csfilesdeleted=delete(l:csFiles)
-            if (!csfilesdeleted)
+            if (filereadable(l:csFiles))
                 echo "refresh cache failed, can not delete ".l:csFiles."\n"
                 return
             endif
