@@ -4,6 +4,8 @@
 #default is ~/code
 GTAGSROOT=${MD_CODE_BASE:-"${HOME}/code"}
 
+GTAGSROOT=${GTAGSROOT/#~/$HOME}
+
 #hard-coded cache data path
 GTAGSDBPATH="${HOME}/.vim/caches"
 

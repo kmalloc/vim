@@ -21,7 +21,10 @@ mv tags ${cppOutDir}/tags
 
 if [ $MD_WX_SOURCE_PATH ];then
     # wxPath=/usr/local/brion/wxWidgets/2.8.9/include
-	ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${MD_WX_SOURCE_PATH}
+
+    wxPath=${MD_WX_SOURCE_PATH/#~/$HOME}
+
+	ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${wxPath}
 	mkdir -p $wxOutDir
 	mv tags ${wxOutDir}/tags
 else
