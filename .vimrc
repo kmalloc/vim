@@ -580,7 +580,7 @@ function! UpdateGtags()
 
     if(g:UseGlobalOverCscope)
         silent! execute "! ~/.vim/gtags.setup.sh update &"
-        call CsAddTags(g:mycodetags) 
+        call CsAddTags(g:mycodetags, 0)
         redraw!
     endif
 
@@ -750,7 +750,7 @@ function! RefreshCscopeData()
 
     endif
 
-    call CsAddTags(l:csOut)
+    call CsAddTags(l:csOut, 1)
 
     redraw!
 
@@ -819,7 +819,7 @@ function! SetupCscopeForCurFolder(mode)
 
     endif
 
-    call CsAddTags(l:tags)
+    call CsAddTags(l:tags, 0)
 
 endfunction
 
@@ -845,7 +845,7 @@ function! SwitchToCodeBase()
         let g:mycodetags = $HOME."/.vim/caches/cscope.out"
     endif
 
-    call CsAddTags(g:mycodetags)
+    call CsAddTags(g:mycodetags, 0)
     
 endfunction
 
@@ -879,7 +879,7 @@ function! CscopeFind(file,type)
 endfunction
 
 "setup cscope cached data path
-function! CsAddTags(tags)
+function! CsAddTags(tags, silent)
     
     silent! execute "cs kill -1"
 
@@ -892,7 +892,7 @@ function! CsAddTags(tags)
 
     set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
 
-    if !filereadable(a:tags)
+    if !a:silent && !filereadable(a:tags)
         execute "echoerr \"can not find ".a:tags.", f11 or f12 please\""
     endif
 
@@ -923,7 +923,7 @@ function! SetupCscope()
 
     endif
 
-    call CsAddTags(g:mycodetags)
+    call CsAddTags(g:mycodetags, 0)
 
 endfunction
 
@@ -955,7 +955,7 @@ function! ToggleGtags()
 
      endif
 
-    call CsAddTags(g:mycodetags)
+    call CsAddTags(g:mycodetags, 0)
     redraw!
 
 endfunction
