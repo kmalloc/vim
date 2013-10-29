@@ -579,7 +579,7 @@ endfunction
 function! UpdateGtags()
 
     if(g:UseGlobalOverCscope)
-        silent! execute "! ~/.vim/gtags.setup.sh update &"
+        silent! execute "! ~/.vim/script/gtags.setup.sh update &"
         call CsAddTags(g:mycodetags, 0)
         redraw!
     endif
@@ -697,7 +697,7 @@ function! Refresh_filelookup_data()
         silent! execute "!rm ".l:lookupfiles
     endif
 
-    silent! execute "!~/.vim/list.all.files&"
+    silent! execute "!~/.vim/script/list.all.files.sh&"
     if filereadable(l:lookupfiles)
         execute "let g:LookupFile_TagExpr='\"".l:lookupfiles."\"'"
     endif 
@@ -741,12 +741,12 @@ function! RefreshCscopeData()
     if g:UseGlobalOverCscope == 0
 
         if !filereadable(l:csFiles)	
-            silent! execute "!~/.vim/list.cscope.files.sh&"
+            silent! execute "!~/.vim/script/list.cscope.files.sh&"
         endif
 
     else
 
-        silent! execute "! ~/.vim/gtags.setup.sh setup&"
+        silent! execute "! ~/.vim/script/gtags.setup.sh setup&"
 
     endif
 
@@ -768,9 +768,9 @@ function! RefreshCodeTags()
 
     let txt=input("refresh code base? otherwise refresh current path.(y/n):")
     if txt == "y"
-        execute "! ~/.vim/list.code.tags.sh &"
+        execute "! ~/.vim/script/list.code.tags.sh &"
     else
-        execute "!~/.vim/list.code.tags.sh cur &"
+        execute "!~/.vim/script/list.code.tags.sh cur &"
     endif
 
     redraw!
@@ -788,7 +788,7 @@ function! List_lookup_file_for_cur_folder(mode)
     endif
 
     if txt == "y"
-        silent! execute "! ~/.vim/list.all.files \"cur\""
+        silent! execute "! ~/.vim/script/list.all.files.sh \"cur\""
     endif
 
     execute "let g:LookupFile_TagExpr='\"filenametags\"'"
@@ -808,12 +808,12 @@ function! SetupCscopeForCurFolder(mode)
 
         if g:UseGlobalOverCscope == 0
 
-            silent! execute "! ~/.vim/list.cscope.files.sh cur"
+            silent! execute "! ~/.vim/script/list.cscope.files.sh cur"
 
         else
 
             let l:tags = "GTAGS"
-            silent! execute "! ~/.vim/gtags.setup.sh cur &"
+            silent! execute "! ~/.vim/script/gtags.setup.sh cur &"
 
         endif
 
@@ -913,7 +913,7 @@ function! SetupCscope()
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
 
         "gtags.setup.sh will set up link to code root, prepare cache, etc.
-        silent! execute "! ~/.vim/gtags.setup.sh env"
+        silent! execute "! ~/.vim/script/gtags.setup.sh env"
   
     elseif filereadable(g:CscopePath)
 
@@ -950,7 +950,7 @@ function! ToggleGtags()
         let g:mycodetags = g:mycodetags."/GTAGS"
 
         if (g:WorkingInCurrDir != 1)
-            silent! execute "! ~/.vim/gtags.setup.sh env"
+            silent! execute "! ~/.vim/script/gtags.setup.sh env"
         endif
 
      endif
@@ -1150,7 +1150,7 @@ function! ToggleWinByName(name)
 
     let l:buf = IsBufShowInCurrTab(a:name)
 
-    " echoerr "win ".a:name." existed:".l:buf.", closing it"
+    " echoerr "win ".a:name." existed?:".l:buf
 
     if (l:buf != -1)
         "toggle, if window already opened, then close it.
@@ -1277,7 +1277,7 @@ function! IsBufShowInCurrTab(name)
         return -1
     endif
 
-    " echoerr "find ".a:name." in current tab ".l:nr
+    " echoerr "find ".a:name." num: ".l:nr
 
     for b in tabpagebuflist(tabpagenr())
         if l:nr == b
