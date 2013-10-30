@@ -15,128 +15,6 @@ if (!has("gui_running"))
     set term=$TERM
 endif
 
-set textwidth=0
-let mapleader=","
-
-"search 
-set ignorecase
-set incsearch
-set hlsearch
-
-"document
-set number
-set nobackup
-set autoread
-set encoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
-set path+=~/code/*
-"set colorcolumn=90 "make column 90th visible
-"set list "visible last column of each line, set nolist
-"set spell spelllang=en_us
-
-set foldenable
-set foldmethod=manual
-
-"share system clipboard
-set clipboard=unnamed
-
-"key and mouse
-set mouse=a
-set winaltkeys=no "disable hot key for the menu in gvim.
-set backspace=indent,eol,start "set backspace key
-
-set timeout timeoutlen=250 ttimeoutlen=100
-
-"enable alt key in terminal
-"set <M-key>=<Esc>key
-"see :h map-alt-keys
-if(!has("gui_running"))
-    exe "set <M-x>=\<ESC>x"
-    exe "set <M-w>=\<ESC>w"
-    exe "set <M-o>=\<ESC>o"
-    exe "set <M-1>=\<ESC>1"
-    exe "set <M-2>=\<ESC>2"
-    exe "set <M-d>=\<ESC>d"
-    exe "set <M-u>=\<ESC>u"
-    exe "set <M-n>=\<ESC>n"
-    exe "set <M-p>=\<ESC>p"
-endif
-
-set tags=~/.vim/caches/cpp.ctags/tags
-set tags+=~/.vim/caches/code.ctags/tags
-set tags+=~/.vim/caches/wx.ctags/tags
-set tags+=~/.vim/caches/cur.ctags/tags
-set tags+=~/.vim/caches/caches/tags
-
-"indention
-set ai
-set si
-set cindent
-set smartindent
-set autoindent
-set ruler
-set showmatch
-set expandtab "replace tab with space, always.
-set tabstop=4
-set shiftwidth=4
-set ruler
-
-"tab
-set switchbuf=usetab  ",newtab
-set hidden
-
-filetype plugin on
-filetype indent on
-
-"appearance
-syntax on
-set t_Co=256
-"set background=light
-
-if (has("gui_running"))
-    set background=dark
-
-    set guifont=MiscFixed\ 18
-    set guioptions-=m "hide menu bar.
-    set guioptions-=T "hide tool bar.
-
-    colorscheme DimGreen 
-else
-    colorscheme torte
-    "colorscheme allan
-endif
-
-"solarized
-"allan deveiate
-"pacific
-"molokai
-"torte
-
-set cursorline "highlight current line
-set laststatus=2 "always show status line
-set completeopt-=preview "remove preview window for autocompletion
-
-"context menu
-highlight Pmenu guibg=darkblue ctermbg=blue
-highlight PmenuSel guibg=brown ctermbg=darkgreen
-
-highlight cursorline term=bold ctermfg=brown gui=bold guifg=brown guibg=bg
-
-hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred    ctermbg=darkblue
-hi User2 guifg=#dd3333 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
-hi User3 guifg=#ff66ff guibg=#222222 ctermfg=darkgreen  ctermbg=darkblue
-hi User4 guifg=#a0ee40 guibg=#222222 ctermfg=darkyellow ctermbg=darkblue
-hi User5 guifg=#eeee40 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
-
-set statusline =%3*[%F]              "full path of current file
-set statusline +=%1*%r               "readonly flag
-set statusline +=%4*[%v]             "virtual column number
-set statusline +=%5*%m               "modified flag
-"set statusline +=%2*%L              "total lines
-"set statusline +=%1*%n              "buffer number
-"set statusline +=%5*%{&ff}          "file format
-
 "----------------------global variable---------------------------
 if !exists("s:IsInitialized")
     let s:IsInitialized = 0
@@ -176,6 +54,8 @@ if (!s:IsInitialized)
         let g:files_checkout = {} "files that have been checkout by p4
     endif
 
+    let g:syntastic_check_on = {} "files that are currently runing syntastic check
+
     "using gtags by default if gtags has installed in folder: ~/tools/gtags
     let g:UseGlobalOverCscope = 0
     let g:IgnoreGtags = 1 "value '1' to disable using gtags.
@@ -194,134 +74,10 @@ if (!s:IsInitialized)
 endif
 
 
-"-------------key mapping-------------------------------
-
-"edit my vimrc
-map <leader>ev :call EditMyVimrc()<CR>
-map <F9> :so ~/.vimrc<CR>
-map <F6> :call ToggleQuickfix()<CR>
-map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
-
-"toggle gvim tool bar.
-if (has("gui_running"))
-    map <M-m> :call ToggleToolsBar()<CR>
-endif
-
-"generate file names list
-"this will replace the previous TagExpr setting.
-map <F10> :call RefreshCodeTags()<CR>
-map <F11> :call SetupCurFolderData("scan")<CR>
-map <F11><F11> :call SwitchToCodeBase()<CR>
-map <S-F11> :call List_lookup_file_for_cur_folder("scan")<CR>
-map <F12> :call RefreshCodeData()<CR>
-
-"use gtags, or cscope to find reference. note, gtags does not support perl for the moment.
-map <F8>  :call ToggleGtags()<CR>
-
-"open terminal to a new tab, if terminal already open, switch to it.
-map <F5>  :call ShowTerminal("tab")<CR>
-
-"open termial to a vertical split window within current tab.
-map <F5><F5>  :call ShowTerminal("win")<CR>
-
-map <F1>  :call ShowTerminal("tab")<CR>
-map <F1><F1>  :call ShowTerminal("win")<CR>
-
-
-"tab key mapping
-map <C-t> :tabnew<CR>
-map <M-x> :tabclose<CR>
-map <M-w> :x<CR>
-map <M-d> <C-d>
-map <M-u> <C-u>
-
-map <M-1> :tabp<CR>
-map <M-2> :tabn<CR>
-map <C-j> :tabp<CR>
-map <C-k> :tabn<CR>
-"tabm +1 tabm -1
-
-map <M-o> :tabnew %<CR> :A<CR>
-
-"toggle header/cpp file
-map <C-h> :A<CR>
-
-map <F2>  :call ToggleHistoryWin()<CR>
-"map <F3>  :AS<CR>
-
-"select all
-map <C-A> ggVG
-
-"window operation 
-map <S-TAB> <C-W>w
-map <S-TAB-TAB> <C-W>p
-
-"resize current window
-nmap <silent> <C-Left>    <C-W><:unlet! t:flwwinlayout<CR>
-nmap <silent> <C-Right>   <C-W>>:unlet! t:flwwinlayout<CR>
-nmap <silent> <C-Up>      <C-W>+:unlet! t:flwwinlayout<CR>
-nmap <silent> <C-Down>    <C-W>-:unlet! t:flwwinlayout<CR>
-
-"taglist
-map <leader>tl :Tlist<CR>  
-map <F4> :Tlist<CR>  
-
-"file explorer
-map <leader>ve :Ve<CR><CR>
-
-"look up file
-map <leader>lf :LookupFile<CR>
-
-"using cscope to find text reference.
-map <F7> :call FindReference()<CR>
-
-"checkout file using p4.
-if g:support_p4_edit_event
-    map <leader>co   :!p4 edit %<CR>
-    map <leader>add  :!p4 add %<CR>
-endif
-
-"save session
-map <leader>ss :mksession! ~/session/vs<CR>
-map <leader>sos :so ~/session/vs<CR>
-
-"bookmark setting
-map mm :call BookMarkHere()<CR>
-map mc :call OpenBookMark()<CR>
-map md :call DelBookMark()<CR>
-
-
-"------cscope key mapping------------------------------------------
-
-"find reference 
-map <leader>fr :call CscopeFind(expand("<cword>"),"s")<CR>
-
-"find definition
-map <leader>fd :call CscopeFind(expand("<cword>"),"g")<CR> 
-
-"find caller
-map <leader>fc :call CscopeFind(expand("<cword>"),"c")<CR>
-
-"find what you specify,find text
-map <leader>ft :call CscopeFind(expand("<cword>"),"t")<CR>
-
-"find this egrep pattern
-map <leader>fe :call CscopeFind(expand("<cword>"),"e")<CR>
-
-"find file
-map <leader>ff :call CscopeFind(expand("<cfile>"),"f")<CR>
-
-"find files that include this file
-map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
-
-"map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
-
-
 "------------------------plugin setting--------------------------------------
 
 "ConqueTerm setting
 let g:ConqueTerm_Color=1
-
 
 "taglist.vim setting
 let Tlist_Inc_Winwidth=1
@@ -351,7 +107,6 @@ let g:LookupFile_EscCancelsPopup = 0
 let g:LookupFile_SearchForBufsInTabs = 1
 let g:LookupFile_Bufs_LikeBufCmd = 0 
 let g:LookupFile_DisableDefaultMap = 1 "I prefer f5 to open terminal window.
-
 
 "autocomplete setting.
 let g:AutoComplPop_CompleteoptPreview = 1
@@ -401,6 +156,13 @@ let g:GtagsCscope_Absolute_Path = 1
 "put a space after comment sign
 let g:NERDSpaceDelims = 1
 
+
+"Syntastic Check setting.
+let g:syntastic_check_on_wq=0
+let g:syntastic_enable_balloons = 1
+let g:syntastic_auto_loc_list=2
+let g:syntastic_always_populate_loc_list=1
+
 "----------------------autocmd------------------------------------
 augroup AutoEventHandler
 
@@ -431,7 +193,6 @@ augroup end
 
 "-----------------autocmd handler---------------
 
-
 function! SetupVim()
 
     let s:IsInitialized = 1 
@@ -457,7 +218,6 @@ function! AutoOpenTaglistOnVimStartup()
     endif
 
 endfunction
-
 
 function! OnBufferWriteByP4(file)
 
@@ -485,13 +245,11 @@ function! OnBufferWriteByP4(file)
 
 endfunction
 
-
 function! OnBufWrite(file)
 
     call OnBufferWriteByP4(a:file)
 
 endfunction
-
 
 function! IsTerminalWin(file)
 
@@ -596,7 +354,7 @@ endfunction
 "check whether shell command "cmd" exist
 function! IsShellCmdExist(cmd)
 
-    silent! execute "! which ".a:cmd." 2>&1 1>/dev/null"
+    silent! system("which ", a:cmd." 2>&1 1>/dev/null")
     return !v:shell_error
 
 endfunction
@@ -867,6 +625,19 @@ function! FindReference()
 endfunction
 
 
+function! ToggleSyntasticCheck()
+
+    let l:nr = bufnr('%')
+    if exists("g:syntastic_check_on[l:nr]") && g:syntastic_check_on[l:nr] == 1
+        SyntasticReset
+        unlet g:syntastic_check_on[l:nr]
+    else
+        SyntasticCheck
+        let g:syntastic_check_on[l:nr] = 1
+    endif 
+
+endfunction
+
 function! OpenCscopeSearchList()
     if g:IsQuickfixOpen == 0
         call ToggleQuickfix()
@@ -921,8 +692,8 @@ function! SetupCscope()
     elseif filereadable(g:CscopePath)
 
         let g:UseGlobalOverCscope = 0 
-        set cscopetag
         set csprg=cscope
+        set cscopetag
 
     endif
 
@@ -1293,9 +1064,260 @@ function! IsBufShowInCurrTab(name)
 endfunction
 
 
-
+"------------------------- vim setting -------------------------
 "source other setttings
 if IsShellCmdExist("git")
     so ~/.vim/.bundlerc
 endif
+
+set textwidth=0
+let mapleader=","
+
+"search 
+set ignorecase
+set incsearch
+set hlsearch
+
+"document
+set number
+set nobackup
+set autoread
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
+set path+=~/code/*
+"set colorcolumn=90 "make column 90th visible
+"set list "visible last column of each line, set nolist
+"set spell spelllang=en_us
+
+set foldenable
+set foldmethod=manual
+
+"share system clipboard
+set clipboard=unnamed
+
+"key and mouse
+set mouse=a
+set winaltkeys=no "disable hot key for the menu in gvim.
+set backspace=indent,eol,start "set backspace key
+
+set timeout timeoutlen=250 ttimeoutlen=100
+
+"enable alt key in terminal
+"set <M-key>=<Esc>key
+"see :h map-alt-keys
+if(!has("gui_running"))
+    exe "set <M-x>=\<ESC>x"
+    exe "set <M-w>=\<ESC>w"
+    exe "set <M-o>=\<ESC>o"
+    exe "set <M-1>=\<ESC>1"
+    exe "set <M-2>=\<ESC>2"
+    exe "set <M-d>=\<ESC>d"
+    exe "set <M-u>=\<ESC>u"
+    exe "set <M-n>=\<ESC>n"
+    exe "set <M-p>=\<ESC>p"
+endif
+
+set tags=~/.vim/caches/cpp.ctags/tags
+set tags+=~/.vim/caches/code.ctags/tags
+set tags+=~/.vim/caches/wx.ctags/tags
+set tags+=~/.vim/caches/cur.ctags/tags
+set tags+=~/.vim/caches/caches/tags
+
+"indention
+set ai
+set si
+set cindent
+set smartindent
+set autoindent
+set ruler
+set showmatch
+set expandtab "replace tab with space, always.
+set tabstop=4
+set shiftwidth=4
+set ruler
+
+"tab
+set switchbuf=usetab  ",newtab
+set hidden
+
+filetype plugin on
+filetype indent on
+
+"appearance
+syntax on
+set t_Co=256
+"set background=light
+
+if (has("gui_running"))
+    set background=dark
+
+    set guifont=MiscFixed\ 18
+    set guioptions-=m "hide menu bar.
+    set guioptions-=T "hide tool bar.
+
+    colorscheme DimGreen "solarized
+else
+    colorscheme torte
+    "colorscheme allan
+endif
+
+"solarized
+"allan deveiate
+"pacific
+"molokai
+"torte
+
+set cursorline "highlight current line
+set laststatus=2 "always show status line
+set completeopt-=preview "remove preview window for autocompletion
+
+"context menu
+highlight Pmenu guibg=darkblue ctermbg=blue
+highlight PmenuSel guibg=brown ctermbg=darkgreen
+
+highlight cursorline term=bold ctermfg=brown gui=bold guibg=bg "guifg=browse
+
+hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred    ctermbg=darkblue
+hi User2 guifg=#dd3333 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
+hi User3 guifg=#ff66ff guibg=#222222 ctermfg=darkgreen  ctermbg=darkblue
+hi User4 guifg=#a0ee40 guibg=#222222 ctermfg=darkyellow ctermbg=darkblue
+hi User5 guifg=#eeee40 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
+
+set statusline =%3*[%F]              "full path of current file
+set statusline +=%1*%r               "readonly flag
+set statusline +=%4*[%v]             "virtual column number
+set statusline +=%5*%m               "modified flag
+"set statusline +=%2*%L              "total lines
+"set statusline +=%1*%n              "buffer number
+"set statusline +=%5*%{&ff}          "file format
+
+
+"-------------key mapping-------------------------------
+
+"edit my vimrc
+map <leader>ev :call EditMyVimrc()<CR>
+map <F9> :so ~/.vimrc<CR>
+map <F6> :call ToggleQuickfix()<CR>
+map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
+
+"toggle gvim tool bar.
+if (has("gui_running"))
+    map <M-m> :call ToggleToolsBar()<CR>
+endif
+
+"generate file names list
+"this will replace the previous TagExpr setting.
+map <F10> :call RefreshCodeTags()<CR>
+map <F11> :call SetupCurFolderData("scan")<CR>
+map <F11><F11> :call SwitchToCodeBase()<CR>
+map <S-F11> :call List_lookup_file_for_cur_folder("scan")<CR>
+map <F12> :call RefreshCodeData()<CR>
+
+"use gtags, or cscope to find reference. note, gtags does not support perl for the moment.
+map <F8>  :call ToggleGtags()<CR>
+
+"open terminal to a new tab, if terminal already open, switch to it.
+map <F5>  :call ShowTerminal("tab")<CR>
+
+"open termial to a vertical split window within current tab.
+map <F5><F5>  :call ShowTerminal("win")<CR>
+
+map <F1>  :call ShowTerminal("tab")<CR>
+map <F1><F1>  :call ShowTerminal("win")<CR>
+
+"tab key mapping
+map <C-t> :tabnew<CR>
+map <M-x> :tabclose<CR>
+map <M-w> :x<CR>
+map <M-d> <C-d>
+map <M-u> <C-u>
+
+map <M-1> :tabp<CR>
+map <M-2> :tabn<CR>
+map <C-j> :tabp<CR>
+map <C-k> :tabn<CR>
+"tabm +1 tabm -1
+
+map <M-o> :tabnew %<CR> :A<CR>
+
+"toggle header/cpp file
+map <C-h> :A<CR>
+
+map <F2>  :call ToggleHistoryWin()<CR>
+"map <F3>  :AS<CR>
+
+"select all
+map <C-A> ggVG
+
+"window operation 
+map <S-TAB> <C-W>w
+map <S-TAB-TAB> <C-W>p
+
+"resize current window
+nmap <silent> <C-Left>    <C-W><:unlet! t:flwwinlayout<CR>
+nmap <silent> <C-Right>   <C-W>>:unlet! t:flwwinlayout<CR>
+nmap <silent> <C-Up>      <C-W>+:unlet! t:flwwinlayout<CR>
+nmap <silent> <C-Down>    <C-W>-:unlet! t:flwwinlayout<CR>
+
+"taglist
+map <leader>tl :Tlist<CR>  
+map <F4> :Tlist<CR>  
+
+"file explorer
+map <leader>ve :Ve<CR><CR>
+
+"look up file
+map <leader>lf :LookupFile<CR>
+
+"using cscope to find text reference.
+map <F7> :call FindReference()<CR>
+
+"checkout file using p4.
+if g:support_p4_edit_event
+    map <leader>co   :!p4 edit %<CR>
+    map <leader>add  :!p4 add %<CR>
+endif
+
+"save session
+map <leader>ss :mksession! ~/session/vs<CR>
+map <leader>sos :so ~/session/vs<CR>
+
+"bookmark setting
+map mm :call BookMarkHere()<CR>
+map mc :call OpenBookMark()<CR>
+map md :call DelBookMark()<CR>
+
+
+"syntastic check.
+
+map <leader>sc :call ToggleSyntasticCheck()<CR>
+
+
+"------cscope key mapping------------------------------------------
+
+"find reference 
+map <leader>fr :call CscopeFind(expand("<cword>"),"s")<CR>
+
+"find definition
+map <leader>fd :call CscopeFind(expand("<cword>"),"g")<CR> 
+
+"find caller
+map <leader>fc :call CscopeFind(expand("<cword>"),"c")<CR>
+
+"find what you specify,find text
+map <leader>ft :call CscopeFind(expand("<cword>"),"t")<CR>
+
+"find this egrep pattern
+map <leader>fe :call CscopeFind(expand("<cword>"),"e")<CR>
+
+"find file
+map <leader>ff :call CscopeFind(expand("<cfile>"),"f")<CR>
+
+"find files that include this file
+map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
+
+"map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
+
+
 
