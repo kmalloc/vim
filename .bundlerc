@@ -1,0 +1,41 @@
+
+set nocompatible
+filetype off
+filetype plugin indent on
+
+let install_bundle=1
+let vundle_readmd=expand("~/.vim.bundle/vundle/README.md")
+if !filereadable(vundle_readmd)
+    echo "Installing vundle"
+    echo ""
+    let $GIT_SSL_NO_VERIFY = 'true'
+    silent! execute "!mkdir -p ~/.vim.bundle"
+    silent! execute "!git clone https://github.com/gmarik/vundle.git ~/.vim.bundle/vundle"
+    let install_bundle=0
+endif
+
+set rtp+=~/.vim.bundle/vundle/
+call vundle#rc("~/.vim.bundle/plugins")
+Bundle 'gmarik/vundle'
+
+"requred!
+Bundle 'gmarik/vundle'
+
+if install_bundle == 0
+    echo "Installing bundles, please ignore errors"
+    echo ""
+    :BundleInstall
+endif
+
+
+"personal plugin
+Bundle 'Syntastic'
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'taglist.vim'
+Bundle 'a.vim'
+Bundle 'acp.vim'
+Bundle 'lookupfile.vim'
+
+
+filetype on
+

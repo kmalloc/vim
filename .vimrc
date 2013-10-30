@@ -324,6 +324,7 @@ let g:ConqueTerm_Color=1
 
 
 "taglist.vim setting
+let Tlist_Inc_Winwidth=1
 let Tlist_Show_One_File=1
 let Tlist_Exit_OnlyWindow=1
 let Tlist_File_Fold_Auto_Close=1
@@ -331,8 +332,10 @@ let Tlist_GainFocus_On_ToggleOpen=0
 let Tlist_Auto_Open=0
 let Tlist_Auto_Update=1
 let Tlist_Use_Right_Window=1
-"let Tlist_Highlight_Tag_On_BufEnter = 0
-
+let Tlist_Display_Tag_Scope = 0
+let Tlist_Highlight_Tag_On_BufEnter = 0
+" let Tlist_Display_Prototype=1 
+" let Tlist_Compact_Format=1
 
 "filelookup setting.
 let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
@@ -1288,4 +1291,11 @@ function! IsBufShowInCurrTab(name)
     return -1
 
 endfunction
+
+
+
+"source other setttings
+if IsShellCmdExist("git")
+    so ~/.vim/.bundlerc
+endif
 

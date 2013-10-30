@@ -11,3 +11,5 @@ doc/tags-ja
 filenametags
 *.swo
 *.swn
+bundle/
+
