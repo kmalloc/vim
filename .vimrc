@@ -89,7 +89,6 @@ let Tlist_Auto_Open=0
 let Tlist_Auto_Update=1
 let Tlist_Use_Right_Window=1
 let Tlist_Display_Tag_Scope = 0
-let Tlist_Highlight_Tag_On_BufEnter = 0
 " let Tlist_Display_Prototype=1
 " let Tlist_Compact_Format=1
 
@@ -885,7 +884,7 @@ endfunction
 
 function! IsCurrentTabEmpty()
 
-    let l:buflist = tabpagebuflist() "[]
+    let l:buflist = tabpagebuflist()
     let l:len = len(l:buflist)
     if len(l:buflist) > 1
         let l:new = 1
@@ -969,7 +968,7 @@ function! ShowTerminal(mode)
     endif
 
     if l:buf > 0
-        silent execute "sb ".l:buf
+        silent! execute "sb ".l:buf
         return
     endif
 
@@ -983,8 +982,6 @@ function! ShowTerminal(mode)
     else
         silent! execute "ConqueTermVSplit bash"
     endif
-
-    redraw!
 
 endfunction
 
@@ -1198,7 +1195,8 @@ set statusline +=%5*%m               "modified flag
 " -------------key mapping-------------------------------
 
 " edit my vimrc
-map <leader>ev :call EditMyVimrc()<CR>
+map <leader>ev  :call EditMyVimrc()<CR>
+
 map <F9> :so ~/.vimrc<CR>
 map <F6> :call ToggleQuickfix()<CR>
 map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
@@ -1267,7 +1265,7 @@ map <leader>tl :Tlist<CR>
 map <F4> :Tlist<CR>
 
 " file explorer
-map <leader>ve :Ve<CR><CR>
+map <leader>ve :Ve<CR>
 
 " look up file
 map <leader>lf :LookupFile<CR>
