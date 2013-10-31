@@ -9,13 +9,13 @@ if !filereadable(vundle_readmd)
     echo "Installing vundle"
     echo ""
     let $GIT_SSL_NO_VERIFY = 'true'
-    silent! execute "!mkdir -p ~/.vim.bundle"
+    silent! execute "!mkdir -p ~/.vim.bundle/"
     silent! execute "!git clone https://github.com/gmarik/vundle.git ~/.vim.bundle/vundle"
     let install_bundle=0
 endif
 
 set rtp+=~/.vim.bundle/vundle/
-call vundle#rc("~/.vim.bundle/plugins")
+call vundle#rc("~/.vim.bundle")
 Bundle 'gmarik/vundle'
 
 "requred!
@@ -27,14 +27,13 @@ if install_bundle == 0
     :BundleInstall
 endif
 
-
 "personal plugin
 Bundle 'Syntastic'
-Bundle 'altercation/vim-colors-solarized'
 Bundle 'taglist.vim'
 Bundle 'a.vim'
-Bundle 'acp.vim'
-Bundle 'lookupfile.vim'
+Bundle 'mru.vim'
+Bundle 'lookupfile'
+Bundle 'Solarized'
 
 
 filetype on

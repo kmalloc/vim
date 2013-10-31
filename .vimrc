@@ -10,12 +10,12 @@
 
 set nocompatible
 
-"must set term before setting alt key binding.
+" must set term before setting alt key binding.
 if (!has("gui_running"))
     set term=$TERM
 endif
 
-"----------------------global variable---------------------------
+" ----------------------global variable---------------------------
 if !exists("s:IsInitialized")
     let s:IsInitialized = 0
 endif
@@ -32,18 +32,18 @@ if (!s:IsInitialized)
     let g:TaglistName = "__Tag_List__"
     let g:IsHistoryWinOpened = 0
 
-    "setting AutoOpenTlist to 1, then each time open a c/c++ file,
-    "taglist will popout to the right automatically.
+    " setting AutoOpenTlist to 1, then each time open a c/c++ file,
+    " taglist will popout to the right automatically.
     let g:AutoOpenTlist = 0
 
     let g:TerminalName = "bash - "
 
-    "rule of thumb: try to avoid hard-coded path for code base in vimrc.
-    "instead, put all code base relative path in shell script.
+    " rule of thumb: try to avoid hard-coded path for code base in vimrc.
+    " instead, put all code base relative path in shell script.
 
     let g:is_in_work = ($USER == "miliao")
 
-    "set support_p4_edit_event to checkout file if file is changed.
+    " set support_p4_edit_event to checkout file if file is changed.
     if g:is_in_work
         let g:support_p4_edit_event = 1
     else
@@ -54,13 +54,13 @@ if (!s:IsInitialized)
         let g:files_checkout = {} "files that have been checkout by p4
     endif
 
-    let g:syntastic_check_on = {} "files that are currently runing syntastic check
+    let g:files_syntastic= {} "files that are currently runing syntastic check
 
-    "using gtags by default if gtags has installed in folder: ~/tools/gtags
+    " using gtags by default if gtags has installed in folder: ~/tools/gtags
     let g:UseGlobalOverCscope = 0
     let g:IgnoreGtags = 1 "value '1' to disable using gtags.
 
-    "cache file for gtags or for cscope
+    " cache file for gtags or for cscope
     let g:mycodetags = $HOME."/.vim/caches/cscope.out"
 
     let g:WorkingInCurrDir = 0
@@ -69,17 +69,17 @@ if (!s:IsInitialized)
     let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
     let g:CscopePath = system("which cscope")
     let g:CscopePath = substitute(g:CscopePath,'\n$','','')
-    "$HOME."/tools/gtags/bin/gtags-cscope"
+    " $HOME."/tools/gtags/bin/gtags-cscope"
 
 endif
 
 
-"------------------------plugin setting--------------------------------------
+" ------------------------plugin setting--------------------------------------
 
-"ConqueTerm setting
+" ConqueTerm setting
 let g:ConqueTerm_Color=1
 
-"taglist.vim setting
+" taglist.vim setting
 let Tlist_Inc_Winwidth=1
 let Tlist_Show_One_File=1
 let Tlist_Exit_OnlyWindow=1
@@ -90,87 +90,88 @@ let Tlist_Auto_Update=1
 let Tlist_Use_Right_Window=1
 let Tlist_Display_Tag_Scope = 0
 let Tlist_Highlight_Tag_On_BufEnter = 0
-" let Tlist_Display_Prototype=1 
+" let Tlist_Display_Prototype=1
 " let Tlist_Compact_Format=1
 
-"filelookup setting.
+" filelookup setting.
 let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
 let g:LookupFile_PreserveLastPattern = 0 "do not preserve last search pattern.
 let g:LookupFile_PreservePatternHistory = 0 "preserve search history
 let g:LookupFile_AlwaysAcceptFirst = 1
 let g:LookupFile_AllowNewFiles=0
 let g:LookupFile_MinPatLength = 3
-let g:LookupFile_UsingSpecializedTags = 1 
+let g:LookupFile_UsingSpecializedTags = 1
 let g:LookupFile_ignorecase=1
-"make arrow work normally.
+" make arrow work normally.
 let g:LookupFile_EscCancelsPopup = 0
 let g:LookupFile_SearchForBufsInTabs = 1
-let g:LookupFile_Bufs_LikeBufCmd = 0 
+let g:LookupFile_Bufs_LikeBufCmd = 0
 let g:LookupFile_DisableDefaultMap = 1 "I prefer f5 to open terminal window.
 
-"autocomplete setting.
+" autocomplete setting.
 let g:AutoComplPop_CompleteoptPreview = 1
 
 
-"OmniCppCompletion
-let g:OmniCpp_NamespaceSearch = 2 
-let g:OmniCpp_ShowPrototypeInAbbr = 1 
-let g:OmniCpp_MayCompleteScope = 0 
+" OmniCppCompletion
+let g:OmniCpp_NamespaceSearch = 2
+let g:OmniCpp_ShowPrototypeInAbbr = 1
+let g:OmniCpp_MayCompleteScope = 0
 
-"MRU setting
-"no help doc is provided.
+" MRU setting
+" no help doc is provided.
 let g:MRU_Max_Entries=1024
-let g:MRU_Use_Current_Window = 0 "
+let g:MRU_Use_Current_Window=0
 let g:MRU_Auto_Close = 0 "do not close on selecting file.
 let g:MRU_Add_Menu = 0 "disable gui menu setting.
 let g:MRU_Open_File_Use_Tabs = 1
 let g:bufExplorerSortBy='name'       " Sort by the buffer's name.
 
-"let g:vbookmark_bookmarkSaveFile=$HOME.'/.vimbookmark'
+" let g:vbookmark_bookmarkSaveFile=$HOME.'/.vimbookmark'
 
 let g:simple_bookmarks_signs = 1
 let g:simple_bookmarks_new_tab = 0
 let g:simple_bookmarks_auto_close = 0
 
-"a.vim setting: search path.
+" a.vim setting: search path.
 let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 
 
-"echofunc.vim setting.
-"if the following is set to 1.
-"information will not shown on status line.
+" echofunc.vim setting.
+" if the following is set to 1.
+" information will not shown on status line.
 let g:EchoFuncShowOnStatus=0
-let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration 
+let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 let g:EchoFunc_AutoTrigger = 0
 let g:EchoFuncKeyPrev='<M-p>'
 let g:EchoFuncKeyNext='<M-n>'
-"need to find an appropriate mapping,
-"otherwhise default mapping will not work in terminal.
-"let g:EchoFuncKeyNext='<C-->'
-"let g:EchoFuncKeyNext='<C-=>'
+" need to find an appropriate mapping,
+" otherwhise default mapping will not work in terminal.
+" let g:EchoFuncKeyNext='<C-->'
+" let g:EchoFuncKeyNext='<C-=>'
 
-"gtags-cscope
+" gtags-cscope
 let g:GtagsCscope_Ignore_Case = 1
 let g:GtagsCscope_Absolute_Path = 1
 
-"put a space after comment sign
+" put a space after comment sign
 let g:NERDSpaceDelims = 1
 
 
-"Syntastic Check setting.
+" Syntastic Check setting.
 let g:syntastic_check_on_wq=0
 let g:syntastic_enable_balloons = 1
-let g:syntastic_auto_loc_list=2
-let g:syntastic_always_populate_loc_list=1
+" let g:syntastic_auto_loc_list=2
+" let g:syntastic_always_populate_loc_list=1
 
-"----------------------autocmd------------------------------------
+
+" ----------------------autocmd------------------------------------
 augroup AutoEventHandler
 
     autocmd!
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call OnBufEnter(expand("<afile>"))
     autocmd BufWinEnter * call OnBufferWinEnter()
 
-    "invoke code-changed event: for p4 to checkout file
+    " invoke code-changed event: for p4 to checkout file
     if g:PerforceExisted
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
@@ -181,21 +182,21 @@ augroup AutoEventHandler
     autocmd WinEnter * call OnWinEnter(expand("<afile>"))
     autocmd BufEnter * call HandleAcp(expand("<afile>"))
 
-    "note: this event will not trigger for those buffers that is displayed in
-    "multiple windows.
+    " note: this event will not trigger for those buffers that is displayed in
+    " multiple windows.
     autocmd BufWinLeave * call CloseWin(expand("<afile>"))
 
-    autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx call AutoOpenTaglistOnVimStartup() 
+    autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx call AutoOpenTaglistOnVimStartup()
     autocmd VimEnter * call SetupVim()
 
 augroup end
-"---------------------function ------------------------------------
+" ---------------------function ------------------------------------
 
-"-----------------autocmd handler---------------
+" -----------------autocmd handler---------------
 
 function! SetupVim()
 
-    let s:IsInitialized = 1 
+    let s:IsInitialized = 1
 
     if g:support_p4_edit_event
         silent! execute "call CheckPerforce()"
@@ -221,7 +222,7 @@ endfunction
 
 function! OnBufferWriteByP4(file)
 
-    "if we don't have p4 here, skip it.
+    " if we don't have p4 here, skip it.
     if g:support_p4_edit_event == 0 || g:PerforceExisted == 0
         echo "p4 command not available."
         return
@@ -273,7 +274,7 @@ function! ShouldSuppressTlist(file)
         return 1
     endif
 
-    if &diff 
+    if &diff
         return 1
     endif
 
@@ -293,8 +294,8 @@ function! OnBufEnter(file)
 
 endfunction
 
-"when in terminal window, disable autocomplete plugin
-"otherwise enable it
+" when in terminal window, disable autocomplete plugin
+" otherwise enable it
 function! HandleAcp(file)
     if match(a:file,g:TerminalName) > -1
         silent! execute "AcpDisable"
@@ -318,8 +319,8 @@ endfunction
 
 function! OnBufferWinEnter()
 
-    "exit when there is only mru window.
-    "not finish yet.
+    " exit when there is only mru window.
+    " not finish yet.
     if(winnr("$") == 1 && bufwinnr(g:MruBufferName) != -1)
         quit
     endif
@@ -347,11 +348,11 @@ function! UpdateGtags()
 
 endfunction
 
-"----------------end autocmd handler------------------
+" ----------------end autocmd handler------------------
 
 
-"----------------handle shell cmd---------------------- 
-"check whether shell command "cmd" exist
+" ----------------handle shell cmd----------------------
+" check whether shell command "cmd" exist
 function! IsShellCmdExist(cmd)
 
     silent! system("which ", a:cmd." 2>&1 1>/dev/null")
@@ -364,16 +365,16 @@ function! CheckPerforce()
 endfunction
 
 
-"deal with path like: /home/miliao/code/aa/../cc
-"output should be:/home/miliao/code/cc
+" deal with path like: /home/miliao/code/aa/../cc
+" output should be:/home/miliao/code/cc
 "
-"/nfs/all/home/miliao/code/cc
-"output: /home/miliao/code/cc
+" /nfs/all/home/miliao/code/cc
+" output: /home/miliao/code/cc
 
-"not quite familiar with vim script resulting in writting such a huge function
+" not quite familiar with vim script resulting in writting such a huge function
 function! NormalizePath(file_)
 
-    "try to remove absolute path
+    " try to remove absolute path
     let l:s = stridx(a:file_, "/home/")
 
     if l:s == -1
@@ -382,13 +383,13 @@ function! NormalizePath(file_)
 
     let l:file = strpart(a:file_, l:s)
 
-    "try to translate ..
+    " try to translate ..
     let l:id = stridx(l:file, "..")
     if l:id == -1
         return l:file
     endif
 
-    "try to extract parent folder.
+    " try to extract parent folder.
     let l:left = l:id + 2
 
     while l:file[l:left] == '/'
@@ -403,12 +404,12 @@ function! NormalizePath(file_)
         let l:id = l:id - 1
     endif
 
-    "now move up
+    " now move up
     while l:id >= 0 && l:file[l:id] != '/'
         let l:id = l:id - 1
     endwhile
 
-    "eliminate extra '/'
+    " eliminate extra '/'
     while l:id > 0 && l:file[l:id - 1] == '/'
         let l:id = l:id - 1
     endwhile
@@ -426,15 +427,15 @@ function! NormalizePath(file_)
 
 endfunction
 
-"use p4 command to checkout a file
+" use p4 command to checkout a file
 function! P4CheckOut(file)
 
     let l:path = NormalizePath(a:file)
 
     silent! execute("! p4 edit ".l:path." > /dev/null 2>&1")
 
-    "echo "origin path:".a:file."\n"
-    "echo "path:".l:path
+    " echo "origin path:".a:file."\n"
+    " echo "path:".l:path
 
     if v:shell_error
         echo "p4 edit error,please check if you are log in\n"
@@ -445,11 +446,11 @@ function! P4CheckOut(file)
 
 endfunction
 
-"----------------end handling shell cmd-----------------------
+" ----------------end handling shell cmd-----------------------
 
 
 
-"---------------code writting helper----------------------
+" ---------------code writting helper----------------------
 
 function! Refresh_filelookup_data()
 
@@ -461,14 +462,14 @@ function! Refresh_filelookup_data()
     silent! execute "!~/.vim/script/list.all.files.sh&"
     if filereadable(l:lookupfiles)
         execute "let g:LookupFile_TagExpr='\"".l:lookupfiles."\"'"
-    endif 
+    endif
 
 endfunction
 
 
-"refresh code in code base, eg, ~/code/gui_tflex/, the specific path is decided in the shell script.
+" refresh code in code base, eg, ~/code/gui_tflex/, the specific path is decided in the shell script.
 function! RefreshCscopeData()
-    "let dir = getcwd()
+    " let dir = getcwd()
 
     if !has("cscope")
         return
@@ -523,8 +524,8 @@ function! RefreshCodeData()
     call RefreshCscopeData()
 endfunction
 
-"refreshing ctags data. pretty much not in use often.
-"ctags data is currently used by omni complete plugin only.
+" refreshing ctags data. pretty much not in use often.
+" ctags data is currently used by omni complete plugin only.
 function! RefreshCodeTags()
 
     let txt=input("refresh code base? otherwise refresh current path.(y/n):")
@@ -539,13 +540,13 @@ function! RefreshCodeTags()
 endfunction
 
 
-"setup files in current folder for LookupFiel, Cscope.
+" setup files in current folder for LookupFiel, Cscope.
 function! List_lookup_file_for_cur_folder(mode)
 
     let txt="n"
 
     if a:mode == "scan" && filereadable("filenametags")
-        let txt = input("filenametags existed,rebuild or not ?(y/n)") 
+        let txt = input("filenametags existed,rebuild or not ?(y/n)")
     endif
 
     if txt == "y"
@@ -592,14 +593,14 @@ function! SetupCurFolderData(mode)
 
 endfunction
 
-"if we are in WorkingInCurrDir mode, then switch to code base mode.
-"this two mode is different in that: cscope date, file look up data, ctags data is different.
-"thus influencing auto complete, etc.
+" if we are in WorkingInCurrDir mode, then switch to code base mode.
+" this two mode is different in that: cscope date, file look up data, ctags data is different.
+" thus influencing auto complete, etc.
 function! SwitchToCodeBase()
 
     let g:WorkingInCurrDir = 0
     let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
-    
+
     if (g:UseGlobalOverCscope)
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
     else
@@ -607,11 +608,11 @@ function! SwitchToCodeBase()
     endif
 
     call CsAddTags(g:mycodetags, 0)
-    
+
 endfunction
 
-"using cscope to find reference by searching text.
-"this type of searching is extremely unefficient, and will block vim for quite a while.
+" using cscope to find reference by searching text.
+" this type of searching is extremely unefficient, and will block vim for quite a while.
 function! FindReference()
     let txt = input('enter text:')
     if txt == ""
@@ -628,13 +629,13 @@ endfunction
 function! ToggleSyntasticCheck()
 
     let l:nr = bufnr('%')
-    if exists("g:syntastic_check_on[l:nr]") && g:syntastic_check_on[l:nr] == 1
+    if exists("g:files_syntastic[l:nr]") && g:files_syntastic[l:nr] == 1
         SyntasticReset
-        unlet g:syntastic_check_on[l:nr]
+        unlet g:files_syntastic[l:nr]
     else
         SyntasticCheck
-        let g:syntastic_check_on[l:nr] = 1
-    endif 
+        let g:files_syntastic[l:nr] = 1
+    endif
 
 endfunction
 
@@ -644,24 +645,24 @@ function! OpenCscopeSearchList()
     endif
 endfunction
 
-"find symbol from cscope cached data.
-"very fast, but may not be accurate if cache is out of date.
+" find symbol from cscope cached data.
+" very fast, but may not be accurate if cache is out of date.
 function! CscopeFind(file,type)
-    silent! execute "cs find ".a:type." ".a:file 
+    silent! execute "cs find ".a:type." ".a:file
     silent! call OpenCscopeSearchList()
     redraw!
 endfunction
 
-"setup cscope cached data path
+" setup cscope cached data path
 function! CsAddTags(tags, silent)
-    
+
     silent! execute "cs kill -1"
 
     if g:UseGlobalOverCscope == 0
         silent! execute "cs add ".a:tags
     else
         silent! execute "cs add ".a:tags
-        "silent! execute "cs add ".a:tags." -Ca"
+        " silent! execute "cs add ".a:tags." -Ca"
     endif
 
     set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
@@ -672,7 +673,7 @@ function! CsAddTags(tags, silent)
 
 endfunction
 
-"setup cscope database.
+" setup cscope database.
 function! SetupCscope()
 
     if(!has('cscope')) "if vim compiled with cscope, then proceed.
@@ -686,12 +687,12 @@ function! SetupCscope()
 
         let g:mycodetags = $HOME."/.vim/caches/GTAGS"
 
-        "gtags.setup.sh will set up link to code root, prepare cache, etc.
+        " gtags.setup.sh will set up link to code root, prepare cache, etc.
         silent! execute "! ~/.vim/script/gtags.setup.sh env"
-  
+
     elseif filereadable(g:CscopePath)
 
-        let g:UseGlobalOverCscope = 0 
+        let g:UseGlobalOverCscope = 0
         set csprg=cscope
         set cscopetag
 
@@ -703,7 +704,7 @@ endfunction
 
 
 function! ToggleGtags()
-    
+
     if g:WorkingInCurrDir == 0
         let g:mycodetags = $HOME."/.vim/caches"
     else
@@ -711,9 +712,9 @@ function! ToggleGtags()
     endif
 
     if g:UseGlobalOverCscope == 1 && filereadable(g:CscopePath)
-        
+
         let g:UseGlobalOverCscope = 0
-        set csprg=cscope 
+        set csprg=cscope
         let g:mycodetags = g:mycodetags."/cscope.out"
 
     elseif g:UseGlobalOverCscope == 0 && filereadable(g:gtagsCscopePath)
@@ -734,9 +735,9 @@ function! ToggleGtags()
 
 endfunction
 
-  "---------------end code writing helper.------------------------
+  " ---------------end code writing helper.------------------------
 
-  "---------------UI setup --------------------------------------
+  " ---------------UI setup --------------------------------------
 function! ToggleToolsBar()
 
     if(has("gui_running"))
@@ -774,14 +775,14 @@ function! DelBookMark()
 endfunction
 
 
-"handle functional window, taglist, quickfix, etc.
+" handle functional window, taglist, quickfix, etc.
 function! ToggleBufferExp(file)
 
     let l:buf = ToggleWinByName(g:BufExplorerName)
 
     if l:buf == -2
         return
-    endif 
+    endif
 
     let l:null = IsCurrentTabEmpty()
 
@@ -796,14 +797,14 @@ endfunction
 
 function! ToggleQuickfix()
 
-    if g:IsQuickfixOpen == 0 
+    if g:IsQuickfixOpen == 0
         let l:win = winnr()
         silent! execute "bo copen"
         silent! execute l:win."wincmd w"
         let g:IsQuickfixOpen = 1
     else
         silent! execute "cclose"
-        let g:IsQuickfixOpen = 0 
+        let g:IsQuickfixOpen = 0
     endif
 
     silent! execute "redraw!"
@@ -817,7 +818,7 @@ function! OpenBookMark()
     let g:IsQuickfixOpen = 1
 endfunction
 
-"mru does not use quickfix to display history.
+" mru does not use quickfix to display history.
 function! OpenHistory()
 
     let g:IsHistoryWinOpened = 1
@@ -827,9 +828,9 @@ function! OpenHistory()
 
 endfunction
 
-"still have bugs,should enable auto close mru.
+" still have bugs,should enable auto close mru.
 function! OpenHistoryIfNecessary()
-    "let l:mruwinnr = bufnr(g:MruBufferName)
+    " let l:mruwinnr = bufnr(g:MruBufferName)
     if g:IsHistoryWinOpened == 1
 
         call OpenHistory()
@@ -871,8 +872,8 @@ function! CloseWin(buffer)
         let g:IsQuickfixOpen = 0
     endif
 
-    "in BufWinLeave event , bufname("%") may not be the buffer being unloaded.
-    "use <afile> instead.
+    " in BufWinLeave event , bufname("%") may not be the buffer being unloaded.
+    " use <afile> instead.
     if a:buffer == g:MruBufferName
         call CloseHistoryBuffer()
     elseif match(a:buffer, g:TerminalName) > -1
@@ -886,7 +887,7 @@ function! IsCurrentTabEmpty()
 
     let l:buflist = tabpagebuflist() "[]
     let l:len = len(l:buflist)
-    if len(l:buflist) > 1 
+    if len(l:buflist) > 1
         let l:new = 1
     elseif l:len == 1
 
@@ -909,7 +910,7 @@ endfunction
 function! EditMyVimrc()
 
     let l:new = IsCurrentTabEmpty()
-    
+
     if !l:new
         silent! execute "tabedit $MYVIMRC"
     else
@@ -918,8 +919,8 @@ function! EditMyVimrc()
 
 endfunction
 
-"if buffer by name is existed in current tab, then close it
-"otherwise return buffer number.
+" if buffer by name is existed in current tab, then close it
+" otherwise return buffer number.
 function! ToggleWinByName(name)
 
     let l:buf = IsBufShowInCurrTab(a:name)
@@ -927,14 +928,14 @@ function! ToggleWinByName(name)
     " echoerr "win ".a:name." existed?:".l:buf
 
     if (l:buf != -1)
-        "toggle, if window already opened, then close it.
-        let l:win = bufwinnr(l:buf) 
+        " toggle, if window already opened, then close it.
+        let l:win = bufwinnr(l:buf)
 
         " echoerr "to close(".l:buf.",".l:win.")"
         " silent! execute l:win."wincmd w"
         " silent! execute "x"
         silent! execute "bw! ".l:buf
-        return -2 
+        return -2
     endif
 
     let l:buf = FindBufferWithName(a:name)
@@ -960,7 +961,7 @@ function! ShowQuickfixIfNecessary()
 endfunction
 
 function! ShowTerminal(mode)
-   
+
     let l:buf = ToggleWinByName(g:TerminalName)
 
     if l:buf == -2
@@ -987,8 +988,8 @@ function! ShowTerminal(mode)
 
 endfunction
 
-"find the first buffer with the name specified in parameter "name"
-"regular expression is supported in "name"
+" find the first buffer with the name specified in parameter "name"
+" regular expression is supported in "name"
 function! FindBufferWithName(name)
     let l:bufcount = bufnr("$")
     let l:currbufnr = 1
@@ -1041,8 +1042,8 @@ function! IsBuffHidden(buf)
 
 endfunction
 
-"can not just bufwinnr() to judge whether a buffer show in current tab.
-"some hidden buffer is not excluded by bufwinnr()
+" can not just bufwinnr() to judge whether a buffer show in current tab.
+" some hidden buffer is not excluded by bufwinnr()
 function! IsBufShowInCurrTab(name)
 
     let l:nr = FindBufferWithName(a:name)
@@ -1064,8 +1065,8 @@ function! IsBufShowInCurrTab(name)
 endfunction
 
 
-"------------------------- vim setting -------------------------
-"source other setttings
+" ------------------------- vim setting -------------------------
+" source other setttings
 if IsShellCmdExist("git")
     so ~/.vim/.bundlerc
 endif
@@ -1073,12 +1074,12 @@ endif
 set textwidth=0
 let mapleader=","
 
-"search 
+" search
 set ignorecase
 set incsearch
 set hlsearch
 
-"document
+" document
 set number
 set nobackup
 set autoread
@@ -1086,26 +1087,26 @@ set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
 set path+=~/code/*
-"set colorcolumn=90 "make column 90th visible
-"set list "visible last column of each line, set nolist
-"set spell spelllang=en_us
+" set colorcolumn=90 "make column 90th visible
+" set list "visible last column of each line, set nolist
+" set spell spelllang=en_us
 
 set foldenable
 set foldmethod=manual
 
-"share system clipboard
+" share system clipboard
 set clipboard=unnamed
 
-"key and mouse
+" key and mouse
 set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start "set backspace key
 
 set timeout timeoutlen=250 ttimeoutlen=100
 
-"enable alt key in terminal
-"set <M-key>=<Esc>key
-"see :h map-alt-keys
+" enable alt key in terminal
+" set <M-key>=<Esc>key
+" see :h map-alt-keys
 if(!has("gui_running"))
     exe "set <M-x>=\<ESC>x"
     exe "set <M-w>=\<ESC>w"
@@ -1124,7 +1125,7 @@ set tags+=~/.vim/caches/wx.ctags/tags
 set tags+=~/.vim/caches/cur.ctags/tags
 set tags+=~/.vim/caches/caches/tags
 
-"indention
+" indention
 set ai
 set si
 set cindent
@@ -1137,17 +1138,17 @@ set tabstop=4
 set shiftwidth=4
 set ruler
 
-"tab
+" tab
 set switchbuf=usetab  ",newtab
 set hidden
 
 filetype plugin on
 filetype indent on
 
-"appearance
+" appearance
 syntax on
 set t_Co=256
-"set background=light
+" set background=light
 
 if (has("gui_running"))
     set background=dark
@@ -1156,23 +1157,24 @@ if (has("gui_running"))
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 
-    colorscheme DimGreen "solarized
+    " colorscheme DimGreen "solarized
+    colorscheme solarized
 else
     colorscheme torte
-    "colorscheme allan
+    " colorscheme allan
 endif
 
-"solarized
-"allan deveiate
-"pacific
-"molokai
-"torte
+" solarized
+" allan deveiate
+" pacific
+" molokai
+" torte
 
 set cursorline "highlight current line
 set laststatus=2 "always show status line
 set completeopt-=preview "remove preview window for autocompletion
 
-"context menu
+" context menu
 highlight Pmenu guibg=darkblue ctermbg=blue
 highlight PmenuSel guibg=brown ctermbg=darkgreen
 
@@ -1188,45 +1190,45 @@ set statusline =%3*[%F]              "full path of current file
 set statusline +=%1*%r               "readonly flag
 set statusline +=%4*[%v]             "virtual column number
 set statusline +=%5*%m               "modified flag
-"set statusline +=%2*%L              "total lines
-"set statusline +=%1*%n              "buffer number
-"set statusline +=%5*%{&ff}          "file format
+" set statusline +=%2*%L              "total lines
+" set statusline +=%1*%n              "buffer number
+" set statusline +=%5*%{&ff}          "file format
 
 
-"-------------key mapping-------------------------------
+" -------------key mapping-------------------------------
 
-"edit my vimrc
+" edit my vimrc
 map <leader>ev :call EditMyVimrc()<CR>
 map <F9> :so ~/.vimrc<CR>
 map <F6> :call ToggleQuickfix()<CR>
 map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
 
-"toggle gvim tool bar.
+" toggle gvim tool bar.
 if (has("gui_running"))
     map <M-m> :call ToggleToolsBar()<CR>
 endif
 
-"generate file names list
-"this will replace the previous TagExpr setting.
+" generate file names list
+" this will replace the previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
 map <F11> :call SetupCurFolderData("scan")<CR>
 map <F11><F11> :call SwitchToCodeBase()<CR>
 map <S-F11> :call List_lookup_file_for_cur_folder("scan")<CR>
 map <F12> :call RefreshCodeData()<CR>
 
-"use gtags, or cscope to find reference. note, gtags does not support perl for the moment.
+" use gtags, or cscope to find reference. note, gtags does not support perl for the moment.
 map <F8>  :call ToggleGtags()<CR>
 
-"open terminal to a new tab, if terminal already open, switch to it.
+" open terminal to a new tab, if terminal already open, switch to it.
 map <F5>  :call ShowTerminal("tab")<CR>
 
-"open termial to a vertical split window within current tab.
+" open termial to a vertical split window within current tab.
 map <F5><F5>  :call ShowTerminal("win")<CR>
 
 map <F1>  :call ShowTerminal("tab")<CR>
 map <F1><F1>  :call ShowTerminal("win")<CR>
 
-"tab key mapping
+" tab key mapping
 map <C-t> :tabnew<CR>
 map <M-x> :tabclose<CR>
 map <M-w> :x<CR>
@@ -1237,87 +1239,85 @@ map <M-1> :tabp<CR>
 map <M-2> :tabn<CR>
 map <C-j> :tabp<CR>
 map <C-k> :tabn<CR>
-"tabm +1 tabm -1
+" tabm +1 tabm -1
 
 map <M-o> :tabnew %<CR> :A<CR>
 
-"toggle header/cpp file
+" toggle header/cpp file
 map <C-h> :A<CR>
 
 map <F2>  :call ToggleHistoryWin()<CR>
-"map <F3>  :AS<CR>
+" map <F3>  :AS<CR>
 
-"select all
+" select all
 map <C-A> ggVG
 
-"window operation 
+" window operation
 map <S-TAB> <C-W>w
 map <S-TAB-TAB> <C-W>p
 
-"resize current window
+" resize current window
 nmap <silent> <C-Left>    <C-W><:unlet! t:flwwinlayout<CR>
 nmap <silent> <C-Right>   <C-W>>:unlet! t:flwwinlayout<CR>
 nmap <silent> <C-Up>      <C-W>+:unlet! t:flwwinlayout<CR>
 nmap <silent> <C-Down>    <C-W>-:unlet! t:flwwinlayout<CR>
 
-"taglist
-map <leader>tl :Tlist<CR>  
-map <F4> :Tlist<CR>  
+" taglist
+map <leader>tl :Tlist<CR>
+map <F4> :Tlist<CR>
 
-"file explorer
+" file explorer
 map <leader>ve :Ve<CR><CR>
 
-"look up file
+" look up file
 map <leader>lf :LookupFile<CR>
 
-"using cscope to find text reference.
+" using cscope to find text reference.
 map <F7> :call FindReference()<CR>
 
-"checkout file using p4.
+" checkout file using p4.
 if g:support_p4_edit_event
     map <leader>co   :!p4 edit %<CR>
     map <leader>add  :!p4 add %<CR>
 endif
 
-"save session
+" save session
 map <leader>ss :mksession! ~/session/vs<CR>
 map <leader>sos :so ~/session/vs<CR>
 
-"bookmark setting
+" bookmark setting
 map mm :call BookMarkHere()<CR>
 map mc :call OpenBookMark()<CR>
 map md :call DelBookMark()<CR>
 
 
-"syntastic check.
-
+" syntastic check.
 map <leader>sc :call ToggleSyntasticCheck()<CR>
 
 
-"------cscope key mapping------------------------------------------
+" ------cscope key mapping------------------------------------------
 
-"find reference 
+" find reference
 map <leader>fr :call CscopeFind(expand("<cword>"),"s")<CR>
 
-"find definition
-map <leader>fd :call CscopeFind(expand("<cword>"),"g")<CR> 
+" find definition
+map <leader>fd :call CscopeFind(expand("<cword>"),"g")<CR>
 
-"find caller
+" find caller
 map <leader>fc :call CscopeFind(expand("<cword>"),"c")<CR>
 
-"find what you specify,find text
+" find what you specify,find text
 map <leader>ft :call CscopeFind(expand("<cword>"),"t")<CR>
 
-"find this egrep pattern
+" find this egrep pattern
 map <leader>fe :call CscopeFind(expand("<cword>"),"e")<CR>
 
-"find file
+" find file
 map <leader>ff :call CscopeFind(expand("<cfile>"),"f")<CR>
 
-"find files that include this file
+" find files that include this file
 map <leader>fi :call CscopeFind(expand("<cfile>"),"i")<CR>
 
-"map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
-
+" map <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:call OpenCscopeSearchList()<CR>
 
 
