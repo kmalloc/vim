@@ -1148,6 +1148,12 @@ if (has("gui_running"))
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 
+    " disable scrollbar
+    set guioptions-=l
+    set guioptions-=r
+    set guioptions-=L
+    set guioptions-=R
+
     " colorscheme DimGreen "solarized
     colorscheme solarized
 else
