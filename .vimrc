@@ -122,7 +122,7 @@ let g:MRU_Max_Entries=1024
 let g:MRU_Use_Current_Window=0
 let g:MRU_Auto_Close = 0 "do not close on selecting file.
 let g:MRU_Add_Menu = 0 "disable gui menu setting.
-let g:MRU_Open_File_Use_Tabs = 1
+let MRU_Open_File_Use_Tabs = 0 "1
 let g:bufExplorerSortBy='name'       " Sort by the buffer's name.
 
 " let g:vbookmark_bookmarkSaveFile=$HOME.'/.vimbookmark'
@@ -167,7 +167,7 @@ let g:syntastic_enable_balloons = 1
 augroup AutoEventHandler
 
     autocmd!
-    autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call OnBufEnter(expand("<afile>"))
+    autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call TlistOnBufferWinEnter(expand("<afile>"))
     autocmd BufWinEnter * call OnBufferWinEnter()
 
     " invoke code-changed event: for p4 to checkout file
@@ -178,8 +178,7 @@ augroup AutoEventHandler
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
-    autocmd WinEnter * call OnWinEnter(expand("<afile>"))
-    autocmd BufEnter * call HandleAcp(expand("<afile>"))
+    autocmd BufEnter * call HandleTerminWin(expand("<afile>"))
 
     " note: this event will not trigger for those buffers that is displayed in
     " multiple windows.
@@ -281,7 +280,7 @@ function! ShouldSuppressTlist(file)
 
 endfunction
 
-function! OnBufEnter(file)
+function! TlistOnBufferWinEnter(file)
 
     let l:skip = ShouldSuppressTlist(a:file)
 
@@ -295,24 +294,19 @@ endfunction
 
 " when in terminal window, disable autocomplete plugin
 " otherwise enable it
-function! HandleAcp(file)
+function! HandleTerminWin(file)
     if match(a:file,g:TerminalName) > -1
         silent! execute "AcpDisable"
         silent! execute "set cursorline!"
+        silent! execute "startinsert"
+        silent! execute "set laststatus=0"
         return 1
     else
         silent! execute "AcpEnable"
         silent! execute "set cursorline"
-        return 0
-    endif
-endfunction
-
-function! OnWinEnter(file)
-    let l:ret = HandleAcp(a:file)
-    if l:ret
-        silent! execute "startinsert"
-    else
         silent! execute "stopinsert"
+        silent! execute "set laststatus=2"
+        return 0
     endif
 endfunction
 
@@ -1291,6 +1285,7 @@ map md :call DelBookMark()<CR>
 
 " syntastic check.
 map <leader>sc :call ToggleSyntasticCheck()<CR>
+map <leader>scu :SyntasticReset<CR>
 
 
 " ------cscope key mapping------------------------------------------
