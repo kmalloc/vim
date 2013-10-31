@@ -543,7 +543,7 @@ function! List_lookup_file_for_cur_folder(mode)
     endif
 
     if txt == "y"
-        silent! execute "! ~/.vim/script/list.all.files.sh \"cur\""
+        silent! execute "! ~/.vim/script/list.all.files.sh cur"
     endif
 
     execute "let g:LookupFile_TagExpr='\"filenametags\"'"
