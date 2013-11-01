@@ -175,7 +175,7 @@ augroup AutoEventHandler
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
 
-    autocmd BufHidden * call OnBufHidden(expand("<afile>"))
+    autocmd BufHidden * call OnBufHidden()
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
@@ -251,10 +251,12 @@ function! OnBufWrite(file)
 
 endfunction
 
-function! OnBufHidden(file)
+function! OnBufHidden()
 
-    if a:file == "[No Name]"
-        execute "bw! ".a:file
+    let name = bufname("%")
+    if name == ""
+        let nr = bufnr("%")
+        silent! execute "bw! ".nr
     endif
 
 endfunction
