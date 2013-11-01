@@ -633,9 +633,11 @@ function! ToggleSyntasticCheck()
 endfunction
 
 function! OpenCscopeSearchList()
+
     if g:IsQuickfixOpen == 0
         call ToggleQuickfix()
     endif
+
 endfunction
 
 " find symbol from cscope cached data.
@@ -789,6 +791,11 @@ function! ToggleBufferExp(file)
 endfunction
 
 function! ToggleQuickfix()
+
+    if tabpagewinnr(tabpagenr(), '$') == 1 && IsTerminalWin(bufname("%"))
+        cclose
+        return
+    endif
 
     if g:IsQuickfixOpen == 0
         let l:win = winnr()
