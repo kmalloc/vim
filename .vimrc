@@ -175,6 +175,7 @@ augroup AutoEventHandler
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
 
+    autocmd BufHidden * call OnBufHidden(expand("<afile>"))
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
@@ -247,6 +248,14 @@ endfunction
 function! OnBufWrite(file)
 
     call OnBufferWriteByP4(a:file)
+
+endfunction
+
+function! OnBufHidden(file)
+
+    if a:file == "[No Name]"
+        execute "bw! ".a:file
+    endif
 
 endfunction
 
