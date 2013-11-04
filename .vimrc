@@ -890,6 +890,9 @@ function! CloseWin(buffer)
     elseif match(a:buffer, g:TerminalName) > -1
         let l:bn = FindBufferWithName(a:buffer)
         silent! execute "bw! ".l:bn
+    elseif match(a:buffer, "Vundle") > -1
+        let l:nr = bufnr("%")
+        silent! execute "bw! ".l:nr
     endif
 
 endfunction
