@@ -16,39 +16,41 @@ if (!has("gui_running"))
 endif
 
 " ----------------------global variable---------------------------
-if !exists("s:IsInitialized")
-    let s:IsInitialized = 0
+if !exists("g:IsVimInitialized")
+    let g:IsVimInitialized = 0
 endif
 
 " initialize global variables when vim is launched.
-if (!s:IsInitialized)
+if (!g:IsVimInitialized)
+
+    if !exists("g:IsHistoryWinOpened")
+        let g:IsHistoryWinOpened = 0
+    endif
+
+    if !exists("g:IsQuickfixOpen")
+        let g:IsQuickfixOpen = 0
+    endif
 
     let g:p4_code_base = $MD_P4_CODE_BASE
-    let g:IsQuickfixOpen = 0
-    let g:PerforceExisted = 0
-
     let g:BufExplorerName = "BufExplorer"
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
-    let g:IsHistoryWinOpened = 0
+    let g:TerminalName = "bash - "
 
     " setting AutoOpenTlist to 1, then each time open a c/c++ file,
     " taglist will popout to the right automatically.
     let g:AutoOpenTlist = 0
 
-    let g:TerminalName = "bash - "
+    " indicate whether perforce exists
+    let g:PerforceExisted = 0
+
 
     " rule of thumb: try to avoid hard-coded path for code base in vimrc.
     " instead, put all code base relative path in shell script.
 
-    let g:is_in_work = ($USER == "miliao")
 
     " set support_p4_edit_event to checkout file if file is changed.
-    if g:is_in_work
-        let g:support_p4_edit_event = 1
-    else
-        let g:support_p4_edit_event = 0
-    endif
+    let g:support_p4_edit_event = 1
 
     if g:support_p4_edit_event
         let g:files_checkout = {} "files that have been checkout by p4
@@ -80,15 +82,15 @@ endif
 let g:ConqueTerm_Color=1
 
 " taglist.vim setting
-let Tlist_Inc_Winwidth=1
-let Tlist_Show_One_File=1
-let Tlist_Exit_OnlyWindow=1
-let Tlist_File_Fold_Auto_Close=1
-let Tlist_GainFocus_On_ToggleOpen=0
-let Tlist_Auto_Open=0
-let Tlist_Auto_Update=1
-let Tlist_Use_Right_Window=1
-let Tlist_Display_Tag_Scope = 0
+let g:Tlist_Inc_Winwidth=1
+let g:Tlist_Show_One_File=1
+let g:Tlist_Exit_OnlyWindow=1
+let g:Tlist_File_Fold_Auto_Close=1
+let g:Tlist_GainFocus_On_ToggleOpen=0
+let g:Tlist_Auto_Open=0
+let g:Tlist_Auto_Update=1
+let g:Tlist_Use_Right_Window=1
+let g:Tlist_Display_Tag_Scope = 0
 " let Tlist_Display_Prototype=1
 " let Tlist_Compact_Format=1
 
@@ -168,7 +170,7 @@ augroup AutoEventHandler
 
     autocmd!
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call TlistOnBufferWinEnter(expand("<afile>"))
-    autocmd BufWinEnter * call OnBufferWinEnter()
+    autocmd WinEnter * call OnWinEnter()
 
     " invoke code-changed event: for p4 to checkout file
     if g:PerforceExisted
@@ -195,7 +197,7 @@ augroup end
 
 function! SetupVim()
 
-    let s:IsInitialized = 1
+    let g:IsVimInitialized = 1
 
     if g:support_p4_edit_event
         silent! execute "call CheckPerforce()"
@@ -321,12 +323,12 @@ function! HandleTerminWin(file)
     endif
 endfunction
 
-function! OnBufferWinEnter()
+function! OnWinEnter()
 
     " exit when there is only mru window.
     " not finish yet.
-    if(winnr("$") == 1 && bufwinnr(g:MruBufferName) != -1)
-        quit
+    if(winnr("$") == 1 && (!IsNullBuf(bufnr("%")) && !IsFileWin(bufnr("%"))))
+        silent! execute "quit"
     endif
 
 endfunction
@@ -436,10 +438,7 @@ function! P4CheckOut(file)
 
     let l:path = NormalizePath(a:file)
 
-    silent! execute("! p4 edit ".l:path." > /dev/null 2>&1")
-
-    " echo "origin path:".a:file."\n"
-    " echo "path:".l:path
+    silent execute("! p4 edit ".l:path." > /dev/null 2>&1")
 
     if v:shell_error
         echo "p4 edit error,please check if you are log in\n"
@@ -877,9 +876,33 @@ function! CloseHistoryBuffer()
 
 endfunction
 
+function! IsQuickfixBuf(buf)
+    let l:type = getbufvar(a:buf, "&buftype")
+    return l:type == "quickfix"
+endfunction
+
+function! IsNullBuf(buf)
+    let l:type = getbufvar(a:buf, "&buftype")
+    if (l:type == "" && bufname(a:buf) == "")
+        return 1
+    endif
+    return 0
+endfunction
+
+function! IsFileWin(buf)
+
+    let l:type = getbufvar(a:buf, "&buftype")
+    if (l:type == "quickfix" || (l:type == "nofile" && match(bufname(a:buf),g:BufExplorerName) == -1) || IsNullBuf(a:buf))
+        return 0
+    endif
+
+    return 1
+
+endfunction
+
 function! CloseWin(buffer)
 
-    if (getbufvar(winbufnr(winnr()), "&buftype") == "quickfix" )
+    if (IsQuickfixBuf(winbufnr(winnr())))
         let g:IsQuickfixOpen = 0
     endif
 
@@ -897,12 +920,21 @@ function! CloseWin(buffer)
 
 endfunction
 
+
 function! IsCurrentTabEmpty()
 
     let l:buflist = tabpagebuflist()
     let l:len = len(l:buflist)
     if len(l:buflist) > 1
-        let l:new = 1
+
+        let l:new = 0
+        for b in l:buflist
+            if !IsFileWin(b)
+                let l:new = 1
+                break
+            endif
+        endfor
+
     elseif l:len == 1
 
         let l:name = bufname(winbufnr(0))
@@ -1219,6 +1251,8 @@ set statusline +=%5*%m               "modified flag
 map <leader>ev  :call EditMyVimrc()<CR>
 
 map <F9> :so ~/.vimrc<CR>
+map <F9><F9> :let g:IsVimInitialized = 0<CR> :so ~/.vimrc<CR> :call SetupVim()<CR>
+
 map <F6> :call ToggleQuickfix()<CR>
 map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
 
