@@ -28,13 +28,13 @@ if install_bundle == 0
 endif
 
 "personal plugin
-Bundle 'taglist.vim'
 Bundle 'a.vim'
 Bundle 'lookupfile'
 Bundle 'Solarized'
 Bundle 'kmalloc/Syntastic'
 Bundle 'kmalloc/mru.vim'
 Bundle 'kmalloc/Conque-Shell'
+Bundle 'kmalloc/taglist.vim'
 
 filetype on
 
