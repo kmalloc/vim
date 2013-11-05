@@ -24,7 +24,7 @@ Bundle 'gmarik/vundle'
 if install_bundle == 0
     echo "Installing bundles, please ignore errors"
     echo ""
-    :BundleInstall
+    exe "BundleInstall"
 endif
 
 "personal plugin

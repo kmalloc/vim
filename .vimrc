@@ -32,7 +32,7 @@ if (!g:IsVimInitialized)
     endif
 
     let g:p4_code_base = $MD_P4_CODE_BASE
-    let g:BufExplorerName = "BufExplorer"
+    let g:BufExplorerName = '\[BufExplorer\]' "use single quote, regex
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
     let g:TerminalName = "bash - "
@@ -177,7 +177,7 @@ augroup AutoEventHandler
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
 
-    autocmd BufHidden * call OnBufHidden()
+    autocmd BufHidden * silent! exe "call OnBufHidden(expand("<afile>"))"
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
@@ -253,12 +253,13 @@ function! OnBufWrite(file)
 
 endfunction
 
-function! OnBufHidden()
+function! OnBufHidden(file)
 
-    let name = bufname("%")
-    if name == ""
-        let nr = bufnr("%")
-        silent! execute "bw! ".nr
+    if a:file == ""
+        let nr = bufnr(a:file)
+        if nr > -1
+            silent! execute "bw! ".nr
+        endif
     endif
 
 endfunction
@@ -327,8 +328,21 @@ function! OnWinEnter()
 
     " exit when there is only mru window.
     " not finish yet.
-    if(winnr("$") == 1 && (!IsNullBuf(bufnr("%")) && !IsFileWin(bufnr("%"))))
-        silent! execute "quit"
+
+    let l:buflist = tabpagebuflist()
+
+    for b in l:buflist
+
+        if (IsNullBuf(b) || IsFileWin(b))
+            return
+        endif
+
+    endfor
+
+    if tabpagenr("$") > 1
+        execute "tabclose"
+    else
+        execute "quit"
     endif
 
 endfunction
@@ -784,6 +798,8 @@ endfunction
 function! ToggleBufferExp(file)
 
     let l:buf = ToggleWinByName(g:BufExplorerName)
+
+    " echoerr "find: ".l:buf
 
     if l:buf == -2
         return
@@ -1284,7 +1300,7 @@ map <F1><F1>  :call ShowTerminal("win")<CR>
 " tab key mapping
 map <C-t> :tabnew<CR>
 map <M-x> :tabclose<CR>
-map <M-w> :x<CR>
+map <M-w> :q<CR>
 map <M-d> <C-d>
 map <M-u> <C-u>
 
