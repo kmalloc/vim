@@ -15,13 +15,14 @@ endif
 
 set rtp+=~/.vim.bundle/vundle/
 call vundle#rc("~/.vim.bundle")
-Bundle 'gmarik/vundle'
 
 if install_bundle == 0
     echo "Installing bundles, please ignore errors"
     echo ""
     exe "BundleInstall"
 endif
+
+Bundle 'gmarik/vundle'
 
 "personal plugin
 Bundle 'a.vim'
