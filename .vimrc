@@ -186,7 +186,7 @@ augroup AutoEventHandler
 
     " note: this event will not trigger for those buffers that is displayed in
     " multiple windows.
-    autocmd BufWinLeave * call CloseWin(expand("<afile>"))
+    " autocmd BufWinLeave * call CloseWinIfNecessary(expand("<afile>"))
 
     autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx call AutoOpenTaglistOnVimStartup()
     autocmd VimEnter * call SetupVim()
@@ -258,12 +258,7 @@ endfunction
 " use bunload
 function! OnBufHidden(file)
 
-    if a:file == ""
-        let nr = bufnr(a:file)
-        if nr > -1
-            silent! execute "bunload! ".nr
-        endif
-    endif
+    call CloseWinIfNecessary(a:file)
 
 endfunction
 
@@ -867,7 +862,8 @@ function! OpenHistoryIfNecessary()
 
     else
 
-        call CloseHistoryBuffer()
+        let l:mruwinnr = bufnr(g:MruBufferName)
+        call CloseHistoryBuffer(l:mruwinnr)
 
     endif
 
@@ -886,12 +882,11 @@ function! ToggleHistoryWin()
 
 endfunction
 
-function! CloseHistoryBuffer()
+function! CloseHistoryBuffer(buf)
 
     let g:IsHistoryWinOpened = 0
-    let l:mruwinnr = bufnr(g:MruBufferName)
-    if l:mruwinnr != -1
-        silent! execute "bw! ".l:mruwinnr
+    if a:buf != -1
+        silent! execute "bw! ".a:buf
     endif
 
 endfunction
@@ -920,22 +915,24 @@ function! IsFileWin(buf)
 
 endfunction
 
-function! CloseWin(buffer)
+function! CloseWinIfNecessary(buffer)
 
-    if (IsQuickfixBuf(winbufnr(winnr())))
+    let br = str2nr(expand("<abuf>"))
+
+    if br < 0
+        return
+    elseif (IsQuickfixBuf(br))
         let g:IsQuickfixOpen = 0
     endif
 
-    " in BufWinLeave event , bufname("%") may not be the buffer being unloaded.
-    " use <afile> instead.
     if a:buffer == g:MruBufferName
-        call CloseHistoryBuffer()
+        call CloseHistoryBuffer(-1)
     elseif match(a:buffer, g:TerminalName) > -1
-        let l:bn = FindBufferWithName(a:buffer)
-        silent! execute "bw! ".l:bn
+        silent! execute "bw! ".br
     elseif match(a:buffer, "Vundle") > -1
-        let l:nr = bufnr("%")
-        silent! execute "bw! ".l:nr
+        silent! execute "bw! ".br
+    elseif a:buffer == ""
+        execute "bw! ".br
     endif
 
 endfunction
