@@ -31,10 +31,20 @@ endif
 Bundle 'a.vim'
 Bundle 'lookupfile'
 Bundle 'Solarized'
+Bundle 'bufexplorer.zip'
+Bundle 'VimExplorer'
+Bundle 'AutoComplPop'
+Bundle 'genutils'
+Bundle 'gtags.vim'
+Bundle 'OmniCppComplete'
+Bundle 'The-NERD-Commenter'
 Bundle 'kmalloc/Syntastic'
 Bundle 'kmalloc/mru.vim'
 Bundle 'kmalloc/Conque-Shell'
 Bundle 'kmalloc/taglist.vim'
+Bundle 'kmalloc/echofunc.vim'
+Bundle 'kmalloc/simple_bookmarks.vim'
+Bundle 'kmalloc/gtags.vim'
 
 filetype on
 

@@ -177,7 +177,8 @@ augroup AutoEventHandler
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
 
-    autocmd BufHidden * silent! exe "call OnBufHidden(expand("<afile>"))"
+    autocmd BufHidden * call OnBufHidden(expand("<afile>"))
+
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
@@ -253,12 +254,14 @@ function! OnBufWrite(file)
 
 endfunction
 
+" bug exists when wipping buffer from BufHidden
+" use bunload
 function! OnBufHidden(file)
 
     if a:file == ""
         let nr = bufnr(a:file)
         if nr > -1
-            silent! execute "bw! ".nr
+            silent! execute "bunload! ".nr
         endif
     endif
 
@@ -322,6 +325,7 @@ function! HandleTerminWin(file)
         silent! execute "set laststatus=2"
         return 0
     endif
+
 endfunction
 
 function! OnWinEnter()
@@ -1200,6 +1204,7 @@ set ruler
 
 " tab
 set switchbuf=usetab  ",newtab
+
 set hidden
 
 filetype plugin on
