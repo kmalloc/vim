@@ -169,6 +169,10 @@ let g:syntastic_enable_balloons = 1
 augroup AutoEventHandler
 
     autocmd!
+
+    " rule of thumb: evaluate <afile> <abuf> both inside function or both in parameter.
+    " keep them consistent, and better use just one.
+
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call TlistOnBufferWinEnter(expand("<afile>"))
     autocmd WinEnter * call OnWinEnter()
 
@@ -177,7 +181,7 @@ augroup AutoEventHandler
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
 
-    " autocmd BufHidden * call OnBufHidden(expand("<afile>"))
+    " autocmd BufHidden * call OnBufHidden(str2nr(expand("<afile>")))
 
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
@@ -187,7 +191,7 @@ augroup AutoEventHandler
     " note: this event will not trigger for those buffers that is displayed in
     " multiple windows.
     " BufWinLeave
-    autocmd QuitPre * call CloseWinIfNecessary(expand("<afile>"))
+    autocmd QuitPre * call CloseWinIfNecessary(str2nr(expand("<abuf>")))
 
     autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx call AutoOpenTaglistOnVimStartup()
     autocmd VimEnter * call SetupVim()
@@ -257,9 +261,9 @@ endfunction
 
 " bug exists when wipping buffer from BufHidden
 " use bunload
-function! OnBufHidden(file)
+function! OnBufHidden(buf)
 
-    call CloseWinIfNecessary(a:file)
+    call CloseWinIfNecessary(a:buf)
 
 endfunction
 
@@ -547,7 +551,8 @@ endfunction
 function! RefreshCodeTags()
 
     let txt=input("refresh code base? otherwise refresh current path.(y/n):")
-    if txt == "y"
+    " ignore case
+    if txt ==? "y"
         execute "! ~/.vim/script/list.code.tags.sh &"
     else
         execute "!~/.vim/script/list.code.tags.sh cur &"
@@ -563,11 +568,11 @@ function! List_lookup_file_for_cur_folder(mode)
 
     let txt="n"
 
-    if a:mode == "scan" && filereadable("filenametags")
+    if a:mode ==# "scan" && filereadable("filenametags")
         let txt = input("filenametags existed,rebuild or not ?(y/n)")
     endif
 
-    if txt == "y"
+    if txt ==? "y"
         silent! execute "! ~/.vim/script/list.all.files.sh cur"
     endif
 
@@ -584,7 +589,7 @@ function! SetupCscopeForCurFolder(mode)
 
     let l:tags = "cscope.out"
 
-    if a:mode == "scan"
+    if a:mode ==# "scan"
 
         if g:UseGlobalOverCscope == 0
 
@@ -633,7 +638,7 @@ endfunction
 " this type of searching is extremely unefficient, and will block vim for quite a while.
 function! FindReference()
     let txt = input('enter text:')
-    if txt == ""
+    if txt ==# ""
         return
     endif
 
@@ -774,7 +779,7 @@ endfunction
 
 function! BookMarkHere()
     let txt = input("bookmark name:")
-    if txt == ""
+    if txt ==# ""
         return
     endif
 
@@ -786,7 +791,7 @@ endfunction
 function! DelBookMark()
 
     let txt = input("bookmark to be deleted:")
-    if(txt == "")
+    if(txt ==# "")
         return
     endif
 
@@ -900,12 +905,12 @@ endfunction
 
 function! IsQuickfixBuf(buf)
     let l:type = getbufvar(a:buf, "&buftype")
-    return l:type == "quickfix"
+    return l:type ==# "quickfix"
 endfunction
 
 function! IsNullBuf(buf)
     let l:type = getbufvar(a:buf, "&buftype")
-    if (l:type == "" && bufname(a:buf) == "")
+    if (l:type ==# "" && bufname(a:buf) ==# "")
         return 1
     endif
     return 0
@@ -914,7 +919,7 @@ endfunction
 function! IsFileWin(buf)
 
     let l:type = getbufvar(a:buf, "&buftype")
-    if (l:type == "quickfix" || (l:type == "nofile" && match(bufname(a:buf),g:BufExplorerName) == -1) || IsNullBuf(a:buf))
+    if (l:type ==# "quickfix" || (l:type ==# "nofile" && match(bufname(a:buf),g:BufExplorerName) == -1) || IsNullBuf(a:buf))
         return 0
     endif
 
@@ -929,7 +934,7 @@ function! CloseCurrentWin()
 
     if match(nm, g:TerminalName) > -1
         silent exe "bw! ".br
-    " elseif nm == ""
+    " elseif nm ==# ""
         " silent exe "bw! ".br
     else
         silent exe "quit"
@@ -937,24 +942,24 @@ function! CloseCurrentWin()
 
 endfunction
 
-function! CloseWinIfNecessary(buffer)
+function! CloseWinIfNecessary(br)
 
-    let br = str2nr(expand("<abuf>"))
-
-    if br < 0
+    if a:br < 0
         return
-    elseif (IsQuickfixBuf(br))
+    elseif (IsQuickfixBuf(a:br))
         let g:IsQuickfixOpen = 0
     endif
 
-    if a:buffer == g:MruBufferName
+    let buffer = bufname(a:br)
+
+    if buffer ==? g:MruBufferName
         call CloseHistoryBuffer(-1)
-    elseif match(a:buffer, g:TerminalName) > -1
-        silent! execute "bw! ".br
-    elseif match(a:buffer, "Vundle") > -1
-        silent! execute "bw! ".br
-    elseif a:buffer == ""
-        execute "bw! ".br
+    elseif match(buffer, g:TerminalName) > -1
+        silent! execute "bw! ".a:br
+    elseif match(buffer, "Vundle") > -1
+        silent! execute "bw! ".a:br
+    elseif buffer ==# ""
+        execute "bw! ".a:br
     endif
 
 endfunction
@@ -1030,7 +1035,7 @@ function! ToggleWinByName(name)
 endfunction
 
 function! CloseAuxiliaryWin()
-    cclose
+    execute "cclose"
     call CloseHistoryBuffer(-2)
 endfunction
 
@@ -1063,7 +1068,7 @@ function! ShowTerminal(mode)
 
     if l:null
         silent! execute "ConqueTerm bash"
-    elseif a:mode == "tab"
+    elseif a:mode ==# "tab"
         silent! execute "ConqueTermTab bash"
         call CloseAuxiliaryWin()
     else
