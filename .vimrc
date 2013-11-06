@@ -58,6 +58,10 @@ if (!g:IsVimInitialized)
 
     let g:files_syntastic= {} "files that are currently runing syntastic check
 
+    if !exists("g:files_hidden")
+        let g:files_hidden = {}
+    endif
+
     " using gtags by default if gtags has installed in folder: ~/tools/gtags
     let g:UseGlobalOverCscope = 0
     let g:IgnoreGtags = 1 "value '1' to disable using gtags.
@@ -181,17 +185,13 @@ augroup AutoEventHandler
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
 
-    " autocmd BufHidden * call OnBufHidden(str2nr(expand("<afile>")))
+    autocmd BufHidden * call OnBufHidden(str2nr(expand("<abuf>")))
+    autocmd BufWinLeave * call OnBufLeaveWin(str2nr(expand("<abuf>")))
 
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
     autocmd BufEnter * call HandleTerminWin(expand("<afile>"))
-
-    " note: this event will not trigger for those buffers that is displayed in
-    " multiple windows.
-    " BufWinLeave
-    autocmd QuitPre * call CloseWinIfNecessary(str2nr(expand("<abuf>")))
 
     autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx call AutoOpenTaglistOnVimStartup()
     autocmd VimEnter * call SetupVim()
@@ -263,7 +263,7 @@ endfunction
 " use bunload
 function! OnBufHidden(buf)
 
-    call CloseWinIfNecessary(a:buf)
+    call HandleHiddenBuf(a:buf)
 
 endfunction
 
@@ -333,6 +333,8 @@ function! OnWinEnter()
 
     " exit when there is only mru window.
     " not finish yet.
+
+    call CleanHiddenUslessBuffer()
 
     let l:buflist = tabpagebuflist()
 
@@ -927,26 +929,29 @@ function! IsFileWin(buf)
 
 endfunction
 
+
 function! CloseCurrentWin()
 
-    let br = bufnr("%")
-    let nm = bufname(br)
+    silent exe ":quit"
 
-    if match(nm, g:TerminalName) > -1
-        silent exe "bw! ".br
-    " elseif nm ==# ""
-        " silent exe "bw! ".br
-    else
-        silent exe "quit"
+endfunction
+
+function! HandleHiddenBuf(br)
+
+    if a:br < 0
+        return
+    endif
+
+    if !IsFileWin(a:br)
+        let g:files_hidden[a:br] = 1
     endif
 
 endfunction
 
-function! CloseWinIfNecessary(br)
 
-    if a:br < 0
-        return
-    elseif (IsQuickfixBuf(a:br))
+function! OnBufLeaveWin(br)
+
+    if (IsQuickfixBuf(a:br))
         let g:IsQuickfixOpen = 0
     endif
 
@@ -954,12 +959,6 @@ function! CloseWinIfNecessary(br)
 
     if buffer ==? g:MruBufferName
         call CloseHistoryBuffer(-1)
-    elseif match(buffer, g:TerminalName) > -1
-        silent! execute "bw! ".a:br
-    elseif match(buffer, "Vundle") > -1
-        silent! execute "bw! ".a:br
-    elseif buffer ==# ""
-        execute "bw! ".a:br
     endif
 
 endfunction
@@ -973,7 +972,7 @@ function! IsCurrentTabEmpty()
 
         let l:new = 0
         for b in l:buflist
-            if !IsFileWin(b)
+            if IsFileWin(b)
                 let l:new = 1
                 break
             endif
@@ -1068,6 +1067,7 @@ function! ShowTerminal(mode)
 
     if l:null
         silent! execute "ConqueTerm bash"
+        call CloseAuxiliaryWin()
     elseif a:mode ==# "tab"
         silent! execute "ConqueTermTab bash"
         call CloseAuxiliaryWin()
@@ -1109,6 +1109,40 @@ function! CleanHiddenBuffer()
     for b in range(1, bufnr("$"))
         if bufloaded(b) && !has_key(visible, b)
             silent! execute "bw! ".b
+        endif
+    endfor
+
+endfunction
+
+function! CleanHiddenUslessBuffer()
+
+    for key in keys(g:files_hidden)
+        if !IsFileWin(key)
+            execute "bw! ".key
+        endif
+    endfor
+
+    let g:files_hidden = {}
+
+    return
+
+    " the following implementation is simple and 100% coverage, but not the most efficient.
+    " alternative is the above: keep a list of hidden buffers and wipe them out in autocmd BufHidden.
+    " but not guarantee to have 100% coverage.
+
+    let visible = {}
+    for t in range(1, tabpagenr('$'))
+        for b in tabpagebuflist(t)
+            let visible[b] = 1
+        endfor
+    endfor
+
+    for b in range(1, bufnr("$"))
+        if bufloaded(b) && !has_key(visible, b)
+            let name = bufname(b)
+            if name ==# "" || match(name, g:TerminalName) > -1 || match(name, "Vundle") > -1
+                silent! execute "bw! ".b
+            endif
         endif
     endfor
 
