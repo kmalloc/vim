@@ -177,7 +177,7 @@ augroup AutoEventHandler
         autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
     endif
 
-    autocmd BufHidden * call OnBufHidden(expand("<afile>"))
+    " autocmd BufHidden * call OnBufHidden(expand("<afile>"))
 
     autocmd BufWritePost ~/.vimrc so ~/.vimrc
     autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
@@ -186,7 +186,8 @@ augroup AutoEventHandler
 
     " note: this event will not trigger for those buffers that is displayed in
     " multiple windows.
-    " autocmd BufWinLeave * call CloseWinIfNecessary(expand("<afile>"))
+    " BufWinLeave
+    autocmd QuitPre * call CloseWinIfNecessary(expand("<afile>"))
 
     autocmd VimEnter *.cc,*.h,*.cpp,*.c,*.hpp,*.cxx call AutoOpenTaglistOnVimStartup()
     autocmd VimEnter * call SetupVim()
@@ -307,6 +308,7 @@ endfunction
 " when in terminal window, disable autocomplete plugin
 " otherwise enable it
 function! HandleTerminWin(file)
+
     if match(a:file,g:TerminalName) > -1
         silent! execute "AcpDisable"
         silent! execute "set cursorline!"
@@ -332,7 +334,7 @@ function! OnWinEnter()
 
     for b in l:buflist
 
-        if (IsNullBuf(b) || IsFileWin(b))
+        if (IsNullBuf(b) || IsFileWin(b) || IsTerminalWin(b))
             return
         endif
 
@@ -885,8 +887,13 @@ endfunction
 function! CloseHistoryBuffer(buf)
 
     let g:IsHistoryWinOpened = 0
-    if a:buf != -1
+    if a:buf > 0
         silent! execute "bw! ".a:buf
+    elseif a:buf == -2
+        let br = FindBufferWithName(g:MruBufferName)
+        if br > 0
+            silent! execute "bw! ".br
+        endif
     endif
 
 endfunction
@@ -912,6 +919,21 @@ function! IsFileWin(buf)
     endif
 
     return 1
+
+endfunction
+
+function! CloseCurrentWin()
+
+    let br = bufnr("%")
+    let nm = bufname(br)
+
+    if match(nm, g:TerminalName) > -1
+        silent exe "bw! ".br
+    " elseif nm == ""
+        " silent exe "bw! ".br
+    else
+        silent exe "quit"
+    endif
 
 endfunction
 
@@ -1009,6 +1031,7 @@ endfunction
 
 function! CloseAuxiliaryWin()
     cclose
+    call CloseHistoryBuffer(-2)
 endfunction
 
 function! ShowQuickfixIfNecessary()
@@ -1302,7 +1325,7 @@ map <F1><F1>  :call ShowTerminal("win")<CR>
 " tab key mapping
 map <C-t> :tabnew<CR>
 map <M-x> :tabclose<CR>
-map <M-w> :q<CR>
+map <M-w> :call CloseCurrentWin()<CR>
 map <M-d> <C-d>
 map <M-u> <C-u>
 
