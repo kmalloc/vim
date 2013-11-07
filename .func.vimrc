@@ -113,7 +113,7 @@ endfunction
 " otherwise enable it
 function! HandleTerminWin(file)
 
-    if match(a:file,g:TerminalName) > -1
+    if IsTerminalWin(a:file)
         silent! execute "AcpDisable"
         silent! execute "set cursorline!"
         silent! execute "startinsert"
@@ -795,14 +795,21 @@ function! IsCurrentTabEmpty()
 
 endfunction
 
-function! EditMyVimrc()
+function! EditMyVimrc(file)
 
     let l:new = IsCurrentTabEmpty()
 
+    let br = bufnr(a:file)
+
+    if br > 0
+        execute "sb ".br
+        return
+    endif
+
     if !l:new
-        silent! execute "tabedit $MYVIMRC"
+        silent! execute "tabedit ".a:file
     else
-        silent! execute "edit $MYVIMRC"
+        silent! execute "edit ".a:file
     endif
 
 endfunction
@@ -912,8 +919,6 @@ function! CleanHiddenBuffer()
     endfor
 
 endfunction
-
-let g:clean_hidden_buffer_co = 1
 
 function! CleanHiddenUslessBuffer()
 

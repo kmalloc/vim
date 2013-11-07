@@ -251,6 +251,10 @@ if (!g:IsVimInitialized)
         let g:IsQuickfixOpen = 0
     endif
 
+    if !exists("g:clean_hidden_buffer_co")
+        let g:clean_hidden_buffer_co = 1
+    endif
+
     let g:p4_code_base = $MD_P4_CODE_BASE
     let g:BufExplorerName = '\[BufExplorer\]' "use single quote, regex
     let g:MruBufferName = "__MRU_Files__"
@@ -269,7 +273,7 @@ if (!g:IsVimInitialized)
     " instead, put all code base relative path in shell script.
 
     " set support_p4_edit_event to checkout file if file is changed.
-    let g:support_p4_edit_event = 1
+    let g:support_p4_edit_event = isdirectory(g:p4_code_base)
 
     if g:support_p4_edit_event
         let g:files_checkout = {} "files that have been checkout by p4
@@ -334,7 +338,8 @@ source $HOME/.vim/.func.vimrc
 " ----------------------------- key mapping ---------------------------------------------
 
 " edit my vimrc
-map <leader>ev  :call EditMyVimrc()<CR>
+map <leader>ev  :call EditMyVimrc($MYVIMRC)<CR>
+map <leader>evf :call EditMyVimrc($HOME."/.vim/.func.vimrc")<CR>
 
 map <F9> :so ~/.vimrc<CR>
 map <F9><F9> :let g:IsVimInitialized = 0<CR> :so ~/.vimrc<CR> :call SetupVim()<CR>
