@@ -256,6 +256,7 @@ if (!g:IsVimInitialized)
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
     let g:TerminalName = "bash - "
+    let g:LookupFileName = '\[Lookup File\]'
 
     " setting AutoOpenTlist to 1, then each time open a c/c++ file,
     " taglist will popout to the right automatically.

@@ -65,10 +65,6 @@ endfunction
 " use bunload
 function! OnBufHidden(buf)
 
-    if g:PerforceExisted == 0
-        return
-    endif
-
     call HandleHiddenBuf(a:buf)
 
 endfunction
@@ -77,8 +73,6 @@ function! IsTerminalWin(file)
 
     if match(a:file, g:TerminalName) > -1
         retur 1
-    elseif bufwinnr(g:TerminalName) != -1
-        return 1
     endif
 
     return 0
@@ -146,7 +140,7 @@ function! OnWinEnter()
 
     for b in l:buflist
 
-        if (IsNullBuf(b) || IsFileWin(b) || IsTerminalWin(b))
+        if (IsNullBuf(b) || IsFileWin(b) || IsTerminalWin(bufname(b)))
             return
         endif
 
@@ -727,14 +721,13 @@ endfunction
 function! IsFileWin(buf)
 
     let l:type = getbufvar(a:buf, "&buftype")
-    if (l:type ==# "quickfix" || (l:type ==# "nofile" && match(bufname(a:buf),g:BufExplorerName) == -1) || IsNullBuf(a:buf))
+    if (l:type ==# "quickfix" || (l:type ==# "nofile" && match(bufname(a:buf),g:BufExplorerName) == -1 && match(bufname(a:buf),g:LookupFileName)) || IsNullBuf(a:buf))
         return 0
     endif
 
     return 1
 
 endfunction
-
 
 function! CloseCurrentWin()
 
@@ -920,37 +913,45 @@ function! CleanHiddenBuffer()
 
 endfunction
 
+let g:clean_hidden_buffer_co = 1
+
 function! CleanHiddenUslessBuffer()
 
-    for key in keys(g:files_hidden)
-        if !IsFileWin(key) && bufloaded(key)
-            execute "bw! ".key
-        endif
-    endfor
+    if (g:clean_hidden_buffer_co % 8)
+
+        for key in keys(g:files_hidden)
+            if !IsFileWin(key)
+                execute "bw! ".key
+            endif
+        endfor
+
+        let g:clean_hidden_buffer_co += 1
+
+    else
+        " the following implementation is simple and 100% coverage, but not the most efficient.
+        " alternative is the above: keep a list of hidden buffers and wipe them out in autocmd BufHidden.
+        " but not guarantee to have 100% coverage.
+
+        let visible = {}
+        for t in range(1, tabpagenr('$'))
+            for b in tabpagebuflist(t)
+                let visible[b] = 1
+            endfor
+        endfor
+
+        for b in range(1, bufnr("$"))
+            if bufloaded(b) && !has_key(visible, b)
+                if !IsFileWin(b)
+                    silent! execute "bw! ".b
+                endif
+            endif
+        endfor
+
+        let g:clean_hidden_buffer_co = 1
+
+    endif
 
     let g:files_hidden = {}
-
-    return
-
-    " the following implementation is simple and 100% coverage, but not the most efficient.
-    " alternative is the above: keep a list of hidden buffers and wipe them out in autocmd BufHidden.
-    " but not guarantee to have 100% coverage.
-
-    let visible = {}
-    for t in range(1, tabpagenr('$'))
-        for b in tabpagebuflist(t)
-            let visible[b] = 1
-        endfor
-    endfor
-
-    for b in range(1, bufnr("$"))
-        if bufloaded(b) && !has_key(visible, b)
-            let name = bufname(b)
-            if name ==# "" || match(name, g:TerminalName) > -1 || match(name, "Vundle") > -1
-                silent! execute "bw! ".b
-            endif
-        endif
-    endfor
 
 endfunction
 
