@@ -117,7 +117,11 @@ function! HandleTerminWin(file)
         silent! execute "AcpDisable"
         silent! execute "set cursorline!"
         silent! execute "startinsert"
-        silent! execute "set laststatus=0"
+
+        if winnr("$") == 1
+            silent! execute "set laststatus=0"
+        endif
+
         return 1
     else
         silent! execute "AcpEnable"
@@ -802,8 +806,21 @@ function! EditMyVimrc(file)
     let br = bufnr(a:file)
 
     if br > 0
-        execute "sb ".br
+
+        if IsBuffHidden(br)
+
+            if !l:new
+                execute "tabnew"
+            endif
+
+            execute "buffer ".br
+
+        else
+            execute "sb ".br
+        endif
+
         return
+
     endif
 
     if !l:new

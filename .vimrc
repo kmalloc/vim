@@ -128,16 +128,17 @@ highlight PmenuSel guibg=brown ctermbg=darkgreen
 highlight cursorline term=bold ctermfg=brown gui=bold guibg=bg "guifg=browse
 
 hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred    ctermbg=darkblue
-hi User2 guifg=#dd3333 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
+hi User2 guifg=#dd3333 guibg=#222222 ctermfg=white      ctermbg=darkblue
 hi User3 guifg=#ff66ff guibg=#222222 ctermfg=darkgreen  ctermbg=darkblue
 hi User4 guifg=#a0ee40 guibg=#222222 ctermfg=darkyellow ctermbg=darkblue
 hi User5 guifg=#eeee40 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
 
-set statusline =%3*[%F]              "full path of current file
-set statusline +=%1*%r               "readonly flag
-set statusline +=%4*[%v]             "virtual column number
-set statusline +=%5*%m               "modified flag
-" set statusline +=%2*%L              "total lines
+set statusline =%3*[%F]              " full path of current file
+set statusline +=%1*%r               " readonly flag
+set statusline +=%4*[%v]             " virtual column number
+set statusline +=%5*%m               " modified flag
+set statusline +=%2*[%L]             " total lines
+set statusline +=%3*%h               " help txt
 " set statusline +=%1*%n              "buffer number
 " set statusline +=%5*%{&ff}          "file format
 
@@ -340,6 +341,7 @@ source $HOME/.vim/.func.vimrc
 " edit my vimrc
 map <leader>ev  :call EditMyVimrc($MYVIMRC)<CR>
 map <leader>evf :call EditMyVimrc($HOME."/.vim/.func.vimrc")<CR>
+map <leader>evb :call EditMyVimrc($HOME."/.vim/.bundle.vimrc")<CR>
 
 map <F9> :so ~/.vimrc<CR>
 map <F9><F9> :let g:IsVimInitialized = 0<CR> :so ~/.vimrc<CR> :call SetupVim()<CR>
