@@ -31,7 +31,7 @@ set autoread
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,gb18030,ucs-bom,gbk,gb2312,cp936
-set path+=~/code/*
+set path+=$MD_CODE_BASE
 " set colorcolumn=90 "make column 90th visible
 " set list "visible last column of each line, set nolist
 " set spell spelllang=en_us
@@ -47,7 +47,7 @@ set mouse=a
 set winaltkeys=no "disable hot key for the menu in gvim.
 set backspace=indent,eol,start "set backspace key
 
-set timeout timeoutlen=250 ttimeoutlen=100
+set timeout timeoutlen=350 ttimeoutlen=200
 
 " enable alt key in terminal
 " set <M-key>=<Esc>key ,see :h map-alt-keys
@@ -317,7 +317,7 @@ augroup MD_EventHandler
     autocmd WinEnter * call OnWinEnter()
 
     " invoke code-changed event: for p4 to checkout file
-    autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>"))
+    autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>:p"))
 
     autocmd BufHidden * call OnBufHidden(str2nr(expand("<abuf>")))
     autocmd BufWinLeave * call OnBufLeaveWin(str2nr(expand("<abuf>")))
@@ -423,8 +423,8 @@ map <F7> :call FindReference()<CR>
 
 " checkout file using p4.
 if g:support_p4_edit_event
-    map <leader>co   :!p4 edit %<CR>
-    map <leader>add  :!p4 add %<CR>
+    map <leader>co   :call P4CheckOut(expand("%:p"), "open")<CR>
+    map <leader>add  :call P4CheckOut(expand("%:p"), "add")<CR>
 endif
 
 " save session

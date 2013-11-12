@@ -42,12 +42,12 @@ function! OnBufferWriteByP4(file)
         return
     endif
 
-    let l:nr = bufnr('%')
+    let l:nr = bufnr(a:file)
     if exists("g:files_checkout[l:nr]") && filewritable(l:nr) && g:files_checkout[l:nr] == 1
         return
     endif
 
-    let l:ret = P4CheckOut(expand("%:p"))
+    let l:ret = P4CheckOut(a:file, "open")
 
     if (l:ret == 1)
         let g:files_checkout[l:nr] = 1
@@ -259,14 +259,21 @@ function! NormalizePath(file_)
 endfunction
 
 " use p4 command to checkout a file
-function! P4CheckOut(file)
+function! P4CheckOut(file, mode)
 
     let l:path = NormalizePath(a:file)
 
-    silent execute("! p4 edit ".l:path." > /dev/null 2>&1")
+    if a:mode == "open"
+        let op = "edit"
+    else
+        let op = "add"
+    endif
+
+    silent execute("! p4 ".op." ".l:path." > /dev/null 2>&1")
 
     if v:shell_error
-        echo "p4 edit error,please check if you are log in\n"
+        echom "p4 ".op." error,please check if you are log in\n"
+        echom "file:".a:file
         return 0
     endif
 
@@ -420,6 +427,8 @@ function! SetupCurFolderData(mode)
     call SetupCscopeForCurFolder(a:mode)
     let g:WorkingInCurrDir = 1
 
+    set path="./"
+
 endfunction
 
 " if we are in WorkingInCurrDir mode, then switch to code base mode.
@@ -428,6 +437,8 @@ endfunction
 function! SwitchToCodeBase()
 
     let g:WorkingInCurrDir = 0
+
+    set path=$MD_CODE_BASE
     let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
 
     if (g:UseGlobalOverCscope)
@@ -453,7 +464,6 @@ function! FindReference()
     silent! execute "cs find e ".txt
     silent! call OpenCscopeSearchList()
 endfunction
-
 
 function! ToggleSyntasticCheck()
 
@@ -614,6 +624,11 @@ function! ToggleBufferExp(file)
     " echoerr "find: ".l:buf
 
     if l:buf == -2
+        return
+    endif
+
+    if l:buf > 0
+        execute "sb ".l:buf
         return
     endif
 
@@ -1000,11 +1015,11 @@ function! IsBufShowInCurrTab(name)
 
     let l:nr = FindBufferWithName(a:name)
 
+    " echoerr "find ".a:name." num: ".l:nr
+
     if l:nr <= 0
         return -1
     endif
-
-    " echoerr "find ".a:name." num: ".l:nr
 
     for b in tabpagebuflist(tabpagenr())
         if l:nr == b
