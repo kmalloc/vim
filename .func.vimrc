@@ -263,13 +263,14 @@ function! P4CheckOut(file, mode)
 
     let l:path = NormalizePath(a:file)
 
-    if a:mode == "open"
+    if a:mode ==# "open"
         let op = "edit"
     else
         let op = "add"
     endif
 
-    silent execute("! p4 ".op." ".l:path." > /dev/null 2>&1")
+    " execute("! p4 ".op." ".l:path." > /dev/null 2>&1")
+    silent execute("! p4 ".op." ".l:path)
 
     if v:shell_error
         echom "p4 ".op." error,please check if you are log in\n"
@@ -628,8 +629,7 @@ function! ToggleBufferExp(file)
     endif
 
     if l:buf > 0
-        execute "sb ".l:buf
-        return
+        execute "bw ".l:buf
     endif
 
     let l:null = IsCurrentTabEmpty()
@@ -957,7 +957,7 @@ function! CleanHiddenUslessBuffer()
     if (g:clean_hidden_buffer_co % 8)
 
         for key in keys(g:files_hidden)
-            if !IsFileWin(key)
+            if bufloaded(key) && !IsFileWin(key)
                 execute "bw! ".key
             endif
         endfor
