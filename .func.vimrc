@@ -269,12 +269,12 @@ function! P4CheckOut(file, mode)
         let op = "add"
     endif
 
-    " execute("! p4 ".op." ".l:path." > /dev/null 2>&1")
-    silent execute("! p4 ".op." ".l:path)
+    " silent execute("! p4 ".op." ".l:path)
 
-    if v:shell_error
-        echom "p4 ".op." error,please check if you are log in\n"
-        echom "file:".a:file
+    let output = system("! p4 ".op." ".l:path)
+
+    if v:shell_error && stridx(output, "opened") == -1
+        echoerr "p4 ".op." error:".output
         return 0
     endif
 
