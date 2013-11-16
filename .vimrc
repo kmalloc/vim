@@ -142,7 +142,9 @@ set statusline +=%2*[%L]             " total lines
 set statusline +=%3*%h               " help txt
 " set statusline +=%5*%{&ff}          "file format
 
-
+" highlight all trailing space
+highlight TrailingSpace ctermbg=red guibg=red
+match TrailingSpace /\s\+$/
 
 " ------------------------ plugin setting --------------------------------------
 
