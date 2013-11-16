@@ -664,6 +664,11 @@ function! ToggleQuickfix()
 
 endfunction
 
+function! CleanQuickfix()
+    execute "call setqflist([])"
+    call CleanUnlistedCodeFileBuffer()
+endfunction
+
 function! OpenBookMark()
     let l:win = winnr()
     silent execute "CopenBookmarks"
@@ -990,6 +995,14 @@ function! CleanHiddenUslessBuffer()
 
     let g:files_hidden = {}
 
+endfunction
+
+function! CleanUnlistedCodeFileBuffer()
+   for b in range(1, bufnr("$"))
+       if !buflisted(b) && stridx(bufname(b), $MD_CODE_BASE) > -1
+           execute "bw! ".b
+       endif
+   endfor
 endfunction
 
 function! IsBuffHidden(buf)

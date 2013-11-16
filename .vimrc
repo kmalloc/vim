@@ -347,6 +347,7 @@ map <F9> :so ~/.vimrc<CR>
 map <F9><F9> :let g:IsVimInitialized = 0<CR> :so ~/.vimrc<CR> :call SetupVim()<CR>
 
 map <F6> :call ToggleQuickfix()<CR>
+map <F6><F6> :call CleanQuickfix()<CR>
 map <F3> :call ToggleBufferExp(expand("<cfile>"))<CR>
 
 " toggle gvim tool bar.
