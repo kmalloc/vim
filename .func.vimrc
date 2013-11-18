@@ -729,6 +729,11 @@ function! CloseHistoryBuffer(buf)
 
 endfunction
 
+function! IsHelpBuf(buf)
+    let l:type = getbufvar(a:buf, "&buftype")
+    return l:type ==# "help"
+endfunction
+
 function! IsQuickfixBuf(buf)
     let l:type = getbufvar(a:buf, "&buftype")
     return l:type ==# "quickfix"
@@ -771,7 +776,6 @@ function! HandleHiddenBuf(br)
 
 endfunction
 
-
 function! OnBufLeaveWin(br)
 
     if (IsQuickfixBuf(a:br))
@@ -785,7 +789,6 @@ function! OnBufLeaveWin(br)
     endif
 
 endfunction
-
 
 function! IsCurrentTabEmpty()
 
@@ -999,7 +1002,7 @@ endfunction
 
 function! CleanUnlistedCodeFileBuffer()
    for b in range(1, bufnr("$"))
-       if !buflisted(b) && stridx(bufname(b), $MD_CODE_BASE) > -1
+       if !buflisted(b) && (IsHelpBuf(b) || stridx(bufname(b), $MD_CODE_BASE) > -1)
            execute "bw! ".b
        endif
    endfor
