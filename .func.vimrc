@@ -490,6 +490,7 @@ endfunction
 " find symbol from cscope cached data.
 " very fast, but may not be accurate if cache is out of date.
 function! CscopeFind(file,type)
+    call CleanQuickfix()
     silent! execute "cs find ".a:type." ".a:file
     silent! call OpenCscopeSearchList()
     redraw!
@@ -667,6 +668,9 @@ endfunction
 function! CleanQuickfix()
     execute "call setqflist([])"
     call CleanUnlistedCodeFileBuffer()
+    if (g:IsQuickfixOpen)
+        call ToggleQuickfix()
+    endif
 endfunction
 
 function! OpenBookMark()
@@ -1002,7 +1006,7 @@ endfunction
 
 function! CleanUnlistedCodeFileBuffer()
    for b in range(1, bufnr("$"))
-       if !buflisted(b) && (IsHelpBuf(b) || stridx(bufname(b), $MD_CODE_BASE) > -1)
+       if bufexists(b) && !buflisted(b) && (IsHelpBuf(b) || stridx(bufname(b), $MD_CODE_BASE) > -1 || getbufvar(b, "&buftype") ==# "")
            execute "bw! ".b
        endif
    endfor
