@@ -338,7 +338,7 @@ function! RefreshCscopeData()
 
     if g:UseGlobalOverCscope == 0
 
-        if !filereadable(l:csFiles)	
+        if !filereadable(l:csFiles)
             silent! execute "!~/.vim/script/list.cscope.files.sh&"
         endif
 
@@ -459,6 +459,8 @@ function! FindReference()
     if txt ==# ""
         return
     endif
+
+    call CleanQuickfix()
 
     echo "...searching..."
 
@@ -665,12 +667,16 @@ function! ToggleQuickfix()
 
 endfunction
 
+function! CloseQuickfixWin()
+    if g:IsQuickfixOpen == 1
+        silent! execute "cclose"
+        let g:IsQuickfixOpen = 0
+    endif
+endfunction
+
 function! CleanQuickfix()
     execute "call setqflist([])"
     call CleanUnlistedCodeFileBuffer()
-    if (g:IsQuickfixOpen)
-        call ToggleQuickfix()
-    endif
 endfunction
 
 function! OpenBookMark()
@@ -1051,4 +1057,9 @@ function! IsBufShowInCurrTab(name)
 
 endfunction
 
+function! EliminateTrailingSpace()
+
+    execute "%s/\\s\\+$//g"
+
+endfunction
 
