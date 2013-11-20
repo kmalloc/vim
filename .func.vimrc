@@ -120,6 +120,8 @@ function! HandleTerminWin(file)
 
         if winnr("$") == 1
             silent! execute "set laststatus=0"
+        else
+            setlocal statusline=%3*terminal
         endif
 
         return 1
