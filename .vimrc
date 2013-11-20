@@ -36,6 +36,7 @@ set path+=$MD_CODE_BASE
 " set list "visible last column of each line, set nolist
 " set spell spelllang=en_us
 
+set modelines=0 "model line is boring, out of control, disable it.
 set foldenable
 set foldmethod=manual
 
