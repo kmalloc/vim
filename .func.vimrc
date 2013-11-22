@@ -920,13 +920,7 @@ function! ShowTerminal(mode)
     endif
 
     if l:buf > 0
-        if a:mode ==# "tab"
-            silent! execute "tabnew"
-            silent! execute "buffer ".l:buf
-        else
-            silent! execute "sb ".l:buf
-        endif
-
+        silent! execute "sb ".l:buf
         return
     endif
 
@@ -1068,7 +1062,7 @@ function! IsBufShowInCurrTab(name)
 
 endfunction
 
-function! EliminateTrailingSpace()
+function! CleanTrailingSpace()
 
     execute "%s/\\s\\+$//g"
 

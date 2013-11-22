@@ -7,7 +7,6 @@
 "                     : to enable perforce checkout event on file changed, setup "MD_P4_CODE_BASE" env variable
 "others               : some shell scripts are put in .vim/
 
-
 set nocompatible
 
 " must set term before setting alt key binding.
