@@ -151,6 +151,8 @@ match TrailingSpace /\s\+$/
 
 " ConqueTerm setting
 let g:ConqueTerm_Color=1
+let g:ConqueTerm_InsertOnEnter=0
+let g:ConqueTerm_CloseOnEnd=1
 
 " taglist.vim setting
 let g:Tlist_Inc_Winwidth=1

@@ -113,10 +113,14 @@ endfunction
 " otherwise enable it
 function! HandleTerminWin(file)
 
+    silent! execute "stopinsert"
+
     if IsTerminalWin(a:file)
         silent! execute "AcpDisable"
         silent! execute "set cursorline!"
-        silent! execute "startinsert"
+        " silent! execute "startinsert"
+
+        match none
 
         if winnr("$") == 1
             silent! execute "set laststatus=0"
@@ -128,7 +132,6 @@ function! HandleTerminWin(file)
     else
         silent! execute "AcpEnable"
         silent! execute "set cursorline"
-        silent! execute "stopinsert"
         silent! execute "set laststatus=2"
         return 0
     endif
@@ -876,7 +879,7 @@ function! ToggleWinByName(name)
 
     if (l:buf != -1)
         " toggle, if window already opened, then close it.
-        let l:win = bufwinnr(l:buf)
+        " let l:win = bufwinnr(l:buf)
 
         " echoerr "to close(".l:buf.",".l:win.")"
         " silent! execute l:win."wincmd w"
@@ -917,7 +920,13 @@ function! ShowTerminal(mode)
     endif
 
     if l:buf > 0
-        silent! execute "sb ".l:buf
+        if a:mode ==# "tab"
+            silent! execute "tabnew"
+            silent! execute "buffer ".l:buf
+        else
+            silent! execute "sb ".l:buf
+        endif
+
         return
     endif
 
