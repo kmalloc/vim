@@ -144,7 +144,6 @@ set statusline +=%3*%h               " help txt
 
 " highlight all trailing space
 highlight TrailingSpace ctermbg=red guibg=red
-match TrailingSpace /\s\+$/
 
 " ------------------------ plugin setting --------------------------------------
 

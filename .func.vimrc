@@ -120,16 +120,17 @@ function! HandleTerminWin(file)
         silent! execute "set cursorline!"
         " silent! execute "startinsert"
 
-        match none
-
         if winnr("$") == 1
             silent! execute "set laststatus=0"
         else
             setlocal statusline=%3*[terminal]
         endif
 
+        match none
+
         return 1
     else
+        match TrailingSpace /\s\+$/
         silent! execute "AcpEnable"
         silent! execute "set cursorline"
         silent! execute "set laststatus=2"
