@@ -320,7 +320,7 @@ augroup MD_EventHandler
     autocmd WinEnter * call OnWinEnter()
 
     " invoke code-changed event: for p4 to checkout file
-    autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py call OnBufWrite(expand("<afile>:p"))
+    autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py,*/*.pm call OnBufWrite(expand("<afile>:p"))
 
     autocmd BufHidden * call OnBufHidden(str2nr(expand("<abuf>")))
     autocmd BufWinLeave * call OnBufLeaveWin(str2nr(expand("<abuf>")))
