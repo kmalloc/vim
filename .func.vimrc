@@ -33,7 +33,6 @@ function! OnBufferWriteByP4(file)
 
     " if we don't have p4 here, skip it.
     if g:support_p4_edit_event == 0 || g:PerforceExisted == 0
-        echom "p4 command not available."
         return
     endif
 
@@ -386,7 +385,7 @@ endfunction
 " setup files in current folder for LookupFiel, Cscope.
 function! List_lookup_file_for_cur_folder(mode)
 
-    let txt="n"
+    let txt="y"
 
     if a:mode ==# "scan" && filereadable("filenametags")
         let txt = input("filenametags existed,rebuild or not ?(y/n)")
@@ -435,6 +434,8 @@ function! SetupCurFolderData(mode)
     let g:WorkingInCurrDir = 1
 
     set path="./"
+
+    redraw!
 
 endfunction
 
