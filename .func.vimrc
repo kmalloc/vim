@@ -386,7 +386,7 @@ endfunction
 " setup files in current folder for LookupFiel, Cscope.
 function! List_lookup_file_for_cur_folder(mode)
 
-    let txt="n"
+    let txt="y"
 
     if a:mode ==# "scan" && filereadable("filenametags")
         let txt = input("filenametags existed,rebuild or not ?(y/n)")
@@ -435,6 +435,8 @@ function! SetupCurFolderData(mode)
     let g:WorkingInCurrDir = 1
 
     set path="./"
+
+    redraw!
 
 endfunction
 

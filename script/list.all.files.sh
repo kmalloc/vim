@@ -3,14 +3,14 @@
 #2 different modes:
 #cur:search current directory.
 #code:search code path(different in office and home)
-mode=${1:-"code"} 
+mode=${1:-"code"}
 
 
 function makelist
 {
   outloc=${1:-"."}
   codeloc=${2:-"."}
-  
+
   rm -f ${outloc}/filenametags
   touch ${outloc}/filenametags
   echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase" > ${outloc}/filenametags
@@ -18,18 +18,24 @@ function makelist
   sort -f >> ${outloc}/filenametags
 }
 
-mkdir -p $HOME/.vim/caches
-
-#default code path is ~/code, if env variable MD_CODE_BASE is not defined
-code=${MD_CODE_BASE:-"${HOME}/code"}
-
-code=${code/#~/$HOME}
 
 if [ "${mode}" == "code" ]; then
-	makelist "${HOME}/.vim/caches" "${code}"
+
+    caches_folder=$HOME/.vim/caches
+
+    #default code path is ~/code, if env variable MD_CODE_BASE is not defined
+    code=${MD_CODE_BASE:-"${HOME}/code"}
+    code=${code/#~/$HOME}
+
 elif [ "${mode}" == "cur" ]; then
-	makelist "`pwd`" "`pwd`"
+
+    caches_folder=`pwd`
+    code_folder=${caches_folder}
+
 else
 	echo "invalid input."
 fi
+
+mkdir -p $caches_folder
+makelist "${caches_folder}" "${code}"
 
