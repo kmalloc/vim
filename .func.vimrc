@@ -33,7 +33,6 @@ function! OnBufferWriteByP4(file)
 
     " if we don't have p4 here, skip it.
     if g:support_p4_edit_event == 0 || g:PerforceExisted == 0
-        echom "p4 command not available."
         return
     endif
 
