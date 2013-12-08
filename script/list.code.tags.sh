@@ -9,7 +9,8 @@ outPutDir=${HOME}/.vim/caches/code.ctags
 
 if [ "${mode}" == "cur" ];then
 	path="`pwd`"
-    outPutDir=${HOME}/.vim/caches/cur.ctags
+    # outPutDir=${HOME}/.vim/caches/cur.ctags
+    outPutDir=.
 fi
 
 if [ -e "tags" ];then

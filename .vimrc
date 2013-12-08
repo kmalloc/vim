@@ -63,11 +63,6 @@ if(!has("gui_running"))
     exe "set <M-p>=\<ESC>p"
 endif
 
-set tags=~/.vim/caches/cpp.ctags/tags
-set tags+=~/.vim/caches/code.ctags/tags
-set tags+=~/.vim/caches/wx.ctags/tags
-set tags+=~/.vim/caches/cur.ctags/tags
-set tags+=~/.vim/caches/caches/tags
 
 " indention
 set ai
@@ -122,8 +117,8 @@ set laststatus=2 "always show status line
 set completeopt-=preview "remove preview window for autocompletion
 
 " context menu
-highlight Pmenu guibg=darkblue ctermbg=blue
-highlight PmenuSel guibg=brown ctermbg=darkgreen
+highlight Pmenu guibg=darkblue ctermbg=darkblue ctermfg=darkgreen
+highlight PmenuSel guibg=brown guibg=white ctermbg=brown ctermfg=white
 
 highlight cursorline term=bold gui=bold guibg=bg "guifg=browse
 

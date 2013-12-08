@@ -15,6 +15,7 @@ function! SetupVim()
         silent! execute "call SetupCurFolderData(\"skip\")"
     else
         silent! execute "call SetupCscope()"
+        silent! execute "call LinkCodeTags()"
     endif
 
 endfunction
@@ -363,18 +364,17 @@ endfunction
 function! RefreshCodeData()
     call Refresh_filelookup_data()
     call RefreshCscopeData()
+    call RefreshCodeTags()
 endfunction
 
 " refreshing ctags data. pretty much not in use often.
 " ctags data is currently used by omni complete plugin only.
 function! RefreshCodeTags()
 
-    let txt=input("refresh code base? otherwise refresh current path.(y/n):")
-    " ignore case
-    if txt ==? "y"
-        execute "! ~/.vim/script/list.code.tags.sh &"
-    else
+    if g:WorkingInCurrDir == 1
         execute "!~/.vim/script/list.code.tags.sh cur &"
+    else
+        execute "! ~/.vim/script/list.code.tags.sh &"
     endif
 
     redraw!
@@ -429,11 +429,13 @@ endfunction
 
 function! SetupCurFolderData(mode)
 
-    call List_lookup_file_for_cur_folder(a:mode)
-    call SetupCscopeForCurFolder(a:mode)
+    set path="./"
     let g:WorkingInCurrDir = 1
 
-    set path="./"
+    call List_lookup_file_for_cur_folder(a:mode)
+    call SetupCscopeForCurFolder(a:mode)
+    call RefreshCodeTags()
+    call LinkCodeTags()
 
     redraw!
 
@@ -456,6 +458,7 @@ function! SwitchToCodeBase()
     endif
 
     call CsAddTags(g:mycodetags, 0)
+    call LinkCodeTags()
 
 endfunction
 
@@ -554,6 +557,16 @@ function! SetupCscope()
 
 endfunction
 
+function! LinkCodeTags()
+    set tags=~/.vim/caches/cpp.ctags/tags
+    set tags+=~/.vim/caches/wx.ctags/tags
+
+    if g:WorkingInCurrDir == 1
+        set tags+=~/.vim/caches/code.ctags/tags
+    else
+        set tags+=./tags
+    endif
+endfunction
 
 function! ToggleGtags()
 
