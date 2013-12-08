@@ -23,6 +23,8 @@ fi
 
 ctags -R --c++-kinds=+p --language-force=c++ --fields=+iaS --extra=+q ${path}
 
-mkdir -p $outPutDir
-mv tags $outPutDir/tags
+if [ $outPutDir != "." ];then
+    mkdir -p $outPutDir
+    mv tags $outPutDir/tags
+fi
 

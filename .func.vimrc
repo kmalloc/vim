@@ -558,14 +558,18 @@ function! SetupCscope()
 endfunction
 
 function! LinkCodeTags()
-    set tags=~/.vim/caches/cpp.ctags/tags
-    set tags+=~/.vim/caches/wx.ctags/tags
 
     if g:WorkingInCurrDir == 1
-        set tags+=~/.vim/caches/code.ctags/tags
+        " must set absolute path, otherwise not working for files in a different folder
+        let cur=getcwd()
+        execute "set tags=".cur."/tags"
     else
-        set tags+=./tags
+        set tags=~/.vim/caches/code.ctags/tags
     endif
+
+    set tags+=~/.vim/caches/cpp.ctags/tags
+    set tags+=~/.vim/caches/wx.ctags/tags
+
 endfunction
 
 function! ToggleGtags()
