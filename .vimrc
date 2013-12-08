@@ -35,7 +35,7 @@ set path+=$MD_CODE_BASE
 " set list "visible last column of each line, set nolist
 " set spell spelllang=en_us
 
-set modelines=0 "model line is boring, out of control, disable it.
+set modelines=0 "mode line is boring, out of control, disable it.
 set foldenable
 set foldmethod=manual
 
@@ -118,7 +118,7 @@ set completeopt-=preview "remove preview window for autocompletion
 
 " context menu
 highlight Pmenu guibg=darkblue ctermbg=darkblue ctermfg=darkgreen
-highlight PmenuSel guibg=brown guibg=white ctermbg=brown ctermfg=white
+highlight PmenuSel guibg=brown guifg=white ctermbg=brown ctermfg=white
 
 highlight cursorline term=bold gui=bold guibg=bg "guifg=browse
 
@@ -157,6 +157,7 @@ let g:Tlist_Auto_Open=0
 let g:Tlist_Auto_Update=1
 let g:Tlist_Use_Right_Window=1
 let g:Tlist_Display_Tag_Scope = 0
+let g:Tlist_Highlight_Tag_On_BufEnter = 0
 " let Tlist_Display_Prototype=1
 " let Tlist_Compact_Format=1
 
