@@ -120,7 +120,7 @@ set completeopt-=preview "remove preview window for autocompletion
 highlight Pmenu guibg=darkblue ctermbg=darkblue ctermfg=darkgreen
 highlight PmenuSel guibg=brown guifg=white ctermbg=brown ctermfg=white
 
-highlight cursorline term=bold gui=bold guibg=bg "guifg=browse
+highlight cursorline term=bold cterm=bold gui=bold guibg=bg "guifg=browse
 
 hi User1 guifg=#eea040 guibg=#222222 ctermfg=darkred    ctermbg=darkblue
 hi User2 guifg=#dd3333 guibg=#222222 ctermfg=white      ctermbg=darkblue

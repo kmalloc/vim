@@ -560,8 +560,8 @@ endfunction
 function! LinkCodeTags()
 
     if g:WorkingInCurrDir == 1
-        let cur=getcwd()
         " must set absolute path, otherwise not working for files in a different folder
+        let cur=getcwd()
         execute "set tags=".cur."/tags"
     else
         set tags=~/.vim/caches/code.ctags/tags
