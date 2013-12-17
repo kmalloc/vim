@@ -151,13 +151,13 @@ let g:ConqueTerm_CloseOnEnd=1
 let g:Tlist_Inc_Winwidth=1
 let g:Tlist_Show_One_File=1
 let g:Tlist_Exit_OnlyWindow=1
-let g:Tlist_File_Fold_Auto_Close=1
+" let g:Tlist_File_Fold_Auto_Close=1 "setting this option will cause taglist to display number on the side after switching tab
 let g:Tlist_GainFocus_On_ToggleOpen=0
 let g:Tlist_Auto_Open=0
 let g:Tlist_Auto_Update=1
 let g:Tlist_Use_Right_Window=1
 let g:Tlist_Display_Tag_Scope = 0
-let g:Tlist_Highlight_Tag_On_BufEnter = 0
+" let g:Tlist_Highlight_Tag_On_BufEnter = 0
 " let Tlist_Display_Prototype=1
 " let Tlist_Compact_Format=1
 
