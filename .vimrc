@@ -157,9 +157,9 @@ let g:Tlist_Auto_Open=0
 let g:Tlist_Auto_Update=1
 let g:Tlist_Use_Right_Window=1
 let g:Tlist_Display_Tag_Scope = 0
-let g:Tlist_Highlight_Tag_On_BufEnter = 0
+" let g:Tlist_Highlight_Tag_On_BufEnter = 0
 " let Tlist_Display_Prototype=1
-" let Tlist_Compact_Format=1
+let Tlist_Compact_Format=1
 
 " filelookup setting.
 let g:LookupFile_TagExpr = '$HOME."/.vim/caches/filenametags"'
