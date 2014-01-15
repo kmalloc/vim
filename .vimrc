@@ -40,7 +40,9 @@ set foldenable
 set foldmethod=manual
 
 " share system clipboard
+" set paste
 set clipboard=unnamed
+set clipboard+=unnamedplus
 
 " key and mouse
 set mouse=a
