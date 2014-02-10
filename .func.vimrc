@@ -134,6 +134,7 @@ function! HandleTerminWin(file)
         silent! execute "AcpEnable"
         silent! execute "set cursorline"
         silent! execute "set laststatus=2"
+        silent! execute "set nocompatible"
         return 0
     endif
 
