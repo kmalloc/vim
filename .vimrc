@@ -111,12 +111,15 @@ if (has("gui_running"))
     colorscheme solarized
 else
     colorscheme torte
-    " colorscheme allan
+    " colorscheme solarized
 endif
+
+let g:solarized_termcolors=256
 
 set cursorline "highlight current line
 set laststatus=2 "always show status line
 set completeopt-=preview "remove preview window for autocompletion
+set completeopt+=longest
 
 " context menu
 highlight Pmenu guibg=darkblue ctermbg=darkblue ctermfg=darkgreen
