@@ -437,10 +437,9 @@ map <leader>ss :mksession! ~/session/vs<CR>
 map <leader>sos :so ~/session/vs<CR>
 
 " bookmark setting
-map mm :call BookMarkHere()<CR>
-map mc :call OpenBookMark()<CR>
-map md :call DelBookMark()<CR>
-
+map <leader>mm :call BookMarkHere()<CR>
+map <leader>mc :call OpenBookMark()<CR>
+map <leader>md :call DelBookMark()<CR>
 
 " syntastic check.
 map <leader>sc :call ToggleSyntasticCheck()<CR>
