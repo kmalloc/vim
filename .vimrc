@@ -317,17 +317,17 @@ augroup MD_EventHandler
     " rule of thumb: evaluate <afile> <abuf> both inside function or both in parameter.
     " keep them consistent, and better use just one.
 
-    autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hpp,*.cxx call TlistOnBufferWinEnter(expand("<afile>"))
+    autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hh,*.hpp,*.cxx call TlistOnBufferWinEnter(expand("<afile>"))
     autocmd WinEnter * call OnWinEnter()
 
     " invoke code-changed event: for p4 to checkout file
-    autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py,*/*.pm call OnBufWrite(expand("<afile>:p"))
+    autocmd BufWritePost */*.cpp,*/*.cc,*/*.c,*/*.cxx,*/*.h,*/*.hh,*/*.hpp,*/*.sh,*/*.pl,*/*.mk,*/*.py,*/*.pm call OnBufWrite(expand("<afile>:p"))
 
     autocmd BufHidden * call OnBufHidden(str2nr(expand("<abuf>")))
     autocmd BufWinLeave * call OnBufLeaveWin(str2nr(expand("<abuf>")))
 
     autocmd BufWritePost ~/.vimrc,~/.vim/*.vimrc so ~/.vimrc
-    autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h call UpdateGtags()
+    autocmd BufWritePost */code/*.cpp,*/code/*.cxx,*/code/*.cc,*/code/*.c,*/code/*.h,*/code/*.hh call UpdateGtags()
     autocmd TabEnter * call OnTabEnter()
     autocmd BufEnter * call HandleTerminWin(expand("<afile>"))
 
