@@ -25,7 +25,6 @@ endif
 Bundle 'gmarik/vundle'
 
 "personal plugin
-Bundle 'a.vim'
 Bundle 'lookupfile'
 Bundle 'Solarized'
 Bundle 'bufexplorer.zip'
@@ -35,6 +34,7 @@ Bundle 'genutils'
 Bundle 'OmniCppComplete'
 Bundle 'The-NERD-Commenter'
 Bundle 'Lokaltog/vim-easymotion'
+Bundle 'kmalloc/a.vim'
 Bundle 'kmalloc/Syntastic'
 Bundle 'kmalloc/mru.vim'
 Bundle 'kmalloc/conque'
