@@ -1,11 +1,11 @@
 "author               : miliao.
-"vim version required : vim 7.0 and above.
+"vim required         : vim 7.0 and above.
 "other requirment     : compile vim with option: --enable-cscope, --enable-pythoninterp, --with-features=huge
 "plugin               : LookupFile,TagList,autocomplete(acp.vim),a.vim,NERD_Commenter,
 "                       echofunc,bufExplorer,vimExplorer,MRU.
 "usage                : to enable cscope&ctags usage, please setup environment variable "MD_CODE_BASE" to specify the code path
 "                     : to enable perforce checkout event on file changed, setup "MD_P4_CODE_BASE" env variable
-"others               : some shell scripts are put in .vim/
+"others               : some shell scripts are put in .vim/script
 
 set nocompatible
 
@@ -65,7 +65,6 @@ if(!has("gui_running"))
     exe "set <M-p>=\<ESC>p"
 endif
 
-
 " indention
 set ai
 set si
@@ -81,7 +80,6 @@ set ruler
 
 " tab
 set switchbuf=usetab  ",newtab
-
 set hidden
 
 filetype plugin on
@@ -133,16 +131,16 @@ hi User3 guifg=#ff66ff guibg=#222222 ctermfg=darkgreen  ctermbg=darkblue
 hi User4 guifg=#a0ee40 guibg=#222222 ctermfg=darkyellow ctermbg=darkblue
 hi User5 guifg=#eeee40 guibg=#222222 ctermfg=cyan       ctermbg=darkblue
 
-set statusline =%1*[%n]             "buffer number
-set statusline +=%3*[%F]              " full path of current file
+set statusline =%1*[%n]              "buffer number
+set statusline +=%3*[%F]             " full path of current file
 set statusline +=%1*%r               " readonly flag
 set statusline +=%4*[%v]             " virtual column number
 set statusline +=%5*%m               " modified flag
 set statusline +=%2*[%L]             " total lines
 set statusline +=%3*%h               " help txt
-" set statusline +=%5*%{&ff}          "file format
+" set statusline +=%5*%{&ff}         "file format
 
-" highlight all trailing space
+" highlight trailing space
 highlight TrailingSpace ctermbg=red guibg=red
 
 " ------------------------ plugin setting --------------------------------------
@@ -184,7 +182,6 @@ let g:LookupFile_DisableDefaultMap = 1 "I prefer f5 to open terminal window.
 " autocomplete setting.
 let g:AutoComplPop_CompleteoptPreview = 1
 
-
 " OmniCppCompletion
 let g:OmniCpp_NamespaceSearch = 2
 let g:OmniCpp_ShowPrototypeInAbbr = 1
@@ -208,7 +205,6 @@ let g:simple_bookmarks_auto_close = 0
 " a.vim setting: search path.
 let g:alternateSearchPath = 'sfr:./src,sfr:../,sfr:../include,sfr:../src'
 
-
 " echofunc.vim setting.
 " if the following is set to 1.
 " information will not shown on status line.
@@ -217,10 +213,6 @@ let g:EchoFuncAutoStartBalloonDeclaration=0 "disable ballon declaration
 let g:EchoFunc_AutoTrigger = 0
 let g:EchoFuncKeyPrev='<M-p>'
 let g:EchoFuncKeyNext='<M-n>'
-" need to find an appropriate mapping,
-" otherwhise default mapping will not work in terminal.
-" let g:EchoFuncKeyNext='<C-->'
-" let g:EchoFuncKeyNext='<C-=>'
 
 " gtags-cscope
 let g:GtagsCscope_Ignore_Case = 1
@@ -238,8 +230,7 @@ let g:syntastic_enable_balloons = 1
 " ------------------------- end plugin settings -----------------------
 
 
-
-" --------------------------------------------- global variable -----------------------------------------------
+" --------------------------------------------- global variables -----------------------------------------------
 
 if !exists("g:IsVimInitialized")
     let g:IsVimInitialized = 0
@@ -261,17 +252,17 @@ if (!g:IsVimInitialized)
     endif
 
     let g:p4_code_base = $MD_P4_CODE_BASE
-    let g:BufExplorerName = '\[BufExplorer\]' "use single quote, regex
+    let g:BufExplorerName = '\[BufExplorer\]' " use single quote for regex
     let g:MruBufferName = "__MRU_Files__"
     let g:TaglistName = "__Tag_List__"
     let g:TerminalName = "bash - "
     let g:LookupFileName = '\[Lookup File\]'
 
-    " setting AutoOpenTlist to 1, then each time open a c/c++ file,
+    " set AutoOpenTlist to 1, then each time open a c/c++ file,
     " taglist will popout to the right automatically.
     let g:AutoOpenTlist = 0
 
-    " indicate whether perforce exists
+    " indicate whether perforce exists or not
     let g:PerforceExisted = 0
 
     " rule of thumb: try to avoid hard-coded path for code base in vimrc.
@@ -281,18 +272,18 @@ if (!g:IsVimInitialized)
     let g:support_p4_edit_event = isdirectory(g:p4_code_base)
 
     if g:support_p4_edit_event
-        let g:files_checkout = {} "files that have been checkout by p4
+        let g:files_checkout = {} " files that have been checkout by p4
     endif
 
-    let g:files_syntastic= {} "files that are currently runing syntastic check
+    let g:files_syntastic= {} " files that are currently running syntastic check
 
     if !exists("g:files_hidden")
         let g:files_hidden = {}
     endif
 
-    " using gtags by default if gtags has installed in folder: ~/tools/gtags
+    " use gtags by default if gtags has installed in folder: ~/tools/gtags
     let g:UseGlobalOverCscope = 0
-    let g:IgnoreGtags = 1 "value '1' to disable using gtags.
+    let g:IgnoreGtags = 1 " value '1' to disable using gtags.
 
     " cache file for gtags or for cscope
     let g:mycodetags = $HOME."/.vim/caches/cscope.out"
@@ -300,9 +291,9 @@ if (!g:IsVimInitialized)
     let g:WorkingInCurrDir = 0
 
     let g:gtagsCscopePath = system("which gtags-cscope")
-    let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') "remove \n from the end
+    let g:gtagsCscopePath = substitute(g:gtagsCscopePath,'\n$','','') " remove \n from the end
     let g:CscopePath = system("which cscope")
-    let g:CscopePath = substitute(g:CscopePath,'\n$','','')
+    let g:CscopePath = substitute(g:CscopePath,'\n$','','') " remove trailing newline char: '\n'
     " $HOME."/tools/gtags/bin/gtags-cscope"
 
 endif
@@ -314,7 +305,7 @@ augroup MD_EventHandler
 
     autocmd! MD_EventHandler
 
-    " rule of thumb: evaluate <afile> <abuf> both inside function or both in parameter.
+    " rule of thumb: evaluate both <afile> and <abuf> inside function or in parameter.
     " keep them consistent, and better use just one.
 
     autocmd BufWinEnter *.cpp,*.cc,*.c,*.h,*.hh,*.hpp,*.cxx call TlistOnBufferWinEnter(expand("<afile>"))
@@ -360,7 +351,7 @@ if (has("gui_running"))
 endif
 
 " generate file names list
-" this will replace the previous TagExpr setting.
+" this will refresh previous TagExpr setting.
 map <F10> :call RefreshCodeTags()<CR>
 map <F11> :call SetupCurFolderData("scan")<CR>
 map <F11><F11> :call SwitchToCodeBase()<CR>
@@ -423,7 +414,7 @@ map <leader>ve :Ve<CR>
 " look up file
 map <leader>lf :LookupFile<CR>
 
-" using cscope to find text reference.
+" use cscope to find text reference.
 map <F7> :call FindReference()<CR>
 
 " checkout file using p4.
