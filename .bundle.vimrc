@@ -45,3 +45,7 @@ Bundle 'kmalloc/gtags.vim'
 
 filetype on
 
+echo "Installing font:"
+
+silent! execute "!mkdir -p ~/.fonts/"
+silent! execute "!cp ~/.vim/fonts/* ~/.fonts/"

@@ -95,7 +95,8 @@ source $HOME/.vim/.bundle.vimrc
 set background=dark
 
 if (has("gui_running"))
-    set guifont=MiscFixed\ 18
+    " set guifont=MiscFixed\ 18
+    set guifont=Source\ Code\ Pro\ 16
     set guioptions-=m "hide menu bar.
     set guioptions-=T "hide tool bar.
 
