@@ -13,7 +13,13 @@ if [ "${mode}" == "cur" ];then
     outPutDir=.
 fi
 
-if [ -e "tags" ];then
+running=`ps ux|grep "ctags .* ${path}\$"`
+
+if [ "$running" != "" ];then
+    exit
+fi
+
+if [ -e "$path/tags" ];then
 	rm $path/tags
 fi
 
