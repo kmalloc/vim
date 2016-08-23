@@ -139,6 +139,7 @@ set statusline +=%4*[%v]             " virtual column number
 set statusline +=%5*%m               " modified flag
 set statusline +=%2*[%L]             " total lines
 set statusline +=%3*%h               " help txt
+set statusline +=%5*[%{strftime('%b-%d:%T')}]
 " set statusline +=%5*%{&ff}         "file format
 
 " highlight trailing space
