@@ -25,7 +25,7 @@ endif
 Bundle 'gmarik/vundle'
 
 "personal plugin
-Bundle 'lookupfile'
+
 Bundle 'Solarized'
 Bundle 'bufexplorer.zip'
 Bundle 'VimExplorer'
@@ -42,6 +42,7 @@ Bundle 'kmalloc/taglist.vim'
 Bundle 'kmalloc/echofunc.vim'
 Bundle 'kmalloc/simple_bookmarks.vim'
 Bundle 'kmalloc/gtags.vim'
+Bundle 'kmalloc/lookupfile'
 
 filetype on
 
