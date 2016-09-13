@@ -376,6 +376,7 @@ map <F1><F1>  :call ShowTerminal("win")<CR>
 map <C-t> :tabnew<CR>
 map <M-x> :tabclose<CR>
 map <M-w> :call CloseCurrentWin()<CR>
+map <C-x> :call CloseCurrentWin()<CR>
 map <M-d> <C-d>
 map <M-u> <C-u>
 
